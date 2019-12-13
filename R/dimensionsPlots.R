@@ -1,0 +1,185 @@
+#' Plot visual outputs linked to the "Dimension" approach for IDEA4
+#'
+#' @param IDEAdata output of the `importIDEA()` function
+#' @param output_dir If a directory path is given, each plot will be exported as a png file in this directory. If the directory doesn't exist yet, it will be created.
+#'
+#' @return a named list of plots
+#' @importFrom magrittr %>%
+#' @export
+#'
+#' @examples
+#' path <- system.file("example.xls", package = "RIDEATools")
+#' dat <- importIDEA(path, anonymous = FALSE)
+#' plots <- dimensionsPlots(dat, output_dir = NULL)
+dimensionsPlots <- function(IDEAdata, output_dir = NULL){
+
+
+
+  singleplots <- function(res_dim){
+
+    splotlist <- list()
+
+    dim_dimensions <- res_dim %>%
+      dplyr::group_by(dimension) %>%
+      dplyr::summarise(score_dim = unique(score_dim), max_dim = 100) %>%
+      dplyr::ungroup() %>%
+      dplyr::arrange(dplyr::desc(dimension))
+
+
+
+    splotlist$dimensions <- ggplot2::ggplot(dim_dimensions,ggplot2::aes(x = dimension, y = score_dim, group = factor(dimension))) +
+      ggplot2::geom_bar(ggplot2::aes(x = dimension, y = max_dim,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
+      ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
+      ggplot2::geom_hline(yintercept = critiq, color = "red", size = 1.5, linetype = 5)+
+      ggplot2::scale_fill_manual(values = c("#2e9c15","#5077FE","#FE962B")) +
+      ggplot2::geom_label(ggplot2::aes(label = paste0(score_dim,"/",max_dim)), fill = "white", size = 5) +
+      ggplot2::theme(axis.line = ggplot2::element_blank())+
+      ggplot2::theme_bw()+
+      ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "grey75")) +
+      ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                     legend.text = ggplot2::element_text(size = 13),
+                     legend.title = ggplot2::element_text(size = 15),
+                     strip.text = ggplot2::element_text(size = 9, face = "bold")) +
+      ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white", color = "black")) +
+      ggplot2::theme(axis.text = ggplot2::element_text(size = 15, color = "black"), axis.title = ggplot2::element_text(size = 15, face = "bold"))+
+      ggplot2::labs(fill = "Dimension", y = "Valeur de la dimension / valeur max") +
+      ggplot2::theme(plot.caption = ggplot2::element_text(face = "bold"))+
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::guides(fill = FALSE)
+
+
+
+    dim_compo <- res_dim %>%
+      dplyr::mutate(dim = sub("^([[:alpha:]]*).*", "\\1", indicateur)) %>%
+      dplyr::mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
+                                        yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante)) %>%
+      dplyr::mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                                        yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante)) %>%
+      dplyr::group_by(composante) %>%
+      dplyr::summarise(dim = unique(dim),dimension = unique(dimension),valeur_compo = unique(valeur_compo), max_compo = unique(max_compo)) %>%
+      dplyr::ungroup() %>%
+      dplyr::arrange(dplyr::desc(dim)) %>%
+      dplyr::mutate(composante = factor(composante, levels = unique(composante)))
+
+    splotlist$composantes <- ggplot2::ggplot(dim_compo,ggplot2::aes(x = composante, y = valeur_compo, group = factor(dimension))) +
+      ggplot2::geom_bar(ggplot2::aes(x = composante, y = max_compo,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
+      ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
+      ggplot2::geom_label(ggplot2::aes(label = paste0(valeur_compo,"/",max_compo)), fill = "white", size = 5.5)+
+      ggplot2::scale_fill_manual(values = c("#2e9c15","#5077FE","#FE962B")) +
+      ggplot2::theme(axis.line = ggplot2::element_blank())+
+      ggplot2::theme_bw()+
+      ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "grey75")) +
+      ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                     legend.text = ggplot2::element_text(size = 15),
+                     legend.title = ggplot2::element_text(size = 17),
+                     strip.text = ggplot2::element_text(size = 9, face = "bold")) +
+      ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white", color = "black")) +
+      ggplot2::theme(axis.text = ggplot2::element_text(size = 17, color = "black"), axis.title = ggplot2::element_text(size = 17, face = "bold"))+
+      ggplot2::labs(fill = "Dimension", y = "Valeur de la composante / valeur max") +
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::coord_flip()
+
+    dim_indic <- res_dim %>%
+      dplyr::inner_join(label_nodes, by = c("indicateur"="code_indicateur", "composante", "dimension")) %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
+                                        yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante)) %>%
+      dplyr::mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                                        yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante)) %>%
+      dplyr::mutate(composante = ifelse(composante == "Réduire les impacts sur la santé humaine et les écosystèmes",
+                                        yes = "Réduire les impacts sur la santé humaine\n et les écosystèmes", no = composante)) %>%
+      dplyr::mutate(nom_indicateur = wrapit(nom_complet)) %>%
+      dplyr::ungroup() %>%
+      dplyr::filter(indicateur %in% liste_indicateurs)  %>%
+      dplyr::mutate(num_indic = readr::parse_number(indicateur)) %>%
+      dplyr::arrange(dplyr::desc(dimension),dplyr::desc(num_indic)) %>%
+      dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur))) %>%
+      dplyr::mutate(nom_indicateur = factor(nom_indicateur, levels = unique(nom_indicateur))) %>%
+      dplyr::mutate(composante = paste0("Composante : ",composante)) %>%
+      dplyr::mutate(dimension2 = dimension) %>%
+      dplyr::group_by(dimension2) %>%
+      tidyr::nest()
+
+
+    indic_plot <- function(df){
+      ggplot2::ggplot(df, ggplot2::aes(x = nom_indicateur, y = valeur, fill = dimension)) +
+        ggplot2::geom_bar(ggplot2::aes(x = nom_indicateur, y = valeur_max,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
+        ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
+        ggplot2::facet_wrap(~composante, ncol = 1, scales = "free_y")+
+        ggplot2::scale_fill_manual(values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B"))+
+        ggplot2::geom_label(ggplot2::aes(label = paste0(valeur,"/",valeur_max)), fill = "white", size = 5)+
+        ggplot2::theme(axis.line = ggplot2::element_blank())+
+        ggplot2::theme_bw()+
+        ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "grey75")) +
+        ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                       legend.text = ggplot2::element_text(size = 13),
+                       legend.title = ggplot2::element_text(size = 15),
+                       strip.text = ggplot2::element_text(size = 12, face = "bold")) +
+        ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white", color = "black", size = 2)) +
+        ggplot2::theme(axis.text = ggplot2::element_text(size = 12, color = "black"), axis.title = ggplot2::element_text(size = 15, face = "bold"))+
+        ggplot2::guides(fill = FALSE) +
+        ggplot2::labs(fill = "Dimension", y = "Valeur de l'indicateur / valeur max") +
+        ggplot2::theme(legend.position = "top") +
+        ggplot2::coord_flip()
+    }
+
+    list_indicators <- map(dim_indic$data, indic_plot)
+    names(list_indicators) <- paste0("indic_",unique(dim_indic$dimension2))
+
+
+
+    return(c(splotlist,list_indicators))
+
+      }
+
+  if(IDEAdata$analysis.type == "single") {
+    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
+    label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
+    return_plot <- singleplots(res_dim)
+
+  }
+
+  if(IDEAdata$analysis.type == "group") {
+    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(nom_exploit) %>% tidyr::nest()
+    label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
+
+    return_plot <- purrr::map(res_dim$data, singleplots)
+    names(return_plot) <- res_dim$nom_exploit
+
+
+
+    ### Ajouter les plots meta...
+
+
+  }
+
+#
+# if(is.null(output_dir)) {
+#   return(return_plot)
+# } else {
+#
+#
+#   dff <- tibble(plotname = names(return_plot),plot = return_plot)
+#
+#
+#   save_custom <- function(plotname,plot){
+#
+#     dim <- switch(plotname,
+#                   "dimensions"=c(5,6))
+#
+#
+#     ggsave(plot,paste0(output_dir/))
+#
+#
+#
+#   }
+
+
+
+
+
+
+}
+
+
+
