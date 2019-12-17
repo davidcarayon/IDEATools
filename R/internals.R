@@ -110,3 +110,18 @@ wrapit <- function(text) {
   wtext <- paste(strwrap(text, width = 75), collapse = " \n ")
   return(wtext)
 }
+
+find_pos <- function(start,end,choice){
+
+  selection = car[start:end]
+  rect_id = start + which(stringr::str_detect(selection,"id=") == TRUE) - 1
+  rect_style = start + which(stringr::str_detect(selection,"style=") == TRUE) - 1
+
+  val <- switch(choice,
+                "id"=rect_id,
+                "style"=rect_style)
+
+  return(val)
+
+
+}

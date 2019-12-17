@@ -1,12 +1,24 @@
-Package: RIDEATools
+Package: IDEA
 Type: Package
-Title: What the Package Does (Title Case)
+Title: R computing tools for the IDEA method
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: c(
+    person("David", "Carayon", email = "david.carayon@irstea.fr", role = c("aut", "cre")))
+Maintainer: David Carayon <david.carayon@irstea.fr>
+Description: This package provides a set of tools for computing IDEA data records in an R environment.
+    Functions in this package allow to extract data from IDEA4 excel files and convert them to dataframes, drawing heuristic maps and other various plots for reporting. 
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
+Imports: 
+    dplyr,
+    ggplot2,
+    janitor,
+    purrr,
+    readr,
+    readxl,
+    stringr,
+    tibble,
+    tidyr,
+    magrittr

@@ -11,9 +11,7 @@
 #' path <- system.file("example.xls", package = "RIDEATools")
 #' dat <- importIDEA(path, anonymous = FALSE)
 #' plots <- dimensionsPlots(dat, output_dir = NULL)
-dimensionsPlots <- function(IDEAdata, output_dir = NULL){
-
-
+dimensionsPlots <- function(IDEAdata){
 
   singleplots <- function(res_dim){
 
@@ -26,6 +24,8 @@ dimensionsPlots <- function(IDEAdata, output_dir = NULL){
       dplyr::arrange(dplyr::desc(dimension))
 
 
+
+    critiq <- min(res_dim$score_dim)
 
     splotlist$dimensions <- ggplot2::ggplot(dim_dimensions,ggplot2::aes(x = dimension, y = score_dim, group = factor(dimension))) +
       ggplot2::geom_bar(ggplot2::aes(x = dimension, y = max_dim,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
@@ -123,7 +123,7 @@ dimensionsPlots <- function(IDEAdata, output_dir = NULL){
         ggplot2::coord_flip()
     }
 
-    list_indicators <- map(dim_indic$data, indic_plot)
+    list_indicators <- purrr::map(dim_indic$data, indic_plot)
     names(list_indicators) <- paste0("indic_",unique(dim_indic$dimension2))
 
 
@@ -148,35 +148,13 @@ dimensionsPlots <- function(IDEAdata, output_dir = NULL){
 
 
 
-    ### Ajouter les plots meta...
+    ### Ajouter les plots meta...--> Discussions avec stagiaire BSA
 
 
   }
 
-#
-# if(is.null(output_dir)) {
-#   return(return_plot)
-# } else {
-#
-#
-#   dff <- tibble(plotname = names(return_plot),plot = return_plot)
-#
-#
-#   save_custom <- function(plotname,plot){
-#
-#     dim <- switch(plotname,
-#                   "dimensions"=c(5,6))
-#
-#
-#     ggsave(plot,paste0(output_dir/))
-#
-#
-#
-#   }
 
-
-
-
+return(return_plot)
 
 
 }

@@ -858,7 +858,7 @@ create_single_data <- function(input){
     ## On supprime les noeuds intermédiaires
     rm(list = ls(pattern = "node_"))
 
-  res_list$nodes <- end_nodes$Global
+  res_list$nodes <- end_nodes
 
 
   return(res_list)
@@ -881,8 +881,18 @@ if(result_list$analysis.type == "group"){
 
   group_data <- purrr::map(list_paths,create_single_data)
 
+  nodes_list <- list(
+    Robustesse = purrr::map(group_data,"nodes") %>% purrr::map("Robustesse") %>% dplyr::bind_rows(),
+    Capacité = purrr::map(group_data,"nodes") %>% purrr::map("Capacité") %>% dplyr::bind_rows(),
+    Autonomie = purrr::map(group_data,"nodes") %>% purrr::map("Autonomie") %>% dplyr::bind_rows(),
+    Responsabilité = purrr::map(group_data,"nodes") %>% purrr::map("Responsabilité") %>% dplyr::bind_rows(),
+    Ancrage = purrr::map(group_data,"nodes") %>% purrr::map("Ancrage") %>% dplyr::bind_rows(),
+    Global = purrr::map(group_data,"nodes") %>% purrr::map("Global") %>% dplyr::bind_rows()
+  )
+
+
   grouped_datasets <- list(
-    nodes = purrr::map(group_data,"nodes") %>% dplyr::bind_rows(),
+    nodes = nodes_list,
     dataset = purrr::map(group_data,"dataset") %>% dplyr::bind_rows(),
     metadata = purrr::map(group_data,"metadata") %>% dplyr::bind_rows()
   )
