@@ -12,11 +12,13 @@
 #' plots <- dimensionsPlots(dat, output_dir = NULL)
 propertiesPlots <- function(IDEAdata){
 
-  return_list <- list()
-
   nom <- unique(IDEAdata$dataset$nom_exploit)
 
-  for (prop in names(IDEAdata$nodes)){
+  draw_trees <- function(IDEAdata, nom){
+
+    return_list <- list()
+
+    for (prop in names(IDEAdata$nodes)){
 
     liste_indicateurs_prop <- switch(prop,
                                      "Ancrage"=c("B10","B3","B9","B8","B7","B6","B15","B14","B19","AN4","AN2","AN1","AN5","AN3"),
@@ -48,10 +50,14 @@ propertiesPlots <- function(IDEAdata){
 
     tab_rect <- tibble::tibble(rect_no) %>%
       dplyr::mutate(rect_end = rect_no+7) %>%
-      dplyr::mutate(rect_id = purrr::map2_dbl(.x = rect_no, .y = rect_end,.f = find_pos,choice = "id")) %>%
-      dplyr::mutate(rect_style = purrr::map2_dbl(.x = rect_no, .y = rect_end,.f = find_pos,choice = "style")) %>%
-      dplyr::mutate(rect_number = readr::parse_number(car[rect_id]))%>%
+      dplyr::mutate(rect_id = purrr::map2_dbl(.x = rect_no, .y = rect_end,.f = find_pos,choice = "id", car = car)) %>%
+      dplyr::mutate(rect_style = purrr::map2_dbl(.x = rect_no, .y = rect_end,.f = find_pos,choice = "style", car = car)) %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(rect_number_p = as.numeric(stringr::str_extract_all(car[rect_id],"[0-9]+")[[1]][1])) %>%
+      dplyr::mutate(rect_number_c = as.numeric(stringr::str_extract_all(car[rect_id],"[0-9]+")[[1]][2])) %>%
+      dplyr::ungroup() %>%
       dplyr::mutate(indicateur = liste_indicateurs_prop)
+
 
     rect_style <- tab_rect$rect_style
 
@@ -60,7 +66,7 @@ propertiesPlots <- function(IDEAdata){
       dplyr::mutate(indicateur = replace_indicateur(indicateur)) %>%
       dplyr::inner_join(tab_rect, by = "indicateur") %>%
       dplyr::mutate(color = replace_col(resultat)) %>%
-      dplyr::arrange(rect_number)
+      dplyr::arrange(rect_number_p,rect_number_c)
 
     for(i in which(tab_to_color$color == "lightgreen")) {
       car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]],"fill:#ffffff","fill:#1CDA53")
@@ -86,15 +92,44 @@ propertiesPlots <- function(IDEAdata){
       car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]],"fill:#ffffff","fill:#A0A0A0")
     }
 
-    num_title <- which(stringr::str_detect(car,"Exploitation anonyme")==TRUE)
+    num_title_a <- which(stringr::str_detect(car,"Exploitation anonyme")==TRUE)
+    num_title_b <- which(stringr::str_detect(car,"Nom de l'exploitation")==TRUE)
+
+    num_title <- na.omit(c(num_title_a,num_title_b))
 
     car[num_title] <- stringr::str_replace(car[num_title],"Exploitation anonyme",nom)
+    car[num_title] <- stringr::str_replace(car[num_title],"Nom de l'exploitation",nom)
 
-    return_list[[prop]] <- car
+    return_list[[prop]] <- paste(car, collapse = "\n")
+
+
 
   }
 
+
   return(return_list)
+  }
+
+
+
+  if(IDEAdata$analysis.type == "single") {
+    result <- draw_trees(IDEAdata, nom)
+    result$analysis.type = IDEAdata$analysis.type
+    result$plot.type <- "propertyplots"
+    return(result)
+  }
+
+  if(IDEAdata$analysis.type == "group") {
+    result <- list()
+    for(i in nom) {
+      result[[i]] <- draw_trees(IDEAdata,nom = i)
+    }
+    result$analysis.type = IDEAdata$analysis.type
+    result$plot.type <- "propertyplots"
+
+    return(result)
+  }
+
 
 
 }

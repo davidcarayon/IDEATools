@@ -1,4 +1,4 @@
-Package: IDEA
+Package: IDEATools
 Type: Package
 Title: R computing tools for the IDEA method
 Version: 0.1.0
@@ -21,4 +21,5 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    magrittr
+    magrittr,
+    rsvg

@@ -111,7 +111,7 @@ wrapit <- function(text) {
   return(wtext)
 }
 
-find_pos <- function(start,end,choice){
+find_pos <- function(start,end,choice,car){
 
   selection = car[start:end]
   rect_id = start + which(stringr::str_detect(selection,"id=") == TRUE) - 1

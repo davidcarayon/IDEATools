@@ -153,7 +153,8 @@ dimensionsPlots <- function(IDEAdata){
 
   }
 
-
+return_plot$analysis.type = IDEAdata$analysis.type
+return_plot$plot.type <- "dimensionplots"
 return(return_plot)
 
 
