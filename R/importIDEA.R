@@ -866,8 +866,6 @@ create_single_data <- function(input){
 
   }
 
-
-
 if (result_list$analysis.type == "single") {
 single_data <- create_single_data(input)
 

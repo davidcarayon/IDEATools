@@ -1,17 +1,32 @@
-#' Export plots
+#' Export IDEA related plots
 #'
-#' @param IDEAdata output of the `importIDEA()` function
+#' @param IDEAres output of IDEA plotting functions
+#' @param outdir the output directory
 #'
-#' @return a named list of plots
+#' @return Exports plots in png/pdf format in the output directory
 #' @importFrom magrittr %>%
 #' @export
-exportIDEA <- function(IDEAres, outdir = "resultats") {
+exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
+
+  # On va toujours créer un dossier par exploitation
+  # On stockera les graphes "meta" à la racine
+
+  if (!dir.exists(outdir)){dir.create(outdir)}
 
   # Heuristic maps ----------------------------------------------------------
-  if (IDEAres$plot.type == "propertyplots") {
+  if (IDEAres$plot.type == "tree") {
 
+tab_res <- tibble::tibble(name = names(IDEAres), itemlist = IDEAres) %>%
+      dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
+      dplyr::mutate(prop = purrr::map(itemlist, names)) %>%
+      tidyr::unnest(c(itemlist,prop)) %>%
+      dplyr::mutate(name = str_replace(name," ","_")) %>%
+      dplyr::mutate(folder = here::here(outdir,name,"Propriétés")) %>%
+      dplyr::mutate(path = here::here(outdir,name,"Propriétés",prop)) %>%
+      dplyr::mutate(png_path = glue::glue("{path}.png"),
+                    pdf_path = glue::glue("{path}.pdf"))
 
-export_heuristic_map <- function(prop,union,itemlist, outdir){
+export_heuristic_map <- function(prop,itemlist,folder,png_path,pdf_path){
 
   heuristic_res <- list(
     Robustesse = c(1439,951),
@@ -22,44 +37,23 @@ export_heuristic_map <- function(prop,union,itemlist, outdir){
     Global=c(1984,1403)
   )
 
-  if (!dir.exists(outdir)){dir.create(outdir)}
-
   dim = heuristic_res[[prop]]
-
   ff <- charToRaw(itemlist)
 
-  pngpath <- paste0(outdir,"/",union,".png")
 
-  pdfpath <- paste0(outdir,"/",union,".pdf")
+  if (!dir.exists(folder)){dir.create(folder, recursive = TRUE)}
 
-  rsvg::rsvg_png(ff,pngpath, width = dim[1], height = dim[2])
-
-  rsvg::rsvg_pdf(ff, pdfpath)
+  rsvg::rsvg_png(ff,png_path, width = dim[1], height = dim[2])
+  rsvg::rsvg_pdf(ff, pdf_path)
 }
 
-
-if(IDEAres$analysis.type == "group"){
-tab_res <- tibble::tibble(name = names(IDEAres), itemlist = IDEAres) %>%
-  dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
-  dplyr::mutate(prop = purrr::map(itemlist, names)) %>%
-  tidyr::unnest(c(itemlist,prop)) %>%
-  dplyr::mutate(union = paste(name,prop,sep="_")) %>%
-  dplyr::mutate(union = stringr::str_replace(union," ","_"))
-purrr::pwalk(.l = list(tab_res$prop,tab_res$union,tab_res$itemlist),.f = export_heuristic_map, outdir = outdir)
-}
-
-
-if(IDEAres$analysis.type == "single"){
-tab_res <- tibble::tibble(prop = names(IDEAres),itemlist = unlist(IDEAres)) %>% dplyr::filter(!prop %in% c("analysis.type","plot.type"))
-purrr::pwalk(.l = list(tab_res$prop,tab_res$prop,tab_res$itemlist),.f = export_heuristic_map, outdir = outdir)
-}
-
+purrr::pwalk(.l = list(tab_res$prop,tab_res$itemlist,tab_res$folder,tab_res$png_path,tab_res$pdf_path),.f = export_heuristic_map)
 
 
 }
 
   # Dimension plots ---------------------------------------------------------
-  if (IDEAres$plot.type == "dimensionplots") {
+  if (IDEAres$plot.type == "dim") {
 dimension_res <- list(
 dimensions = c(9.11,5.6),
 composantes = c(13.69,10.5),
@@ -69,34 +63,32 @@ indic_Agroécologique = c(10.69,12)
 )
 
 
-export_dimplot <- function(plotname,union,plot,w,h,outdir) {
-  filename = paste0(outdir,"/",union,".png")
-  print(plot) %>%
-    ggplot2::ggsave(filename=filename,dpi = "retina", width = w, height = h)
-}
 
-
-
-if(IDEAres$analysis.type == "group"){
 
 n_exploit <- dplyr::n_distinct(names(IDEAres))-2
 
 tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
-    dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
-    dplyr::mutate(plotname = purrr::map(plot, names)) %>%
-    tidyr::unnest(c(plot,plotname)) %>%
-    dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
-         heights = rep(c(5.6,10.5,13.5,9,12),n_exploit))%>%
-  dplyr::mutate(union = paste(name,plotname,sep="_")) %>%
-  dplyr::mutate(union = stringr::str_replace(union," ","_"))
-purrr::pwalk(.l = list(tab_res$plotname,tab_res$union,tab_res$plot,tab_res$widths, tab_res$heights,outdir), .f = export_dimplot)
+  dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
+  dplyr::mutate(plotname = purrr::map(plot, names)) %>%
+  tidyr::unnest(c(plot,plotname)) %>%
+  dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
+                heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
+  dplyr::mutate(name = str_replace(name," ","_")) %>%
+  dplyr::mutate(folder = here::here(outdir,name,"Dimensions")) %>%
+  dplyr::mutate(path = here::here(outdir,name,"Dimensions",plotname)) %>%
+  dplyr::mutate(png_path = glue::glue("{path}.png"))
+
+export_dimplot <- function(plotname,plot,widths, heights, folder, png_path) {
+
+  if (!dir.exists(folder)){dir.create(folder, recursive = TRUE)}
+
+  print(plot) %>%
+    ggplot2::ggsave(filename=png_path,dpi = "retina", width = widths, height = heights)
 }
 
+purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heights, tab_res$folder,tab_res$png_path), .f = export_dimplot)
 
-if(IDEAres$analysis.type == "single"){
-  tab_res <- tibble::tibble(plotname = names(IDEAres), plot = IDEAres) %>% dplyr::filter(!plotname %in% c("analysis.type","plot.type")) %>% dplyr::mutate(widths = c(9.11,13.69,10.69,10.69,10.69), heights = c(5.6,10.5,13.5,9,12))
-  purrr::pwalk(.l = list(tab_res$plotname,tab_res$plotname,tab_res$plot,tab_res$widths, tab_res$heights,outdir), .f = export_dimplot)
-  }
+
 
 }
 

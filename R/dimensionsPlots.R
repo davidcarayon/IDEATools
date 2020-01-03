@@ -23,8 +23,6 @@ dimensionsPlots <- function(IDEAdata){
       dplyr::ungroup() %>%
       dplyr::arrange(dplyr::desc(dimension))
 
-
-
     critiq <- min(res_dim$score_dim)
 
     splotlist$dimensions <- ggplot2::ggplot(dim_dimensions,ggplot2::aes(x = dimension, y = score_dim, group = factor(dimension))) +
@@ -147,14 +145,10 @@ dimensionsPlots <- function(IDEAdata){
     names(return_plot) <- res_dim$nom_exploit
 
 
-
-    ### Ajouter les plots meta...--> Discussions avec stagiaire BSA
-
-
   }
 
 return_plot$analysis.type = IDEAdata$analysis.type
-return_plot$plot.type <- "dimensionplots"
+return_plot$plot.type <- "dim"
 return(return_plot)
 
 

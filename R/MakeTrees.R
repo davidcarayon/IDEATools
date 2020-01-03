@@ -10,10 +10,9 @@
 #' path <- system.file("example.xls", package = "RIDEATools")
 #' dat <- importIDEA(path, anonymous = FALSE)
 #' plots <- dimensionsPlots(dat, output_dir = NULL)
-propertiesPlots <- function(IDEAdata){
+MakeTrees <- function(IDEAdata){
 
-  nom <- unique(IDEAdata$dataset$nom_exploit)
-
+## Définition d'une fonction qui sera appliquée à chaque exploitation (nom = facteur de tri)
   draw_trees <- function(IDEAdata, nom){
 
     return_list <- list()
@@ -62,6 +61,7 @@ propertiesPlots <- function(IDEAdata){
     rect_style <- tab_rect$rect_style
 
     tab_to_color <- IDEAdata$nodes[[prop]] %>%
+      dplyr::filter(nom_exploit == nom) %>%
       tidyr::gather(key = indicateur, value = resultat,-nom_exploit) %>%
       dplyr::mutate(indicateur = replace_indicateur(indicateur)) %>%
       dplyr::inner_join(tab_rect, by = "indicateur") %>%
@@ -102,30 +102,32 @@ propertiesPlots <- function(IDEAdata){
 
     return_list[[prop]] <- paste(car, collapse = "\n")
 
-
-
   }
 
 
   return(return_list)
   }
 
+## On recence les exploitations
+  nom <- unique(IDEAdata$dataset$nom_exploit)
 
-
+## Si il n'y a qu'une seule exploitation, le résultat est simple
   if(IDEAdata$analysis.type == "single") {
     result <- draw_trees(IDEAdata, nom)
     result$analysis.type = IDEAdata$analysis.type
-    result$plot.type <- "propertyplots"
+    result$plot.type <- "tree"
     return(result)
   }
 
+## Sinon, on lance une petite boucle
   if(IDEAdata$analysis.type == "group") {
+
     result <- list()
     for(i in nom) {
       result[[i]] <- draw_trees(IDEAdata,nom = i)
     }
     result$analysis.type = IDEAdata$analysis.type
-    result$plot.type <- "propertyplots"
+    result$plot.type <- "tree"
 
     return(result)
   }
