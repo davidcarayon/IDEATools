@@ -126,14 +126,75 @@ dimensionsPlots <- function(IDEAdata){
 
 
 
-    return(c(splotlist,list_indicators))
+    indicateurs_ancrage <- c("B10","B3","B9","B8","B7","B6","B15","B14","B19")
+    indicateurs_autonomie <- c("B13","B15","B18","B8","C5","C3","C6","A7","A8","A6")
+    indicateurs_robustesse <- c("A1","A3","A4","A14","C5","C4","C7","A2","C8","C9","A15","B22","B13","B15","B18","B16")
+    indicateurs_responsabilite <- c("B20","B5","B19","B11","B1","B2","B4","A10","A9","A11","C11","B17","B14","B16","B21","B23","A5","A16","A17","A18","A19","B12")
+    indicateurs_capacite <- c("A5","A12","A13","B14","B15","B16","B13","B18","B1","B3","C1","C2","C3","C10")
+
+    prop_radar <- res_dim %>%
+      dplyr::mutate(Propriete = dplyr::case_when(indicateur %in% indicateurs_ancrage ~ "Ancrage Territorial",
+                                                 indicateur %in% indicateurs_autonomie ~ "Autonomie",
+                                                 indicateur %in% indicateurs_robustesse ~ "Robustesse",
+                                                 indicateur %in% indicateurs_responsabilite ~ "Responsabilité globale",
+                                                 indicateur %in% indicateurs_capacite ~ "Capacité productive et reproductive \nde biens et de services"))  %>%
+      dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>%
+      dplyr::mutate(num_indic = readr::parse_number(indicateur)) %>%
+      dplyr::arrange(dplyr::desc(dimension),num_indic) %>%
+      dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur)))
+
+    plist <- list()
+
+    for (i in unique(prop_radar$Propriete)) {
+
+      # Get the name and the y position of each label
+      label_data <- prop_radar %>% dplyr::filter(Propriete == i)
+      label_data$id <- seq(1, nrow(label_data))
+      number_of_bar <- nrow(label_data)
+      angle <- 90 - 360 * (label_data$id-0.5) /number_of_bar     # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
+      label_data$hjust <- ifelse( angle < -90, 1, 0)
+      label_data$angle <- ifelse(angle < -90, angle+180, angle)
+      label_data = label_data %>% dplyr::filter(score_ind > 5)
+
+      plist[[i]] <- ggplot2::ggplot(prop_radar %>% dplyr::filter(Propriete == i), ggplot2::aes(x = indicateur, y = score_ind, fill = dimension)) +
+        ggplot2::geom_rect(xmin = -Inf, ymin = -20, xmax = Inf, ymax = 100, fill = "white", color = "white")+
+        ggplot2::geom_col(ggplot2::aes(x = indicateur, y = 100, fill = dimension),alpha = 0.3, color = "black")+
+        ggplot2::geom_col() +
+        ggplot2::theme_bw()+
+        ggplot2::geom_text(data=label_data, ggplot2::aes(x=id, y=score_ind+1, label=paste0(round(score_ind),"%"), hjust=hjust), color="black", fontface="bold",alpha=1, size=4.2, angle= label_data$angle, inherit.aes = FALSE) +
+        # ggplot2::geom_hline(yintercept = c(100), color = "black", size = 1.5, linetype = 1)+
+        ggplot2::scale_fill_manual(limits = c("Agroécologique","Socio-Territoriale","Economique"),values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
+        ggplot2::theme(
+          axis.title = ggplot2::element_blank(),
+          plot.title = ggplot2::element_text(size = 15,hjust = 0.5, face = "bold"),
+          legend.text = ggplot2::element_text(size = 13),
+          legend.title = ggplot2::element_text(size = 15),
+          axis.text.y = ggplot2::element_blank(),
+          axis.ticks.y = ggplot2::element_blank(),
+          panel.grid.major.y = ggplot2::element_blank()
+
+        ) +
+        ggplot2::scale_y_continuous(limits = c(-20,130),breaks = c(0,20,40,60,80,100))+
+        ggplot2::theme(axis.text = ggplot2::element_text(size = 13, color = "black", face = "bold"))  +
+        ggplot2::labs(fill = "Dimension", title = glue::glue('Indicateurs de la propriété "{i}"'), caption = "NB : Les scores inférieurs à 5% ne sont pas indiqués")+
+        ggplot2::theme(legend.position = "top")+
+        ggplot2::coord_polar()
+    }
+
+
+
+
+
+    return(c(splotlist,list_indicators,plist))
 
       }
 
   if(IDEAdata$analysis.type == "single") {
     res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
     label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
-    return_plot <- singleplots(res_dim)
+    return_plot <- list()
+    nom <- unique(res_dim$nom_exploit)
+    return_plot[[nom]] <- singleplots(res_dim)
 
   }
 

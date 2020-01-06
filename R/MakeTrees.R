@@ -113,7 +113,8 @@ MakeTrees <- function(IDEAdata){
 
 ## Si il n'y a qu'une seule exploitation, le résultat est simple
   if(IDEAdata$analysis.type == "single") {
-    result <- draw_trees(IDEAdata, nom)
+    result <- list()
+    result[[nom]] <- draw_trees(IDEAdata, nom)
     result$analysis.type = IDEAdata$analysis.type
     result$plot.type <- "tree"
     return(result)

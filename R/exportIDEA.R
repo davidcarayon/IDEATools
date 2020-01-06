@@ -20,9 +20,10 @@ tab_res <- tibble::tibble(name = names(IDEAres), itemlist = IDEAres) %>%
       dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
       dplyr::mutate(prop = purrr::map(itemlist, names)) %>%
       tidyr::unnest(c(itemlist,prop)) %>%
-      dplyr::mutate(name = str_replace(name," ","_")) %>%
-      dplyr::mutate(folder = here::here(outdir,name,"Propriétés")) %>%
-      dplyr::mutate(path = here::here(outdir,name,"Propriétés",prop)) %>%
+      # dplyr::mutate(prop = stringi::stri_trans_general(prop,"Latin-ASCII")) %>%
+      dplyr::mutate(name = stringr::str_replace(name," ","_")) %>%
+      dplyr::mutate(folder = file.path(outdir,name,"Propriétés","Cartes_heuristiques")) %>%
+      dplyr::mutate(path = file.path(outdir,name,"Propriétés","Cartes_heuristiques",prop)) %>%
       dplyr::mutate(png_path = glue::glue("{path}.png"),
                     pdf_path = glue::glue("{path}.pdf"))
 
@@ -30,9 +31,9 @@ export_heuristic_map <- function(prop,itemlist,folder,png_path,pdf_path){
 
   heuristic_res <- list(
     Robustesse = c(1439,951),
-    Capacité = c(1596,934),
+    Capacite = c(1596,934),
     Autonomie = c(1439,951),
-    Responsabilité=c(1439,951),
+    Responsabilite=c(1439,951),
     Ancrage= c(1439,951),
     Global=c(1984,1403)
   )
@@ -74,8 +75,8 @@ tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
   dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
                 heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
   dplyr::mutate(name = str_replace(name," ","_")) %>%
-  dplyr::mutate(folder = here::here(outdir,name,"Dimensions")) %>%
-  dplyr::mutate(path = here::here(outdir,name,"Dimensions",plotname)) %>%
+  dplyr::mutate(folder = file.path(outdir,name,"Dimensions")) %>%
+  dplyr::mutate(path = file.path(outdir,name,"Dimensions",plotname)) %>%
   dplyr::mutate(png_path = glue::glue("{path}.png"))
 
 export_dimplot <- function(plotname,plot,widths, heights, folder, png_path) {

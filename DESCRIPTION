@@ -19,7 +19,11 @@ Imports:
     readr,
     readxl,
     stringr,
+    stringi,
     tibble,
     tidyr,
     magrittr,
-    rsvg
+    rsvg,
+    here,
+    shiny,
+    shinydashboard
