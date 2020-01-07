@@ -184,7 +184,7 @@ ui = dashboardPage(skin = "blue",
                               box(plotOutput("indic_prop", height = "900px"), width = 12)),
 
                       tabItem(tabName = "legende",
-                              h1("Indicateurs déclinés par propriété de la durabilité"),
+                              h1("Légende des indicateurs"),
                               DT::dataTableOutput("legende_out",height = "800px"))
                               )
 
@@ -322,7 +322,7 @@ observeEvent(input$files, {
       if (is.null(inFile))
         return()
 
-      downloadButton("zipfile", "Générer le pack de figures", style = "width:100%;")
+      downloadButton("zipfile", "Générer le pack de figures (.zip)", style = "width:100%;")
 
 
     })
@@ -613,7 +613,7 @@ print(p)
 })
 output$indic_eco <- renderPlot({
 
-  p <- IDEAresdim()[[1]]$indic_Economique+ theme(panel.spacing = unit(1, "lines"))
+  p <- IDEAresdim()[[1]]$indic_Economique+ facet_wrap(~composante, ncol = 2, scales = "free_y")+ theme(panel.spacing = unit(1, "lines"))
 
   print(p)
 
@@ -621,7 +621,7 @@ output$indic_eco <- renderPlot({
 })
 output$indic_st <- renderPlot({
 
-  p <- IDEAresdim()[[1]]$`indic_Socio-Territoriale`+ theme(panel.spacing = unit(1, "lines"))
+  p <- IDEAresdim()[[1]]$`indic_Socio-Territoriale` + facet_wrap(~composante, ncol = 2, scales = "free_y") + theme(panel.spacing = unit(1, "lines"))
 
   print(p)
 
@@ -629,7 +629,7 @@ output$indic_st <- renderPlot({
 })
 output$indic_ae <- renderPlot({
 
-  p <- IDEAresdim()[[1]]$indic_Agroécologique+ theme(panel.spacing = unit(1, "lines"))
+  p <- IDEAresdim()[[1]]$indic_Agroécologique+ facet_wrap(~composante, ncol = 2, scales = "free_y")+ theme(panel.spacing = unit(1, "lines"))
 
   print(p)
 
@@ -665,12 +665,11 @@ output$legende_out <- DT::renderDataTable({
     mutate(Dimension = as.character(Dimension)) %>%
     select(-dim, -no_code) %>%
     mutate(Composante = str_remove_all(Composante,"\\n")) %>%
-    select(-Composante) %>%
     mutate(Dimension =ifelse(is.na(Dimension),yes = " ",no = Dimension)) %>%
     filter(Niveau == "indicateur") %>%
     select(-Niveau) -> df
 
-  DT::datatable(df,height = "800px")
+  DT::datatable(df,options = list(pageLength = 20))
 
 
 
@@ -680,8 +679,6 @@ output$legende_out <- DT::renderDataTable({
 #### REPORT
     output$report <- downloadHandler(
         # For PDF output, change this to "report.pdf"
-
-
 
         filename = "rapport_individuel.pdf",
 
@@ -696,6 +693,7 @@ output$legende_out <- DT::renderDataTable({
 
             tempReport <- file.path(tempdir(), "rapport_individuel.Rmd")
             file.copy("rapport_individuel.Rmd", tempReport, overwrite = TRUE)
+            # setwd(tempdir())
 
             # Set up parameters to pass to Rmd document
             params <- list(file = inFile$datapath,

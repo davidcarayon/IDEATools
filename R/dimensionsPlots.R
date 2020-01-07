@@ -166,7 +166,7 @@ dimensionsPlots <- function(IDEAdata){
         ggplot2::scale_fill_manual(limits = c("Agroécologique","Socio-Territoriale","Economique"),values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
         ggplot2::theme(
           axis.title = ggplot2::element_blank(),
-          plot.title = ggplot2::element_text(size = 15,hjust = 0.5, face = "bold"),
+          plot.title = ggplot2::element_text(size = 14,hjust = 0.5, face = "bold"),
           legend.text = ggplot2::element_text(size = 13),
           legend.title = ggplot2::element_text(size = 15),
           axis.text.y = ggplot2::element_blank(),

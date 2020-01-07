@@ -31,9 +31,9 @@ export_heuristic_map <- function(prop,itemlist,folder,png_path,pdf_path){
 
   heuristic_res <- list(
     Robustesse = c(1439,951),
-    Capacite = c(1596,934),
+    Capacité = c(1596,934),
     Autonomie = c(1439,951),
-    Responsabilite=c(1439,951),
+    Responsabilité=c(1439,951),
     Ancrage= c(1439,951),
     Global=c(1984,1403)
   )
@@ -55,12 +55,19 @@ purrr::pwalk(.l = list(tab_res$prop,tab_res$itemlist,tab_res$folder,tab_res$png_
 
   # Dimension plots ---------------------------------------------------------
   if (IDEAres$plot.type == "dim") {
-dimension_res <- list(
+
+
+    dimension_res <- list(
 dimensions = c(9.11,5.6),
 composantes = c(13.69,10.5),
 `indic_Socio-Territoriale` = c(10.69,13.5),
 indic_Economique = c(10.69,9),
-indic_Agroécologique = c(10.69,12)
+indic_Agroécologique = c(10.69,12),
+`Responsabilité globale` = c(6,7),
+`Ancrage Territorial` = c(6,7),
+Autonomie = c(6,7),
+Robustesse = c(6,7),
+`Capacité productive et reproductive \nde biens et de services` = c(6,7)
 )
 
 
@@ -72,8 +79,8 @@ tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
   dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
   dplyr::mutate(plotname = purrr::map(plot, names)) %>%
   tidyr::unnest(c(plot,plotname)) %>%
-  dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
-                heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
+  dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69,6,6,6,6,6),n_exploit),
+                heights = rep(c(5.6,10.5,13.5,9,12,7,7,7,7,7),n_exploit)) %>%
   dplyr::mutate(name = str_replace(name," ","_")) %>%
   dplyr::mutate(folder = file.path(outdir,name,"Dimensions")) %>%
   dplyr::mutate(path = file.path(outdir,name,"Dimensions",plotname)) %>%

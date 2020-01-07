@@ -4,12 +4,12 @@
 \alias{dimensionsPlots}
 \title{Plot visual outputs linked to the "Dimension" approach for IDEA4}
 \usage{
-dimensionsPlots(IDEAdata, export = NULL)
+dimensionsPlots(IDEAdata)
 }
 \arguments{
 \item{IDEAdata}{output of the `importIDEA()` function}
 
-\item{export}{If a directory path is given, each plot will be exported as a png file in this directory. If the directory doesn't exist yet, it will be created.}
+\item{output_dir}{If a directory path is given, each plot will be exported as a png file in this directory. If the directory doesn't exist yet, it will be created.}
 }
 \value{
 a named list of plots
@@ -20,5 +20,5 @@ Plot visual outputs linked to the "Dimension" approach for IDEA4
 \examples{
 path <- system.file("example.xls", package = "RIDEATools")
 dat <- importIDEA(path, anonymous = FALSE)
-plots <- dimensionsPlots(dat, export = NULL)
+plots <- dimensionsPlots(dat, output_dir = NULL)
 }
