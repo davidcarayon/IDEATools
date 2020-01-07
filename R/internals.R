@@ -105,12 +105,26 @@ replace_indicateur <- function(indicateur) {
   return(res)
 }
 
-
+#' Adds a line break for too long strings
+#'
+#' @param text the string to modify
+#'
+#' @return a the string with line breaks
+#' @importFrom magrittr %>%
 wrapit <- function(text) {
   wtext <- paste(strwrap(text, width = 75), collapse = " \n ")
   return(wtext)
 }
 
+#' Finds the position of the given rectangle in the svg string
+#'
+#' @param start the starting position of the rectangle
+#' @param end the ending position of the rectangle
+#' @param choice output type, can be "id" or "style"
+#' @param car the svg string canvas
+#'
+#' @return the correct rectangle id or style position
+#' @importFrom magrittr %>%
 find_pos <- function(start,end,choice,car){
 
   selection = car[start:end]

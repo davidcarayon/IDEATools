@@ -22,6 +22,7 @@ a named list, containing :
 Import IDEA4 data
 }
 \examples{
-path <- system.file("example.xls", package = "RIDEATools")
-importIDEA(normalizepath(path), anonymous = FALSE)
+library(IDEATools)
+path <- system.file("example.xls", package = "IDEATools")
+IDEAdata <- importIDEA(path, anonymous = FALSE)
 }

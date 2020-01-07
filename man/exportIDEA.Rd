@@ -7,13 +7,20 @@
 exportIDEA(IDEAres, outdir = paste0("RES_", Sys.Date()))
 }
 \arguments{
-\item{IDEAres}{output of IDEA plotting functions}
+\item{IDEAres}{output of IDEA plotting functions (either `Maketree()` or `dimensionPlots()`)}
 
 \item{outdir}{the output directory}
 }
 \value{
-Exports plots in png/pdf format in the output directory
+Exports plots in png/pdf format in the selected output directory
 }
 \description{
 Export IDEA related plots
+}
+\examples{
+library(IDEATools)
+path <- system.file("example.xls", package = "IDEATools")
+IDEAdata <- importIDEA(path, anonymous = FALSE)
+IDEAres <- dimensionsPlots(IDEAdata)
+exportIDEA(IDEAres, outdir = "tmp")
 }

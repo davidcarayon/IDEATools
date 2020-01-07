@@ -1,7 +1,11 @@
 library(shiny)
 library(shinydashboard)
 library(flexdashboard)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(readr)
 library(IDEATools)
 library(DT)
 
@@ -53,6 +57,12 @@ ui = dashboardPage(skin = "blue",
                        menuSubItem("Economiques",tabName = "indic_eco",icon = icon("chart-bar")),
                        menuSubItem("Socio-Territoriaux",tabName = "indic_st",icon = icon("chart-bar")),
                        menuSubItem("Agroécologiques",tabName = "indic_ae",icon = icon("chart-bar"))),
+                       menuItem("Détail des indicateurs par propriété",tabName = "prop_indic",icon = icon("list"),
+                                menuSubItem("Robustesse",tabName = "radar_robustesse", icon = icon("chart-pie")),
+                                menuSubItem("Autonomie",tabName = "radar_autonomie", icon = icon("chart-pie")),
+                                menuSubItem("Capacité Productive",tabName = "radar_cp", icon = icon("chart-pie")),
+                                menuSubItem("Responsabilité Globale",tabName = "radar_rg", icon = icon("chart-pie")),
+                                menuSubItem("Ancrage Territorial",tabName = "radar_an", icon = icon("chart-pie"))),
                        menuItem("Cartes heuristiques", tabName = "tree", icon = icon("project-diagram"),
                                 menuSubItem("Robustesse",tabName = "robustesse", icon = icon("sitemap")),
                                 menuSubItem("Autonomie",tabName = "autonomie", icon = icon("sitemap")),
@@ -60,7 +70,6 @@ ui = dashboardPage(skin = "blue",
                                 menuSubItem("Responsabilité Globale",tabName = "rg", icon = icon("sitemap")),
                                 menuSubItem("Ancrage Territorial",tabName = "an", icon = icon("sitemap")),
                                 menuSubItem("Global",tabName = "global", icon = icon("sitemap"))),
-                       menuItem("Détail des indicateurs par propriété",tabName = "prop_indic",icon = icon("chart-pie")),
                        menuItem("Légende",tabName = "legende",icon = icon("book")))
                    )),
 
@@ -164,9 +173,12 @@ ui = dashboardPage(skin = "blue",
                                 imageOutput("global_tree")), width = 12, height = "1000px")),
 
 
+                      ## Composantes
                       tabItem(tabName = "compo",
                               box(plotOutput("composantes", height = "800px"), width = 12)),
 
+
+                      ## Détail des indicateurs par dimension
                       tabItem(tabName = "indic",fluidPage()),
 
                       tabItem(tabName = "indic_eco",
@@ -179,9 +191,22 @@ ui = dashboardPage(skin = "blue",
                               h1("Indicateurs Agroécologiques"),
                               box(plotOutput("indic_ae", height = "800px"), width = 12)),
 
-                      tabItem(tabName = "prop_indic",
-                              h1("Indicateurs déclinés par propriété de la durabilité"),
-                              box(plotOutput("indic_prop", height = "900px"), width = 12)),
+
+                      ### Plots radar
+                      tabItem(tabName = "prop_indic",fluidPage()),
+
+                      tabItem(tabName = "radar_robustesse",
+                              box(plotOutput("robust_radar",height = "800px"), width = 12, height = "820px")),
+                      tabItem(tabName = "radar_autonomie",
+                              box(plotOutput("auto_radar",height = "800px"), width = 12, height = "820px")),
+                      tabItem(tabName = "radar_cp",
+                              box(plotOutput("cp_radar",height = "800px"), width = 12, height = "820px")),
+                      tabItem(tabName = "radar_rg",
+                              box(plotOutput("rg_radar",height = "800px"), width = 12, height = "820px")),
+                      tabItem(tabName = "radar_an",
+                              box(plotOutput("an_radar",height = "800px"), width = 12, height = "820px")),
+
+
 
                       tabItem(tabName = "legende",
                               h1("Légende des indicateurs"),
@@ -202,10 +227,15 @@ IDEAdata <- eventReactive(input$files, {
 
 })
 
-
 IDEAresdim <- eventReactive(input$files, {
 
   IDEATools::importIDEA(input = input$files$datapath, anonymous = FALSE) %>% dimensionsPlots()
+
+})
+
+IDEAresrad <- eventReactive(input$files, {
+
+  IDEATools::importIDEA(input = input$files$datapath, anonymous = FALSE) %>% radarPlots()
 
 })
 
@@ -574,7 +604,6 @@ observeEvent(input$files, {
     })
 
 #### Boutons clickables propriétés
-
     observeEvent(input$button_box_01, {
       newtab <- "robustesse"
       updateTabItems(session,inputId="tabs",selected = newtab)
@@ -600,9 +629,7 @@ observeEvent(input$files, {
       updateTabItems(session,inputId="tabs",selected = newtab)
     })
 
-
 ## Plots dimension
-
 output$composantes <- renderPlot({
 
 p <- IDEAresdim()[[1]]$composantes
@@ -636,24 +663,28 @@ output$indic_ae <- renderPlot({
 
 })
 
-## Plot propriétés
 
-output$indic_prop <- renderPlot({
-
-  p <- ggpubr::ggarrange(
-    IDEAresdim()[[1]]$Robustesse,
-    IDEAresdim()[[1]]$`Ancrage Territorial`,
-    IDEAresdim()[[1]]$`Responsabilité globale`,
-    IDEAresdim()[[1]]$Autonomie,
-    IDEAresdim()[[1]]$`Capacité productive et reproductive \nde biens et de services`,
-    common.legend = TRUE
-  )
-
+## Radar propriétés
+output$robust_radar <- renderPlot({
+  p <- IDEAresrad()[[1]]$Robustesse
   print(p)
-
-
 })
-
+output$auto_radar <- renderPlot({
+  p <- IDEAresrad()[[1]]$Autonomie
+  print(p)
+})
+output$cp_radar <- renderPlot({
+  p <- IDEAresrad()[[1]]$`Capacité productive et reproductive \nde biens et de services`
+  print(p)
+})
+output$rg_radar <- renderPlot({
+  p <- IDEAresrad()[[1]]$`Responsabilité globale`
+  print(p)
+})
+output$an_radar <- renderPlot({
+  p <- IDEAresrad()[[1]]$`Ancrage Territorial`
+  print(p)
+})
 
 output$legende_out <- DT::renderDataTable({
 

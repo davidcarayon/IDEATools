@@ -1,11 +1,17 @@
 #' Export IDEA related plots
 #'
-#' @param IDEAres output of IDEA plotting functions
+#' @param IDEAres output of IDEA plotting functions (either `Maketree()` or `dimensionPlots()`)
 #' @param outdir the output directory
 #'
-#' @return Exports plots in png/pdf format in the output directory
+#' @return Exports plots in png/pdf format in the selected output directory
 #' @importFrom magrittr %>%
 #' @export
+#' @examples
+#' library(IDEATools)
+#' path <- system.file("example.xls", package = "IDEATools")
+#' IDEAdata <- importIDEA(path, anonymous = FALSE)
+#' IDEAres <- dimensionsPlots(IDEAdata)
+#' exportIDEA(IDEAres, outdir = "tmp")
 exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
 
   # On va toujours créer un dossier par exploitation
@@ -62,16 +68,8 @@ dimensions = c(9.11,5.6),
 composantes = c(13.69,10.5),
 `indic_Socio-Territoriale` = c(10.69,13.5),
 indic_Economique = c(10.69,9),
-indic_Agroécologique = c(10.69,12),
-`Responsabilité globale` = c(6,7),
-`Ancrage Territorial` = c(6,7),
-Autonomie = c(6,7),
-Robustesse = c(6,7),
-`Capacité productive et reproductive \nde biens et de services` = c(6,7)
+indic_Agroécologique = c(10.69,12)
 )
-
-
-
 
 n_exploit <- dplyr::n_distinct(names(IDEAres))-2
 
@@ -79,8 +77,8 @@ tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
   dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
   dplyr::mutate(plotname = purrr::map(plot, names)) %>%
   tidyr::unnest(c(plot,plotname)) %>%
-  dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69,6,6,6,6,6),n_exploit),
-                heights = rep(c(5.6,10.5,13.5,9,12,7,7,7,7,7),n_exploit)) %>%
+  dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
+                heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
   dplyr::mutate(name = str_replace(name," ","_")) %>%
   dplyr::mutate(folder = file.path(outdir,name,"Dimensions")) %>%
   dplyr::mutate(path = file.path(outdir,name,"Dimensions",plotname)) %>%
@@ -100,7 +98,44 @@ purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heig
 
 }
 
+  # Radar plots ---------------------------------------------------------
+  if (IDEAres$plot.type == "radar") {
 
+
+    dimension_radar <- list(
+      `Responsabilité globale` = c(16.1,7.61),
+      `Ancrage Territorial` = c(16.1,7.61),
+      Autonomie = c(16.1,7.61),
+      Robustesse = c(16.1,7.61),
+      `Capacité productive et reproductive \nde biens et de services` = c(16.1,7.61)
+    )
+
+    n_exploit <- dplyr::n_distinct(names(IDEAres))-2
+
+    tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
+      dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
+      dplyr::mutate(plotname = purrr::map(plot, names)) %>%
+      tidyr::unnest(c(plot,plotname)) %>%
+      dplyr::mutate(widths = rep(c(16.1,16.1,16.1,16.1,16.1),n_exploit),
+                    heights = rep(c(7.61,7.61,7.61,7.61,7.61),n_exploit)) %>%
+      dplyr::mutate(name = str_replace(name," ","_")) %>%
+      dplyr::mutate(folder = file.path(outdir,name,"Propriétés")) %>%
+      dplyr::mutate(path = file.path(outdir,name,"Propriétés",plotname)) %>%
+      dplyr::mutate(png_path = glue::glue("{path}.png"))
+
+    export_radarplot <- function(plotname,plot,widths, heights, folder, png_path) {
+
+      if (!dir.exists(folder)){dir.create(folder, recursive = TRUE)}
+
+      print(plot) %>%
+        ggplot2::ggsave(filename=png_path,dpi = "retina", width = widths, height = heights)
+    }
+
+    purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heights, tab_res$folder,tab_res$png_path), .f = export_radarplot)
+
+
+
+  }
 
 
 }

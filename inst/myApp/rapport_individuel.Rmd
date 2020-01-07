@@ -61,7 +61,9 @@ anon = params$anon
 IDEAdata <- IDEATools::importIDEA(file, anonymous = FALSE)
 IDEAresdim <- IDEATools::dimensionsPlots(IDEAdata)
 IDEAresprop <- IDEATools::MakeTrees(IDEAdata)
+IDEAresrad <- IDEATools::radarPlots(IDEAdata)
 IDEATools::exportIDEA(IDEAresdim,outdir = outdir)
+IDEATools::exportIDEA(IDEAresrad,outdir = outdir)
 
 res_prop <- IDEAdata$dataset
 res_dim <- IDEAdata$dataset
@@ -198,29 +200,28 @@ knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques",
 ## Diagamme radar des scores obtenus au sein de chaque propriété
 
 ```{r} 
-plist <- IDEAresdim[[1]]
+plist <- IDEAresrad[[1]]
 ```
 
-```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Angrage territorial", fig.width = 6, fig.height=7, fig.align="center"}
+```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Angrage territorial", fig.width = 16.1, fig.height=7.61, fig.align="center"}
 print(plist[["Ancrage Territorial"]])
 ```
 
-```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Autonomie", fig.width = 6, fig.height=7, fig.align="center"}
+```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Autonomie", fig.width = 16.1, fig.height=7.61, fig.align="center"}
 print(plist[["Autonomie"]])
 ```
 
-```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Capacité productive et reproductive de biens et services", fig.width = 6, fig.height=7, fig.align="center"}
+```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Capacité productive et reproductive de biens et services", fig.width = 16.1, fig.height=7.61, fig.align="center"}
 print(plist[["Capacité productive et reproductive \nde biens et de services"]])
 ```
 
-```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Responsabilité globale", fig.width = 6, fig.height=7, fig.align="center"}
+```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Responsabilité globale", fig.width = 16.1, fig.height=7.61, fig.align="center"}
 print(plist[["Responsabilité globale"]])
 ```
 
-```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Robustesse", fig.width = 6, fig.height=7, fig.align="center"}
+```{r fig.cap= "Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété Robustesse", fig.width = 16.1, fig.height=7.61, fig.align="center"}
 print(plist[["Robustesse"]])
 ```
-
 
 \newpage
 

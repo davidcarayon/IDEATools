@@ -12,8 +12,9 @@
 #' @export
 #'
 #' @examples
-#' path <- system.file("example.xls", package = "RIDEATools")
-#' importIDEA(normalizepath(path), anonymous = FALSE)
+#' library(IDEATools)
+#' path <- system.file("example.xls", package = "IDEATools")
+#' IDEAdata <- importIDEA(path, anonymous = FALSE)
 importIDEA <- function(input, anonymous = FALSE){
 
 input <- normalizePath(input)

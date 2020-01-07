@@ -24,6 +24,7 @@ Imports:
     tidyr,
     magrittr,
     rsvg,
-    here,
     shiny,
-    shinydashboard
+    shinydashboard,
+    DT,
+    ggpubr
