@@ -7,13 +7,13 @@
 importIDEA(input, anonymous = FALSE)
 }
 \arguments{
-\item{input}{a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json. If the input is a directory, the only accepted format is .xls.}
+\item{input}{a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json.}
 
 \item{anonymous}{Boolean. Should the results be anonymised ? If yes, a correspondence table will be added to  the result list}
 }
 \value{
 a named list, containing :
-    analysis.type : a string which can be "single" or "group" depending on the input type.
+    analysis.type : a string which can be "single" or "multi" depending on the input type.
     dataset : a tibble dataframe with the extracted data
     nodes : results of the property analysis
     metadata : metadata extracted from the input

@@ -27,7 +27,7 @@ tab_res <- tibble::tibble(name = names(IDEAres), itemlist = IDEAres) %>%
       dplyr::mutate(prop = purrr::map(itemlist, names)) %>%
       tidyr::unnest(c(itemlist,prop)) %>%
       # dplyr::mutate(prop = stringi::stri_trans_general(prop,"Latin-ASCII")) %>%
-      dplyr::mutate(name = stringr::str_replace(name," ","_")) %>%
+      dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
       dplyr::mutate(folder = file.path(outdir,name,"Propriétés","Cartes_heuristiques")) %>%
       dplyr::mutate(path = file.path(outdir,name,"Propriétés","Cartes_heuristiques",prop)) %>%
       dplyr::mutate(png_path = glue::glue("{path}.png"),
@@ -79,7 +79,7 @@ tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
   tidyr::unnest(c(plot,plotname)) %>%
   dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
                 heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
-  dplyr::mutate(name = str_replace(name," ","_")) %>%
+  dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
   dplyr::mutate(folder = file.path(outdir,name,"Dimensions")) %>%
   dplyr::mutate(path = file.path(outdir,name,"Dimensions",plotname)) %>%
   dplyr::mutate(png_path = glue::glue("{path}.png"))
@@ -106,7 +106,7 @@ purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heig
       `Responsabilité globale` = c(16.1,7.61),
       `Ancrage Territorial` = c(16.1,7.61),
       Autonomie = c(16.1,7.61),
-      Robustesse = c(16.1,7.61),
+      Robustesse = c(16.1,5.61),
       `Capacité productive et reproductive \nde biens et de services` = c(16.1,7.61)
     )
 
@@ -118,7 +118,7 @@ purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heig
       tidyr::unnest(c(plot,plotname)) %>%
       dplyr::mutate(widths = rep(c(16.1,16.1,16.1,16.1,16.1),n_exploit),
                     heights = rep(c(7.61,7.61,7.61,7.61,7.61),n_exploit)) %>%
-      dplyr::mutate(name = str_replace(name," ","_")) %>%
+      dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
       dplyr::mutate(folder = file.path(outdir,name,"Propriétés")) %>%
       dplyr::mutate(path = file.path(outdir,name,"Propriétés",plotname)) %>%
       dplyr::mutate(png_path = glue::glue("{path}.png"))

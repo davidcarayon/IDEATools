@@ -122,7 +122,7 @@ MakeTrees <- function(IDEAdata){
   }
 
 ## Sinon, on lance une petite boucle
-  if(IDEAdata$analysis.type == "group") {
+  if(IDEAdata$analysis.type == "multi") {
 
     result <- list()
     for(i in nom) {

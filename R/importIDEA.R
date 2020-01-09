@@ -1,10 +1,10 @@
 #' Import IDEA4 data
 #'
-#' @param input a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json. If the input is a directory, the only accepted format is .xls.
+#' @param input a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json.
 #' @param anonymous Boolean. Should the results be anonymised ? If yes, a correspondence table will be added to  the result list
 #'
 #' @return a named list, containing :
-#'     analysis.type : a string which can be "single" or "group" depending on the input type.
+#'     analysis.type : a string which can be "single" or "multi" depending on the input type.
 #'     dataset : a tibble dataframe with the extracted data
 #'     nodes : results of the property analysis
 #'     metadata : metadata extracted from the input
@@ -23,9 +23,10 @@ input <- normalizePath(input)
 
   result_list <- list()
 
-  result_list$analysis.type <- ifelse(stringr::str_detect(input,".xls"),
+  result_list$analysis.type <- ifelse(stringr::str_detect(input,".xls") |
+                                      stringr::str_detect(input,".xlsx"),
                           yes = "single",
-                          no = "group")
+                          no = "multi")
 
 
 
@@ -38,17 +39,30 @@ create_single_data <- function(input){
 
 # Dataset proprietes ------------------------------------------------------
 
-    metadata <- suppressMessages(readxl::read_xls(input, sheet = "Saisie et Calculateur") %>% janitor::clean_names() %>%  dplyr::select(1,2) %>% tidyr::drop_na())
+    metadata <- suppressMessages(readxl::read_excel(input, sheet = "Saisie et Calculateur") %>% janitor::clean_names() %>%  dplyr::select(1,2) %>% tidyr::drop_na())
 
     names(metadata) = c("title","value")
 
     res_list$metadata <- metadata
 
     nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
+
+    if(is.na(nom)){
+
+      metadata <- bind_rows(
+        tibble(title = "NOM Prénom :",value = paste0("EA_",stringi::stri_rand_strings(1, 5, '[A-Z]'))),
+        metadata)
+
+      nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
+
+        }
+
+
+
+
     elevage = metadata %>% dplyr::filter(title == "Présence d'élevage :") %>% dplyr::pull(value) %>% `[`(1)
 
     metadata$nom_exploit = nom
-
 
     metadata <- metadata %>% dplyr::select(nom_exploit,title,value)
 
@@ -57,10 +71,10 @@ create_single_data <- function(input){
     ## Agroécologie
 
     ## Label
-    AE_lab <- suppressMessages(readxl::read_xls(input, sheet = "Dimension agroécologique") %>% janitor::clean_names() %>% dplyr::select(x2) %>% tidyr::drop_na())
+    AE_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agroécologique") %>% janitor::clean_names() %>% dplyr::select(x2) %>% tidyr::drop_na())
 
     ## Valeur
-    AE_val <- suppressMessages(readxl::read_xls(input, sheet = "Dimension agroécologique") %>% janitor::clean_names() %>% dplyr::select(x8) %>% tidyr::drop_na() %>% dplyr::slice(seq(2, 38, 2)))
+    AE_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agroécologique") %>% janitor::clean_names() %>% dplyr::select(x8) %>% tidyr::drop_na() %>% dplyr::slice(seq(2, 38, 2)))
 
     AE <- dplyr::bind_cols(AE_lab, AE_val) %>%
       dplyr::mutate(dimension = "Durabilité Agroécologique") %>%
@@ -69,9 +83,9 @@ create_single_data <- function(input){
     ## Socio-territorial
 
     ## Label
-    ST_lab <- suppressMessages(readxl::read_xls(input, sheet = "Dimension socio-territoriale") %>% janitor::clean_names() %>% dplyr::select(x2) %>% tidyr::drop_na())
+    ST_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale") %>% janitor::clean_names() %>% dplyr::select(x2) %>% tidyr::drop_na())
     ## Valeur
-    ST_val <- suppressMessages(readxl::read_xls(input, sheet = "Dimension socio-territoriale") %>% janitor::clean_names() %>% dplyr::select(x8) %>% tidyr::drop_na() %>% dplyr::slice(seq(2, 46, 2)))
+    ST_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale") %>% janitor::clean_names() %>% dplyr::select(x8) %>% tidyr::drop_na() %>% dplyr::slice(seq(2, 46, 2)))
 
     ST <- dplyr::bind_cols(ST_lab, ST_val) %>%
       dplyr::mutate(dimension = "Durabilité Socio-Territoriale") %>%
@@ -81,9 +95,9 @@ create_single_data <- function(input){
     ## Economique
 
     ## Label
-    EC_lab <- suppressMessages(readxl::read_xls(input, sheet = "Dimension économique") %>% janitor::clean_names() %>% dplyr::select(x2) %>% tidyr::drop_na())
+    EC_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension économique") %>% janitor::clean_names() %>% dplyr::select(x2) %>% tidyr::drop_na())
     ## Valeur
-    EC_val <- suppressMessages(readxl::read_xls(input, sheet = "Dimension économique") %>% janitor::clean_names() %>% dplyr::select(x7) %>% tidyr::drop_na() %>% dplyr::slice(seq(2, 22, 2)))
+    EC_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension économique") %>% janitor::clean_names() %>% dplyr::select(x7) %>% tidyr::drop_na() %>% dplyr::slice(seq(2, 22, 2)))
 
     EC <- dplyr::bind_cols(EC_lab, EC_val) %>%
       dplyr::mutate(dimension = "Durabilité Economique") %>%
@@ -143,7 +157,7 @@ create_single_data <- function(input){
 
 # Dataset dimensions ------------------------------------------------------
 
-    file <- suppressMessages(readxl::read_xls(input, sheet = "Bilan durabilité")) %>% janitor::clean_names()
+    file <- suppressMessages(readxl::read_excel(input, sheet = "Bilan durabilité")) %>% janitor::clean_names()
 
     table_dimensions <- file %>%
       dplyr::select(x2, x5) %>%
@@ -874,9 +888,9 @@ res <- c(result_list,single_data)
 
 }
 
-if(result_list$analysis.type == "group"){
+if(result_list$analysis.type == "multi"){
 
-  list_paths <- paste0(input,"/",list.files(input, pattern = "\\.xls$"))
+  list_paths <- c(paste0(input,"/",list.files(input, pattern = "\\.xls$")),paste0(input,"/",list.files(input, pattern = "\\.xlsx$")))
 
   group_data <- purrr::map(list_paths,create_single_data)
 

@@ -9,7 +9,6 @@ output:
     toc: yes
     toc_depth: 3
     keep_tex: true
-fontsize: 13pt
 header-includes:
 - \usepackage[french]{babel}
 - \usepackage{lastpage}
@@ -30,7 +29,7 @@ mainfont: Carlito
 subtitle: Eléments de sortie d'analyse individuelle - Version 0.1
 params:
   outdir : "tmp"
-  file : "file"
+  data: "data"
   anon : FALSE
 editor_options:
   chunk_output_type: console
@@ -52,18 +51,17 @@ library(stringr)
 
 ```{r input, include = FALSE}
 outdir <- params$outdir
-file = params$file
+IDEAdata = params$data
 anon = params$anon
 ```
 
 
 ```{r calcul IDEA, include = FALSE}
-IDEAdata <- IDEATools::importIDEA(file, anonymous = FALSE)
 IDEAresdim <- IDEATools::dimensionsPlots(IDEAdata)
 IDEAresprop <- IDEATools::MakeTrees(IDEAdata)
 IDEAresrad <- IDEATools::radarPlots(IDEAdata)
-IDEATools::exportIDEA(IDEAresdim,outdir = outdir)
-IDEATools::exportIDEA(IDEAresrad,outdir = outdir)
+# IDEATools::exportIDEA(IDEAresdim,outdir = outdir)
+# IDEATools::exportIDEA(IDEAresrad,outdir = outdir)
 
 res_prop <- IDEAdata$dataset
 res_dim <- IDEAdata$dataset

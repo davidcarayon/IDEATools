@@ -14,7 +14,9 @@ simplify_indicator_name <- function(name) {
 
 }
 
-
+#' @importFrom magrittr %>%
+#' @export
+magrittr::`%>%`
 
 #' Atribute valid color to a property
 #'

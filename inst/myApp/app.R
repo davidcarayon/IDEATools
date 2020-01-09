@@ -49,7 +49,7 @@ ui = dashboardPage(skin = "blue",
 
                    ## Le sidebar, avec l'input, des item et subitem
                    dashboardSidebar(width = 350,h4(
-                       fileInput("files", "Charger le calculateur (.xls)", accept = ".xls"),
+                       fileInput("files", "Charger le calculateur (format excel)", accept = c(".xls",".xlsx")),
                        sidebarMenu(id="tabs",
                        menuItem("Synthèse & Export", tabName = "synthese", icon = icon("tachometer")),
                        menuItem("Détail des composantes",tabName = "compo",icon = icon("chart-bar")),
@@ -196,7 +196,7 @@ ui = dashboardPage(skin = "blue",
                       tabItem(tabName = "prop_indic",fluidPage()),
 
                       tabItem(tabName = "radar_robustesse",
-                              box(plotOutput("robust_radar",height = "800px"), width = 12, height = "820px")),
+                              box(plotOutput("robust_radar",height = "800px", width = "100%"), width = 12, height = "820px")),
                       tabItem(tabName = "radar_autonomie",
                               box(plotOutput("auto_radar",height = "800px"), width = 12, height = "820px")),
                       tabItem(tabName = "radar_cp",
@@ -229,13 +229,13 @@ IDEAdata <- eventReactive(input$files, {
 
 IDEAresdim <- eventReactive(input$files, {
 
-  IDEATools::importIDEA(input = input$files$datapath, anonymous = FALSE) %>% dimensionsPlots()
+  IDEAdata() %>% dimensionsPlots()
 
 })
 
 IDEAresrad <- eventReactive(input$files, {
 
-  IDEATools::importIDEA(input = input$files$datapath, anonymous = FALSE) %>% radarPlots()
+  IDEAdata() %>% radarPlots()
 
 })
 
@@ -284,11 +284,11 @@ observeEvent(input$files, {
         if (is.null(inFile))
             return(NULL)
 
-        dim <- IDEATools::importIDEA(inFile$datapath)
+        dim <- IDEAdata()
 
         val <- dim$dataset %>% arrange(score_dim) %>% slice(1) %>% pull(score_dim)
 
-        paste0("IDEA = ", val, "/100")
+        paste0("IDEA = ", round(as.numeric(val),0), "/100")
 
 
     })
@@ -299,10 +299,10 @@ observeEvent(input$files, {
         if (is.null(inFile))
             return(
 
-              h1(tags$b(div(style="display:inline-block;width:100%;text-align: left;","← Pour démarrer l'application, charger un calculateur au format .xls")))
+              h1(tags$b(div(style="display:inline-block;width:100%;text-align: left;","← Pour démarrer l'application, charger un calculateur au format .xls ou .xlsx")))
             )
 
-        dim <- IDEATools::importIDEA(inFile$datapath)
+        dim <- IDEAdata()
 
         val <- dim$metadata %>% filter(title == "NOM Prénom :") %>% pull(value)
 
@@ -727,7 +727,7 @@ output$legende_out <- DT::renderDataTable({
             # setwd(tempdir())
 
             # Set up parameters to pass to Rmd document
-            params <- list(file = inFile$datapath,
+            params <- list(data = IDEAdata(),
                            outdir = outdir,
                            anon = FALSE)
 
@@ -769,6 +769,8 @@ output$legende_out <- DT::renderDataTable({
 
           v <- IDEAdata()$metadata %>% filter(title == "NOM Prénom :") %>% pull(value) %>% stringr::str_replace_all(" ", "_")
           IDEAresdim() %>% IDEATools::exportIDEA(outdir = outdir)
+          IDEAresrad() %>% IDEATools::exportIDEA(outdir = outdir)
+          IDEATools::MakeTrees(IDEAdata()) %>% IDEATools::exportIDEA(outdir = outdir)
 
           setwd(outdir)
           fs <- file.path(v,list.files(file.path(outdir,v), recursive=TRUE))

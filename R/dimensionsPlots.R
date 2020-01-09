@@ -139,7 +139,7 @@ dimensionsPlots <- function(IDEAdata){
 
   }
 
-  if(IDEAdata$analysis.type == "group") {
+  if(IDEAdata$analysis.type == "multi") {
     res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(nom_exploit) %>% tidyr::nest()
     label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
 
