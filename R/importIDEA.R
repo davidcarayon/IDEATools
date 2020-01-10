@@ -179,7 +179,8 @@ create_single_data <- function(input){
       dplyr::select(x5, x6, x8) %>%
       tidyr::drop_na() %>%
       dplyr::mutate_at(dplyr::vars(x6, x8), as.numeric) %>%
-      dplyr::select(indicateur = x5, valeur = round(x6,0), valeur_max = x8)
+      dplyr::select(indicateur = x5, valeur = x6, valeur_max = x8) %>%
+      dplyr::mutate(valeur = round(valeur,0))
 
     max_compo <- file %>%
       dplyr::select(x2, x11) %>%

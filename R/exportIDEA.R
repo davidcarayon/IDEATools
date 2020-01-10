@@ -77,6 +77,7 @@ tab_res <- tibble::tibble(name = names(IDEAres), plot = IDEAres) %>%
   dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
   dplyr::mutate(plotname = purrr::map(plot, names)) %>%
   tidyr::unnest(c(plot,plotname)) %>%
+  dplyr::mutate(plotname = dplyr::recode(plotname,"dimensions"="Dimensions","composantes"="Composantes","indic_Socio-Territoriale"="Indicateurs Socio-Territoriaux","indic_Economique"="Indicateurs Economiques","indic_Agroécologique"="Indicateurs Agroécologiques")) %>%
   dplyr::mutate(widths = rep(c(9.11,13.69,10.69,10.69,10.69),n_exploit),
                 heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
   dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
@@ -116,6 +117,7 @@ purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heig
       dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
       dplyr::mutate(plotname = purrr::map(plot, names)) %>%
       tidyr::unnest(c(plot,plotname)) %>%
+      dplyr::mutate(plotname = c(names(IDEAres[[1]][1:4]),"Capacité productive et reproductive de biens et de services")) %>%
       dplyr::mutate(widths = rep(c(16.1,16.1,16.1,16.1,16.1),n_exploit),
                     heights = rep(c(7.61,7.61,7.61,7.61,7.61),n_exploit)) %>%
       dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
