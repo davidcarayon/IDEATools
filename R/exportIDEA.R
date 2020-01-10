@@ -117,7 +117,7 @@ purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heig
       dplyr::filter(!name %in% c("analysis.type","plot.type")) %>%
       dplyr::mutate(plotname = purrr::map(plot, names)) %>%
       tidyr::unnest(c(plot,plotname)) %>%
-      dplyr::mutate(plotname = c(names(IDEAres[[1]][1:4]),"Capacité productive et reproductive de biens et de services")) %>%
+      dplyr::mutate(plotname = dplyr::recode(plotname,"Capacité productive et reproductive \nde biens et de services"="Capacité productive et reproductive de biens et de services")) %>%
       dplyr::mutate(widths = rep(c(16.1,16.1,16.1,16.1,16.1),n_exploit),
                     heights = rep(c(7.61,7.61,7.61,7.61,7.61),n_exploit)) %>%
       dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%

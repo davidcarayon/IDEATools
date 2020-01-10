@@ -55,7 +55,32 @@ create_single_data <- function(input){
 
       nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
 
-        }
+    }
+
+    if(anonymous){
+
+
+      if(is.na(nom)){
+
+        metadata <- bind_rows(
+          tibble(title = "NOM Prénom :",value = paste0("EA ",stringi::stri_rand_strings(1, 5, '[A-Z]'))),
+          metadata)
+
+        nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
+
+      } else {
+
+        metadata %>%
+          dplyr::mutate(value = ifelse(title = "NOM Prénom", yes = paste0("EA ",stringi::stri_rand_strings(1, 5, '[A-Z]')), no = value))
+
+        nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
+
+
+      }
+
+
+
+    }
 
 
 
