@@ -50,7 +50,7 @@ create_single_data <- function(input){
     if(is.na(nom)){
 
       metadata <- bind_rows(
-        tibble(title = "NOM Prénom :",value = paste0("EA_",stringi::stri_rand_strings(1, 5, '[A-Z]'))),
+        tibble(title = "NOM Prénom :",value = paste0("EA ",stringi::stri_rand_strings(1, 5, '[A-Z]'))),
         metadata)
 
       nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
@@ -141,6 +141,7 @@ create_single_data <- function(input){
     results_dexi <- categ %>%
       dplyr::mutate(nom_exploit = nom) %>%
       dplyr::inner_join(results, by = "indicateur") %>%
+      dplyr::mutate(score_deplafonne = round(score_deplafonne,0)) %>%
       dplyr::mutate(categorie_dexi = purrr::pmap_chr(list(TD, D, I, F, score_deplafonne), categ_dexi)) %>%
       dplyr::select(nom_exploit, dimension, indicateur, nom_indicateur, score_deplafonne, categorie_dexi)
 
@@ -178,7 +179,7 @@ create_single_data <- function(input){
       dplyr::select(x5, x6, x8) %>%
       tidyr::drop_na() %>%
       dplyr::mutate_at(dplyr::vars(x6, x8), as.numeric) %>%
-      dplyr::select(indicateur = x5, valeur = x6, valeur_max = x8)
+      dplyr::select(indicateur = x5, valeur = round(x6,0), valeur_max = x8)
 
     max_compo <- file %>%
       dplyr::select(x2, x11) %>%
@@ -890,7 +891,7 @@ res <- c(result_list,single_data)
 
 if(result_list$analysis.type == "multi"){
 
-  list_paths <- c(paste0(input,"/",list.files(input, pattern = "\\.xls$")),paste0(input,"/",list.files(input, pattern = "\\.xlsx$")))
+  list_paths <- paste0(input,"/",list.files(input, pattern = "\\.xls*"))
 
   group_data <- purrr::map(list_paths,create_single_data)
 

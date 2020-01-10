@@ -62,7 +62,7 @@ IDEAresprop <- IDEATools::MakeTrees(IDEAdata)
 IDEAresrad <- IDEATools::radarPlots(IDEAdata)
 # IDEATools::exportIDEA(IDEAresdim,outdir = outdir)
 # IDEATools::exportIDEA(IDEAresrad,outdir = outdir)
-
+# IDEATools::exportIDEA(IDEAresprop, outdir = outdir)
 res_prop <- IDEAdata$dataset
 res_dim <- IDEAdata$dataset
 metadata <- IDEAdata$metadata

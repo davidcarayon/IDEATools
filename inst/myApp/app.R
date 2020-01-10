@@ -196,7 +196,7 @@ ui = dashboardPage(skin = "blue",
                       tabItem(tabName = "prop_indic",fluidPage()),
 
                       tabItem(tabName = "radar_robustesse",
-                              box(plotOutput("robust_radar",height = "800px", width = "100%"), width = 12, height = "820px")),
+                              box(plotOutput("robust_radar",height = "841px", width = "1314"), width = 12, height = "850px")),
                       tabItem(tabName = "radar_autonomie",
                               box(plotOutput("auto_radar",height = "800px"), width = 12, height = "820px")),
                       tabItem(tabName = "radar_cp",
@@ -723,7 +723,8 @@ output$legende_out <- DT::renderDataTable({
             inFile <- input$files
 
             tempReport <- file.path(tempdir(), "rapport_individuel.Rmd")
-            file.copy("rapport_individuel.Rmd", tempReport, overwrite = TRUE)
+            template <- system.file("myApp/rapport_individuel.Rmd", package = "IDEATools")
+            file.copy(template, tempReport, overwrite = TRUE)
             # setwd(tempdir())
 
             # Set up parameters to pass to Rmd document

@@ -32,6 +32,7 @@ radarPlots <- function(IDEAdata){
       dplyr::arrange(dplyr::desc(dimension),num_indic) %>%
       dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur)))
 
+
     splotlist <- list()
 
     for (i in unique(prop_radar$Propriete)) {
@@ -54,12 +55,12 @@ radarPlots <- function(IDEAdata){
         dplyr::ungroup() %>%
         dplyr::mutate(no = readr::parse_number(code_indicateur)) %>%
         dplyr::arrange(dim,no) %>%
-        dplyr::select(Code = code_indicateur,Légende = nom_indicateur)
+        dplyr::select(Code = code_indicateur,`Nom de l'indicateur` = nom_indicateur)
 
 
       colors <- list(
         Robustesse = c(rep("#2e9c15",6),rep("#5077FE",2),rep("#FE962B",4)),
-        `Capacité productive et reproductive \nde biens et de services` = c(rep("#2e9c15",2),rep("#5077FE",3)),
+        `Capacité productive et reproductive \nde biens et de services` = c(rep("#2e9c15",2),rep("#FE962B",3)),
         Autonomie = c(rep("#2e9c15",3),rep("#5077FE",2),rep("#FE962B",3)),
         `Responsabilité globale`=c(rep("#2e9c15",8),rep("#5077FE",10),"#FE962B"),
         `Ancrage Territorial`= c(rep("#5077FE",9))
