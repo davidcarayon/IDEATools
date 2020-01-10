@@ -27,4 +27,6 @@ Imports:
     shiny,
     shinydashboard,
     DT,
-    ggpubr
+    ggpubr,
+    rmarkdown,
+    flexdashboard

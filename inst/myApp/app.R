@@ -299,7 +299,7 @@ observeEvent(input$files, {
         if (is.null(inFile))
             return(
 
-              h1(tags$b(div(style="display:inline-block;width:100%;text-align: left;","← Pour démarrer l'application, charger un calculateur au format .xls ou .xlsx")))
+              h1(tags$b(div(style="display:inline-block;width:100%;text-align: left;","\U2190 Pour démarrer l'application, charger un calculateur au format .xls ou .xlsx")))
             )
 
         dim <- IDEAdata()
