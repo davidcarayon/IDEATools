@@ -9,6 +9,9 @@ library(readr)
 library(IDEATools)
 library(DT)
 
+
+
+## Définition de fonctions perso et de styles CSS à inserer dans l'UI
 replace_col <- function(resultat) {
   res <- dplyr::case_when(
     resultat == "NC" ~ "grey",
@@ -20,7 +23,6 @@ replace_col <- function(resultat) {
   )
   return(res)
 }
-
 options(shiny.maxRequestSize=30*1024^2)
 
 ## CSS pour le style des gauges
@@ -192,7 +194,7 @@ ui = dashboardPage(skin = "blue",
                               box(plotOutput("indic_ae", height = "800px"), width = 12)),
 
 
-                      ### Plots radar
+                      ### Détail des indicateurs par propriété
                       tabItem(tabName = "prop_indic",fluidPage()),
 
                       tabItem(tabName = "radar_robustesse",
@@ -221,27 +223,32 @@ ui = dashboardPage(skin = "blue",
 # Define server logic
 server = function(input, output, session) {
 
+## Définition du répertoire temporaire utilisé pour exporter les images/rapports
+outdir <- tempdir(getwd())
+
+## Import des données de l'input
 IDEAdata <- eventReactive(input$files, {
 
   IDEATools::importIDEA(input = input$files$datapath, anonymous = FALSE)
 
 })
 
+## Production des plots dimension
 IDEAresdim <- eventReactive(input$files, {
 
   IDEAdata() %>% dimensionsPlots()
 
 })
 
+## Production des diagrammes radar
 IDEAresrad <- eventReactive(input$files, {
 
   IDEAdata() %>% radarPlots()
 
 })
 
-outdir <- tempdir(getwd())
 
-## Tracé des arbres
+## Tracé des arbres et export dans le répertoire temporaire avec barre de progression
 observeEvent(input$files, {
   withProgress(message = "Coloration des cartes heuristiques...", detail = "Merci de patienter quelques instants", value = 0.2, {
 
@@ -333,7 +340,7 @@ observeEvent(input$files, {
 
     })
 
-#### Téléchargements de rapports etc.
+#### Téléchargements de rapports et de zip
     output$dl <- renderUI({
 
       inFile <- input$files
@@ -357,7 +364,7 @@ observeEvent(input$files, {
 
     })
 
-#### Définition des propriétés
+#### Définition des infobox propriétés
     output$prop1 <- renderInfoBox({
 
       # inFile <- input$files
@@ -603,7 +610,7 @@ observeEvent(input$files, {
            class="center")
     })
 
-#### Boutons clickables propriétés
+#### Boutons clickables propriétés <-> arbres
     observeEvent(input$button_box_01, {
       newtab <- "robustesse"
       updateTabItems(session,inputId="tabs",selected = newtab)
@@ -686,6 +693,7 @@ output$an_radar <- renderPlot({
   print(p)
 })
 
+## Table de légende de fin
 output$legende_out <- DT::renderDataTable({
 
 
@@ -707,21 +715,24 @@ output$legende_out <- DT::renderDataTable({
 })
 
 
-#### REPORT
+
+# Rapport automatisé ------------------------------------------------------
+
     output$report <- downloadHandler(
         # For PDF output, change this to "report.pdf"
 
         filename = "rapport_individuel.pdf",
 
         content = function(file) {
-            # Copy the report file to a temporary directory before processing it, in
-            # case we don't have write permissions to the current working dir (which
-            # can happen when deployed).
+
 
           withProgress(message = "Rendu du rapport en cours........", detail = "Merci de patienter quelques instants", value = 0.2,{
 
             inFile <- input$files
 
+            # Copy the report file to a temporary directory before processing it, in
+            # case we don't have write permissions to the current working dir (which
+            # can happen when deployed).
             tempReport <- file.path(tempdir(), "rapport_individuel.Rmd")
             template <- system.file("myApp/rapport_individuel.Rmd", package = "IDEATools")
             file.copy(template, tempReport, overwrite = TRUE)
@@ -746,13 +757,7 @@ output$legende_out <- DT::renderDataTable({
     )
 
 
-
-    # output$zipfile <- downloadHandler(
-    #   filename = "Pack_figures",
-    #
-    #
-    # )
-
+# Téléchargement .zip -----------------------------------------------------
     output$zipfile <- downloadHandler(
       # For PDF output, change this to "report.pdf"
 

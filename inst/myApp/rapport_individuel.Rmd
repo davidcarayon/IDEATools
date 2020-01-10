@@ -221,23 +221,23 @@ print(plist[["Responsabilité globale"]])
 print(plist[["Robustesse"]])
 ```
 
-\newpage
+<!-- \newpage -->
 
-# Légende
+<!-- # Légende -->
 
-\footnotesize
+<!-- \footnotesize -->
 
-```{r}
-label_nodes %>% select(`Code Indicateur`=code_indicateur, `Nom Indicateur`=nom_indicateur, Niveau = level, Dimension = dimension, Composante = composante, dim) %>%
-  mutate(no_code = parse_number(`Code Indicateur`)) %>%
-  mutate(Niveau = factor(Niveau, levels = c("indicateur","noeud","branche","propriete"))) %>%
-  arrange(Niveau,dim,no_code) %>%
-  mutate(Dimension = as.character(Dimension)) %>%
-  select(-dim, -no_code) %>%
-  mutate(Composante = str_remove_all(Composante,"\\n")) %>%
-  select(-Composante) %>%
-  mutate(Dimension =ifelse(is.na(Dimension),yes = " ",no = Dimension)) %>%
-  filter(Niveau == "indicateur") %>%
-  select(-Niveau) %>%
-  knitr::kable()
-```
+<!-- ```{r} -->
+<!-- label_nodes %>% select(`Code Indicateur`=code_indicateur, `Nom Indicateur`=nom_indicateur, Niveau = level, Dimension = dimension, Composante = composante, dim) %>% -->
+<!--   mutate(no_code = parse_number(`Code Indicateur`)) %>% -->
+<!--   mutate(Niveau = factor(Niveau, levels = c("indicateur","noeud","branche","propriete"))) %>% -->
+<!--   arrange(Niveau,dim,no_code) %>% -->
+<!--   mutate(Dimension = as.character(Dimension)) %>% -->
+<!--   select(-dim, -no_code) %>% -->
+<!--   mutate(Composante = str_remove_all(Composante,"\\n")) %>% -->
+<!--   select(-Composante) %>% -->
+<!--   mutate(Dimension =ifelse(is.na(Dimension),yes = " ",no = Dimension)) %>% -->
+<!--   filter(Niveau == "indicateur") %>% -->
+<!--   select(-Niveau) %>% -->
+<!--   knitr::kable() -->
+<!-- ``` -->

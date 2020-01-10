@@ -1,3 +1,5 @@
+#' Run the shiny App
+#'
 #' @importFrom magrittr %>%
 #' @export
 runIDEATool <- function() {
