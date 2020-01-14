@@ -1,10 +1,10 @@
 #' Import IDEA4 data
 #'
 #' @param input a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json.
-#' @param anonymous Boolean. Should the results be anonymised ? If yes, a correspondence table will be added to  the result list
+#' @param anonymous Boolean. Should the results be anonymised ?
 #'
 #' @return a named list, containing :
-#'     analysis.type : a string which can be "single" or "multi" depending on the input type.
+#'     analysis.type : a string which can be "single" or "folder" depending on the input type.
 #'     dataset : a tibble dataframe with the extracted data
 #'     nodes : results of the property analysis
 #'     metadata : metadata extracted from the input
@@ -27,9 +27,6 @@ input <- normalizePath(input)
                                       stringr::str_detect(input,".xlsx"),
                           yes = "single",
                           no = "multi")
-
-
-
 
 create_single_data <- function(input){
 
@@ -253,7 +250,6 @@ create_single_data <- function(input){
     ####### Calcul des noeuds
 
 # Calcul des noeuds -------------------------------------------------------
-
 
     prop_data <- results_dexi
 

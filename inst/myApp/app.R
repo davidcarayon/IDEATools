@@ -9,8 +9,6 @@ library(readr)
 library(IDEATools)
 library(DT)
 
-
-
 ## Définition de fonctions perso et de styles CSS à inserer dans l'UI
 replace_col <- function(resultat) {
   res <- dplyr::case_when(

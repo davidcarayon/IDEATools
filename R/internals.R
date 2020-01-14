@@ -38,8 +38,99 @@ replace_col <- function(resultat) {
 
 
 
+# Defining custom functions -----------------------------------------------
+
+## Agregates items into indicators
+Item2Indic <- function(indicateur,df) {
+
+  df <- df %>% arrange(item)
+
+  items <- df$value %>% as.numeric()
+
+  if(indicateur %in% c("A1","A5","A7","A8","A14","A19","B23")) {
+
+    if(indicateur == "A1") {value = ifelse(items[2]==4, yes = 4, no = sum(items))}
+    if(indicateur == "A5") {value = ifelse(metadata$MTD_15 >= 0.75, yes = 5, no = sum(items))}
+    if(indicateur == "A7") {value = case_when(metadata$MTD_14 == 0 ~ 0,
+                                              metadata$MTD_14 == 1 ~ 0.7*items[1]+0.3*items[2],
+                                              metadata$MTD_14 == 2 ~ as.numeric(items[2]))}
+    if(indicateur == "A8") {value = ifelse(metadata$MTD_15 >= 0.95, yes = 8, no = sum(items))}
+    if(indicateur == "A14"){value = case_when(metadata$MTD_16 == 0 ~ 4,
+                                              metadata$MTD_14 == 0 ~ as.numeric(items[1]),
+                                              metadata$MTD_14 != 0 & metadata$MTD_16 !=0 ~ min(as.numeric(items)))}
+    if(indicateur == "A19") {value = ifelse(metadata$MTD_14 == 0, yes = items[1], no = min(as.numeric(items)))}
+    if(indicateur == "B23") {value = ifelse(metadata$MTD_14 == 0, yes = items[2], no = round(mean(items)))}
+
+  } else {
+
+    value = sum(items)
+
+  }
 
 
+  return(as.numeric(value))
+
+
+}
+
+## Re-scales indicators according to the max authorized value
+ScaleIndicator <- function(indicateur,value) {
+  max = list_max[[indicateur]]
+  scaled_value = ifelse(value > max, yes = max, no = value)
+  if(scaled_value < 0){scaled_value = 0}
+  return(scaled_value)
+}
+
+## Converts the unscaled indicator values to qualitative categories according to the DEXi model
+Score2Dexi <- function(TD, D, I, F, score) {
+  seuils <- c(TD, D, I, F) %>% stats::na.omit()
+
+  if (length(seuils) == 4) {
+    res <- dplyr::case_when(
+      score < D ~ "très défavorable",
+      score >= D & score < I ~ "défavorable",
+      score >= I & score < F ~ "intermédiaire",
+      score >= F ~ "favorable"
+    )
+  }
+
+  if (length(seuils) == 3) {
+    res <- dplyr::case_when(
+      score < I ~ "défavorable",
+      score >= I & score < F ~ "intermédiaire",
+      score >= F ~ "favorable"
+    )
+  }
+
+  if (length(seuils) == 2) {
+    res <- dplyr::case_when(
+      score < F ~ "intermédiaire",
+      score >= F ~ "favorable"
+    )
+  }
+
+
+  return(res)
+}
+
+## Re-scales the composante value according to the max authorized value
+ScaleComposante <- function(composante,value) {
+  max = list_max_compo[[composante]]
+  scaled_value = ifelse(value > max, yes = max, no = value)
+  if(scaled_value < 0){scaled_value = 0}
+  return(scaled_value)
+}
+
+## Calculates the dimension score based on the composantes
+Composante2Dimension <- function(df) {
+
+  df %>%
+    dplyr::distinct(composante, composante_value) %>%
+    pull(composante_value) %>%
+    sum(na.rm=TRUE)
+
+
+}
 
 #' Attribute a code to each node
 #'
