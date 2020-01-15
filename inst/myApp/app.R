@@ -45,7 +45,7 @@ css3 <- HTML("
 ui = dashboardPage(skin = "blue",
 
                    ## Le header
-                   dashboardHeader(title="Calculateur IDEA4", titleWidth = 300),
+                   dashboardHeader(title="Applicatif IDEA4", titleWidth = 300),
 
                    ## Le sidebar, avec l'input, des item et subitem
                    dashboardSidebar(width = 350,h4(

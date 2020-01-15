@@ -47,6 +47,8 @@ Item2Indic <- function(indicateur,df) {
 
   items <- df$value %>% as.numeric()
 
+  if(class(metadata$MTD_14) == "character"){metadata$MTD_14 = readr::parse_number(metadata$MTD_14)}
+
   if(indicateur %in% c("A1","A5","A7","A8","A14","A19","B23")) {
 
     if(indicateur == "A1") {value = ifelse(items[2]==4, yes = 4, no = sum(items))}
