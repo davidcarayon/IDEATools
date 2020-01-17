@@ -1,6 +1,22 @@
 
 
-
+#' Import IDEA4 data
+#'
+#' @param input a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json.
+#' @param anonymous Boolean. Should the results be anonymised ?
+#'
+#' @return a named list, containing :
+#'     analysis.type : a string which can be "single" or "folder" depending on the input type.
+#'     dataset : a tibble dataframe with the extracted data
+#'     nodes : results of the property analysis
+#'     metadata : metadata extracted from the input
+#' @importFrom magrittr %>%
+#' @export
+#'
+#' @examples
+#' library(IDEATools)
+#' path <- system.file("example.xls", package = "IDEATools")
+#' IDEAdata <- importIDEA(path, anonymous = FALSE)
 importIDEA2 <- function(input, anonymous = FALSE){
 
 input <- normalizePath(input)
@@ -21,13 +37,52 @@ importFromFile <- function(file){
 
   res_list <- list()
 
+  ## Agregates items into indicators
+  Item2Indic <- function(indicateur,df) {
+
+    df <- df %>% dplyr::arrange(item)
+
+    items <- df$value %>% as.numeric()
+
+    if(class(metadata$MTD_14) == "character"){metadata$MTD_14 = readr::parse_number(metadata$MTD_14)}
+
+    if(indicateur %in% c("A1","A5","A7","A8","A14","A19","B23")) {
+
+      if(indicateur == "A1") {value = ifelse(items[2]==4, yes = 4, no = sum(items))}
+      if(indicateur == "A5") {value = ifelse(metadata$MTD_15 >= 0.75, yes = 5, no = sum(items))}
+      if(indicateur == "A7") {value = dplyr::case_when(metadata$MTD_14 == 0 ~ 0,
+                                                       metadata$MTD_14 == 1 ~ 0.7*items[1]+0.3*items[2],
+                                                       metadata$MTD_14 == 2 ~ as.numeric(items[2]))}
+      if(indicateur == "A8") {value = ifelse(metadata$MTD_15 >= 0.95, yes = 8, no = sum(items))}
+      if(indicateur == "A14"){value = dplyr::case_when(metadata$MTD_16 == 0 ~ 4,
+                                                       metadata$MTD_14 == 0 ~ as.numeric(items[1]),
+                                                       metadata$MTD_14 != 0 & metadata$MTD_16 !=0 ~ min(as.numeric(items)))}
+      if(indicateur == "A19") {value = ifelse(metadata$MTD_14 == 0, yes = items[1], no = min(as.numeric(items)))}
+      if(indicateur == "B23") {value = ifelse(metadata$MTD_14 == 0, yes = items[2], no = round(mean(items)+1e-10))}
+
+    } else {
+
+      value = sum(items)
+
+    }
+
+
+    return(as.numeric(value))
+
+
+  }
+
+
   if(filetype == "json"){
 
     ## Read the json file
     res <- jsonlite::fromJSON(file)
 
     ## Extract metadata and wrap them in a 1-line dataframe
-    metadata <- res$metadonnees %>% dplyr::bind_cols()
+    metadata <- res$metadonnees %>% dplyr::bind_cols() %>% dplyr::mutate_all(as.character)
+
+    if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
+    metadata$MTD_14 = readr::parse_number(metadata$MTD_14) %>% as.character()
 
     ## Extract the farm id
     id_exploit <- metadata$MTD_01
@@ -88,7 +143,18 @@ importFromFile <- function(file){
       ## Mimic the .json input
       BDD <- suppressMessages(readxl::read_excel(file, sheet = "Renvoi BDD", skip = 3) %>% janitor::clean_names())
       metadata <- BDD %>% dplyr::slice(1:17) %>% dplyr::select(code,valeur) %>% tidyr::spread(key = code, value = valeur) %>%
-        mutate_at(vars(MTD_02:MTD_04,MTD_07:MTD_09,MTD_10:MTD_16),readr::parse_number)#" A modifier si modif du fichier
+        dplyr::mutate_at(dplyr::vars(MTD_02:MTD_04,MTD_07:MTD_09,MTD_10:MTD_16),readr::parse_number)#" A modifier si modif du fichier
+
+
+      metadata$MTD_14 <- suppressMessages(readxl::read_excel(file, sheet = "Saisie et Calculateur", skip = 3) %>% janitor::clean_names() %>%
+                                    dplyr::filter(id_exploitation == "Présence et type d'élevage :") %>% dplyr::pull(2) %>% readr::parse_number())
+
+
+      if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
+      metadata <- metadata %>% dplyr::mutate_all(as.character)
+
+
+
 
       items <- BDD %>% dplyr::slice(22:nrow(BDD)) %>% dplyr::select(code,a_exporter) %>% tidyr::spread(key = code, value = a_exporter)
 
@@ -110,11 +176,11 @@ importFromFile <- function(file){
         tidyr::nest() %>%
         ## Calculating the indicator unscaled, then scaled value
         dplyr::mutate(unscaled_value = purrr::map2_dbl(indicateur,data,Item2Indic)) %>%
-        mutate(value = map2_dbl(indicateur,unscaled_value, ScaleIndicator)) %>%
+        dplyr::mutate(value = purrr::map2_dbl(indicateur,unscaled_value, ScaleIndicator)) %>%
         dplyr::select(-data) %>%
         dplyr::ungroup() %>%
         ## Joining to gather info on dimension/composante
-        dplyr::inner_join(categ %>% select(-nom_indicateur), by = "indicateur")%>%
+        dplyr::inner_join(categ %>% dplyr::select(-nom_indicateur), by = "indicateur")%>%
         dplyr::inner_join(label_nodes, by = c("indicateur"="code_indicateur")) %>%
         dplyr::mutate(id_exploit = id_exploit) %>%
         dplyr::mutate(unscaled_value = round(unscaled_value,0)) %>%
@@ -122,14 +188,14 @@ importFromFile <- function(file){
         dplyr::mutate(categorie_dexi = purrr::pmap_chr(list(TD, D, I, F, unscaled_value), Score2Dexi)) %>%
         dplyr::select(id_exploit, dimension, composante,indicateur, nom_indicateur, unscaled_value, categorie_dexi, value) %>%
         ## Adding indicator values to calculate composantes
-        group_by(composante) %>%
+        dplyr::group_by(composante) %>%
         dplyr::mutate(composante_value = sum(value, na.rm=TRUE)) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(composante_value = purrr::map2_dbl(composante,composante_value,ScaleComposante)) %>%
         dplyr::group_by(dimension) %>%
-        nest() %>%
+        tidyr::nest() %>%
         dplyr::mutate(dimension_value = purrr::map_dbl(data,Composante2Dimension)) %>%
-        unnest(cols = c(data)) %>%
+        tidyr::unnest(cols = c(data)) %>%
         dplyr::ungroup() %>%
         dplyr::select(id_exploit,dimension,composante,indicateur,nom_indicateur,unscaled_value,categorie_dexi,value,composante_value,dimension_value)
 
@@ -150,24 +216,28 @@ importFromFile <- function(file){
       ### Defining metadata
       metadata <- tibble::tibble(MTD_00 = NA)
       metadata$MTD_01 <- as.character(Saisie_et_calc[4,2])
-      metadata$MTD_02 <- as.numeric(Saisie_et_calc[12,2])
+      metadata$MTD_02 <- Saisie_et_calc[12,2]
       metadata$MTD_03 <- as.numeric(Saisie_et_calc[27,6])
       metadata$MTD_04 <- as.numeric(Saisie_et_calc[27,2])
       metadata$MTD_05 <- NA
       metadata$MTD_06 <- NA
-      metadata$MTD_07 <- sum(as.numeric(Saisie_et_calc[15:16,2])) / metadata$MTD_02
+      metadata$MTD_07 <- NA
       metadata$MTD_08 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)") %>% dplyr::pull(x6) %>% `[`(1) %>% as.numeric()
       metadata$MTD_09 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "EBE retenu IDEA") %>% dplyr::pull(x6) %>% `[`(1) %>% as.numeric()
       metadata$MTD_10 <- NA
-      metadata$MTD_11 <- as.numeric(Saisie_et_calc[6,2])
+      metadata$MTD_11 <- readr::parse_number(as.character(Saisie_et_calc[6,2]))
       metadata$MTD_12 <- NA
       metadata$MTD_13 <- Saisie_et_calc[4,6]  %>% as.numeric() %>%  as.Date(origin="1900-01-01") %>% stringr::str_split("-") %>% unlist() %>% `[`(1) %>% as.numeric()
       metadata$MTD_14 <- ifelse(Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Présence d'élevage :") %>% dplyr::pull(x2) %>% `[`(1) == "non", yes = 0, no = 1)
-      metadata$MTD_15 <- as.numeric(Saisie_et_calc[15,2]) / metadata$MTD_02
+      metadata$MTD_15 <- NA
       metadata$MTD_16 <- NA
 
       ### If anonymous is TRUE, or if no ID could be found, then replace the ID by a random 5-letter string
       if(anonymous == TRUE | is.na(metadata$MTD_01) == TRUE){metadata$MTD_01 <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
+
+      if(metadata$MTD_01 =="0"){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
+
+      metadata <- metadata %>% dplyr::mutate_all(as.character)
 
       # Add to the result list
       res_list$metadata <- metadata
@@ -219,16 +289,16 @@ importFromFile <- function(file){
       ## Adding dimension data
 
       res_list$dataset <- results_dexi %>%
-        select(indicateur,unscaled_value, categorie_dexi) %>%
-        inner_join(label_nodes, by = c("indicateur"="code_indicateur")) %>%
+        dplyr::select(indicateur,unscaled_value, categorie_dexi) %>%
+        dplyr::inner_join(label_nodes, by = c("indicateur"="code_indicateur")) %>%
         dplyr::mutate(id_exploit = metadata$MTD_01) %>%
         dplyr::mutate(unscaled_value = round(unscaled_value,0)) %>%
         dplyr::mutate(value = purrr::map2_dbl(indicateur,unscaled_value, ScaleIndicator)) %>%
         dplyr::select(id_exploit, dimension, composante,indicateur, nom_indicateur, unscaled_value, categorie_dexi, value) %>%
         ## Adding indicator values to calculate composantes
-        group_by(composante) %>%
-        dplyr::mutate(composante_value = sum(unscaled_value, na.rm=TRUE)) %>%
-        ungroup() %>%
+        dplyr::group_by(composante) %>%
+        dplyr::mutate(composante_value = sum(value, na.rm=TRUE)) %>%
+        dplyr::ungroup() %>%
         dplyr::mutate(composante_value = purrr::map2_dbl(composante,composante_value,ScaleComposante)) %>%
         dplyr::group_by(dimension) %>%
         tidyr::nest() %>%
@@ -251,6 +321,10 @@ importFromFile <- function(file){
 # Computing nodes ---------------------------------------------------------
   if(metadata$MTD_14 == 0) {
     results_dexi = results_dexi %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(categorie_dexi = ifelse(indicateur == "A7", yes = "NC", no = categorie_dexi)) %>%
+      dplyr::ungroup()
+    res_list$dataset <- res_list$dataset %>%
       dplyr::rowwise() %>%
       dplyr::mutate(categorie_dexi = ifelse(indicateur == "A7", yes = "NC", no = categorie_dexi)) %>%
       dplyr::ungroup()

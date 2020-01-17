@@ -128,7 +128,7 @@ dimensionsPlots <- function(IDEAdata){
 
     return(c(splotlist,list_indicators))
 
-      }
+  }
 
   if(IDEAdata$analysis.type == "single") {
     res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
@@ -149,9 +149,9 @@ dimensionsPlots <- function(IDEAdata){
 
   }
 
-return_plot$analysis.type = IDEAdata$analysis.type
-return_plot$plot.type <- "dim"
-return(return_plot)
+  return_plot$analysis.type = IDEAdata$analysis.type
+  return_plot$plot.type <- "dim"
+  return(return_plot)
 
 
 }

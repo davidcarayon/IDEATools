@@ -68,7 +68,7 @@ create_single_data <- function(input){
       } else {
 
         metadata %>%
-          dplyr::mutate(value = ifelse(title = "NOM Prénom", yes = paste0("EA ",stringi::stri_rand_strings(1, 5, '[A-Z]')), no = value))
+          dplyr::mutate(value = ifelse(title == "NOM Prénom", yes = paste0("EA ",stringi::stri_rand_strings(1, 5, '[A-Z]')), no = value))
 
         nom = metadata %>% dplyr::filter(title == "NOM Prénom :") %>% dplyr::pull(value) %>% `[`(1)
 
