@@ -1,5 +1,3 @@
-
-
 #' Import IDEA4 data
 #'
 #' @param input a system path leading either to a single file or a directory. If the input is a single file, accepted formats are : .xls, .xlsx and .json.
@@ -82,7 +80,6 @@ importFromFile <- function(file){
     metadata <- res$metadonnees %>% dplyr::bind_cols() %>% dplyr::mutate_all(as.character)
 
     if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
-    metadata$MTD_14 = readr::parse_number(metadata$MTD_14) %>% as.character()
 
     ## Extract the farm id
     id_exploit <- metadata$MTD_01
@@ -142,19 +139,20 @@ importFromFile <- function(file){
 
       ## Mimic the .json input
       BDD <- suppressMessages(readxl::read_excel(file, sheet = "Renvoi BDD", skip = 3) %>% janitor::clean_names())
-      metadata <- BDD %>% dplyr::slice(1:17) %>% dplyr::select(code,valeur) %>% tidyr::spread(key = code, value = valeur) %>%
-        dplyr::mutate_at(dplyr::vars(MTD_02:MTD_04,MTD_07:MTD_09,MTD_10:MTD_16),readr::parse_number)#" A modifier si modif du fichier
+      metadata <- BDD %>%
+        dplyr::slice(1:17) %>%
+        dplyr::select(code,valeur) %>%
+        tidyr::spread(key = code, value = valeur) %>%
+        dplyr::mutate_all(as.character)
 
 
-      metadata$MTD_14 <- suppressMessages(readxl::read_excel(file, sheet = "Saisie et Calculateur", skip = 3) %>% janitor::clean_names() %>%
-                                    dplyr::filter(id_exploitation == "Présence et type d'élevage :") %>% dplyr::pull(2) %>% readr::parse_number())
-
+      metadata$MTD_14 <- suppressMessages(readxl::read_excel(file, sheet = "Saisie et Calculateur", skip = 3)) %>%
+        janitor::clean_names() %>%
+        dplyr::filter(id_exploitation == "Présence et type d'élevage :") %>%
+        dplyr::pull(2) %>%
+        as.character()
 
       if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
-      metadata <- metadata %>% dplyr::mutate_all(as.character)
-
-
-
 
       items <- BDD %>% dplyr::slice(22:nrow(BDD)) %>% dplyr::select(code,a_exporter) %>% tidyr::spread(key = code, value = a_exporter)
 
@@ -217,17 +215,17 @@ importFromFile <- function(file){
       metadata <- tibble::tibble(MTD_00 = NA)
       metadata$MTD_01 <- as.character(Saisie_et_calc[4,2])
       metadata$MTD_02 <- Saisie_et_calc[12,2]
-      metadata$MTD_03 <- as.numeric(Saisie_et_calc[27,6])
-      metadata$MTD_04 <- as.numeric(Saisie_et_calc[27,2])
+      metadata$MTD_03 <- Saisie_et_calc[27,6]
+      metadata$MTD_04 <- Saisie_et_calc[27,2]
       metadata$MTD_05 <- NA
       metadata$MTD_06 <- NA
       metadata$MTD_07 <- NA
-      metadata$MTD_08 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)") %>% dplyr::pull(x6) %>% `[`(1) %>% as.numeric()
-      metadata$MTD_09 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "EBE retenu IDEA") %>% dplyr::pull(x6) %>% `[`(1) %>% as.numeric()
+      metadata$MTD_08 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)") %>% dplyr::pull(x6) %>% `[`(1)
+      metadata$MTD_09 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "EBE retenu IDEA") %>% dplyr::pull(x6) %>% `[`(1)
       metadata$MTD_10 <- NA
-      metadata$MTD_11 <- readr::parse_number(as.character(Saisie_et_calc[6,2]))
+      metadata$MTD_11 <- as.character(Saisie_et_calc[6,2])
       metadata$MTD_12 <- NA
-      metadata$MTD_13 <- Saisie_et_calc[4,6]  %>% as.numeric() %>%  as.Date(origin="1900-01-01") %>% stringr::str_split("-") %>% unlist() %>% `[`(1) %>% as.numeric()
+      metadata$MTD_13 <- Saisie_et_calc[4,6] %>% as.numeric() %>%  as.Date(origin="1900-01-01") %>% stringr::str_split("-") %>% unlist() %>% `[`(1) %>% as.numeric()
       metadata$MTD_14 <- ifelse(Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Présence d'élevage :") %>% dplyr::pull(x2) %>% `[`(1) == "non", yes = 0, no = 1)
       metadata$MTD_15 <- NA
       metadata$MTD_16 <- NA
@@ -313,13 +311,16 @@ importFromFile <- function(file){
 
   } else {
 
-    error("Invalid file extension. Please use .xls(x) or .json files")
+    stop("Invalid file extension. Please use .xls(x) or .json files")
 
   }
 
 
 # Computing nodes ---------------------------------------------------------
-  if(metadata$MTD_14 == 0) {
+
+  if(is.na(metadata$MTD_14)){stop("La présence ou non d'élevage n'a pas été renseignée. Merci de remplir cette cellule.")}
+
+  if(metadata$MTD_14 == "0" | metadata$MTD_14 == "0 - pas d'élevage") {
     results_dexi = results_dexi %>%
       dplyr::rowwise() %>%
       dplyr::mutate(categorie_dexi = ifelse(indicateur == "A7", yes = "NC", no = categorie_dexi)) %>%
