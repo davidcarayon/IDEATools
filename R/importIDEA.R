@@ -175,7 +175,6 @@ create_single_data <- function(input){
         dplyr::ungroup()
     }
 
-
     ## Ajout des données de dimension
 
 # Dataset dimensions ------------------------------------------------------

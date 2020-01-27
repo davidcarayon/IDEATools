@@ -21,7 +21,8 @@ dimensionsPlots <- function(IDEAdata){
       dplyr::group_by(dimension) %>%
       dplyr::summarise(score_dim = unique(score_dim), max_dim = 100) %>%
       dplyr::ungroup() %>%
-      dplyr::arrange(dplyr::desc(dimension))
+      dplyr::arrange(dplyr::desc(dimension)) %>%
+      dplyr::mutate(dimension = factor(dimension, levels = c("Agroécologique","Socio-Territoriale","Economique")))
 
     critiq <- min(res_dim$score_dim)
 
@@ -29,7 +30,7 @@ dimensionsPlots <- function(IDEAdata){
       ggplot2::geom_bar(ggplot2::aes(x = dimension, y = max_dim,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_hline(yintercept = critiq, color = "red", size = 1.5, linetype = 5)+
-      ggplot2::scale_fill_manual(values = c("#2e9c15","#5077FE","#FE962B")) +
+      ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#5077FE","Economique"="#FE962B")) +
       ggplot2::geom_label(ggplot2::aes(label = paste0(score_dim,"/",max_dim)), fill = "white", size = 5) +
       ggplot2::theme(axis.line = ggplot2::element_blank())+
       ggplot2::theme_bw()+
@@ -63,7 +64,7 @@ dimensionsPlots <- function(IDEAdata){
       ggplot2::geom_bar(ggplot2::aes(x = composante, y = max_compo,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_label(ggplot2::aes(label = paste0(valeur_compo,"/",max_compo)), fill = "white", size = 5.5)+
-      ggplot2::scale_fill_manual(values = c("#2e9c15","#5077FE","#FE962B")) +
+      ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#5077FE","Economique"="#FE962B")) +
       ggplot2::theme(axis.line = ggplot2::element_blank())+
       ggplot2::theme_bw()+
       ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "grey75")) +
@@ -78,6 +79,8 @@ dimensionsPlots <- function(IDEAdata){
       ggplot2::coord_flip()
 
     dim_indic <- res_dim %>%
+      mutate(composante = recode(composante,"Bouclage de flux \r\nde matières et d'énergie \r\npar une recherche d'autonomie"="Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                                 "Développement local \r\net économie circulaire" = "Développement local \net économie circulaire")) %>%
       dplyr::inner_join(label_nodes, by = c("indicateur"="code_indicateur", "composante", "dimension")) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",

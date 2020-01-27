@@ -42,20 +42,19 @@ importFromFile <- function(file){
 
     items <- df$value %>% as.numeric()
 
-    if(class(metadata$MTD_14) == "character"){metadata$MTD_14 = readr::parse_number(metadata$MTD_14)}
-
-    if(indicateur %in% c("A1","A5","A7","A8","A14","A19","B23")) {
+    if(indicateur %in% c("A1","A5","A7","A8","A14","A19","B23","B2")) {
 
       if(indicateur == "A1") {value = ifelse(items[2]==4, yes = 4, no = sum(items))}
       if(indicateur == "A5") {value = ifelse(metadata$MTD_15 >= 0.75, yes = 5, no = sum(items))}
       if(indicateur == "A7") {value = dplyr::case_when(metadata$MTD_14 == 0 ~ 0,
-                                                       metadata$MTD_14 == 1 ~ 0.7*items[1]+0.3*items[2],
+                                                       metadata$MTD_14 == 1 ~ round(0.7*items[1]+0.3*items[2]+1e-10),
                                                        metadata$MTD_14 == 2 ~ as.numeric(items[2]))}
       if(indicateur == "A8") {value = ifelse(metadata$MTD_15 >= 0.95, yes = 8, no = sum(items))}
       if(indicateur == "A14"){value = dplyr::case_when(metadata$MTD_16 == 0 ~ 4,
                                                        metadata$MTD_14 == 0 ~ as.numeric(items[1]),
                                                        metadata$MTD_14 != 0 & metadata$MTD_16 !=0 ~ min(as.numeric(items)))}
       if(indicateur == "A19") {value = ifelse(metadata$MTD_14 == 0, yes = items[1], no = min(as.numeric(items)))}
+      if(indicateur == "B2") {value = ifelse(metadata$MTD_14 == 0, yes = items[2], no = items[1])}
       if(indicateur == "B23") {value = ifelse(metadata$MTD_14 == 0, yes = items[2], no = round(mean(items)+1e-10))}
 
     } else {
@@ -80,6 +79,12 @@ importFromFile <- function(file){
     metadata <- res$metadonnees %>% dplyr::bind_cols() %>% dplyr::mutate_all(as.character)
 
     if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
+    if(metadata$MTD_14 == "0 - pas d'élevage"){
+      metadata$MTD_14 = 0}
+    if(metadata$MTD_14 == "2 - herbivore"){
+      metadata$MTD_14 = 2}
+    if(metadata$MTD_14 == "1 - monogastrique"){
+      metadata$MTD_14 = 1}
 
     ## Extract the farm id
     id_exploit <- metadata$MTD_01
@@ -145,12 +150,21 @@ importFromFile <- function(file){
         tidyr::spread(key = code, value = valeur) %>%
         dplyr::mutate_all(as.character)
 
-
       metadata$MTD_14 <- suppressMessages(readxl::read_excel(file, sheet = "Saisie et Calculateur", skip = 3)) %>%
         janitor::clean_names() %>%
         dplyr::filter(id_exploitation == "Présence et type d'élevage :") %>%
         dplyr::pull(2) %>%
         as.character()
+
+      if(metadata$MTD_14 == "0 - pas d'élevage"){
+        metadata$MTD_14 = 0}
+
+      if(metadata$MTD_14 == "2 - herbivore"){
+        metadata$MTD_14 = 2}
+
+      if(metadata$MTD_14 == "1 - monogastrique"){
+        metadata$MTD_14 = 1}
+
 
       if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
 
@@ -226,9 +240,16 @@ importFromFile <- function(file){
       metadata$MTD_11 <- as.character(Saisie_et_calc[6,2])
       metadata$MTD_12 <- NA
       metadata$MTD_13 <- Saisie_et_calc[4,6] %>% as.numeric() %>%  as.Date(origin="1900-01-01") %>% stringr::str_split("-") %>% unlist() %>% `[`(1) %>% as.numeric()
-      metadata$MTD_14 <- ifelse(Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Présence d'élevage :") %>% dplyr::pull(x2) %>% `[`(1) == "non", yes = 0, no = 1)
+      metadata$MTD_14 <- Saisie_et_calc %>% dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Présence d'élevage :") %>% dplyr::pull(x2) %>% `[`(1)
       metadata$MTD_15 <- NA
       metadata$MTD_16 <- NA
+
+      if(metadata$MTD_14 == "0 - pas d'élevage"){
+        metadata$MTD_14 = 0}
+      if(metadata$MTD_14 == "2 - herbivore"){
+        metadata$MTD_14 = 2}
+      if(metadata$MTD_14 == "1 - monogastrique"){
+        metadata$MTD_14 = 1}
 
       ### If anonymous is TRUE, or if no ID could be found, then replace the ID by a random 5-letter string
       if(anonymous == TRUE | is.na(metadata$MTD_01) == TRUE){metadata$MTD_01 <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
