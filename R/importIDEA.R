@@ -80,11 +80,11 @@ importFromFile <- function(file){
 
     if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}
     if(metadata$MTD_14 == "0 - pas d'élevage"){
-      metadata$MTD_14 = 0}
+      metadata$MTD_14 = "0"}
     if(metadata$MTD_14 == "2 - herbivore"){
-      metadata$MTD_14 = 2}
+      metadata$MTD_14 = "2"}
     if(metadata$MTD_14 == "1 - monogastrique"){
-      metadata$MTD_14 = 1}
+      metadata$MTD_14 = "1"}
 
     ## Extract the farm id
     id_exploit <- metadata$MTD_01
@@ -157,13 +157,13 @@ importFromFile <- function(file){
         as.character()
 
       if(metadata$MTD_14 == "0 - pas d'élevage"){
-        metadata$MTD_14 = 0}
+        metadata$MTD_14 = "0"}
 
       if(metadata$MTD_14 == "2 - herbivore"){
-        metadata$MTD_14 = 2}
+        metadata$MTD_14 = "2"}
 
       if(metadata$MTD_14 == "1 - monogastrique"){
-        metadata$MTD_14 = 1}
+        metadata$MTD_14 = "1"}
 
 
       if(metadata$MTD_01 %in% c("0",NA)){metadata$MTD_01  <- stringi::stri_rand_strings(1, 5, '[A-Z]')}

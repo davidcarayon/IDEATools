@@ -146,16 +146,16 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
     n_exploit <- IDEAres$n_exploit
 
     dimension_res <- list(
-      metaProp = c(1.49*n_exploit,6.82),
-      metaIndic = c(1.26*n_exploit,10),
-      metaDim = c(1.5*n_exploit, 8.61)
+      metaProp = c(10.4,6.82),
+      metaIndic = c(8.8,10),
+      metaDim = c(10.5, 8.61)
     )
 
 
     tab_res <- tibble::tibble(plotname = names(IDEAres), plot = IDEAres) %>%
       dplyr::filter(!plotname %in% c("input.type","plot.type","n_exploit")) %>%
       dplyr::mutate(plotname = dplyr::recode(plotname,"metaProp"="Matrice_Propriétés","metaIndic"="Matrice_Indicateurs","metaDim"="Hist_Dimensions")) %>%
-      dplyr::mutate(widths = c(1.49,1.26,1.5)*n_exploit,
+      dplyr::mutate(widths = c(10.4,8.8,10.5),
                     heights = c(6.82,10,8.61)) %>%
       dplyr::mutate(plotname = stringr::str_replace_all(plotname," ","_")) %>%
       dplyr::mutate(folder = file.path(outdir,plotname)) %>%

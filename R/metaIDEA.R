@@ -43,7 +43,7 @@ metaIDEA <- function(IDEAdata){
 
   return_plot$metaProp <- ggplot(heat_data %>% filter(level == "Propriété"), aes(id_exploit, nom_indicateur, fill = resultat)) +
     geom_tile(color = "black") +
-    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC"="#A0A0A0")) +
+    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC"="#A0A0A0"),drop = FALSE) +
     labs(x = "Exploitation",y = "Propriété", fill = "Evaluation") +
     ggpubr::theme_pubr() +
     theme(axis.text.y = element_text(color = "black", size = 13), axis.title = element_text(size = 17, face = "bold"), legend.text = element_text(size = 13), legend.title = element_text(size = 15), legend.position = "top") +
@@ -55,7 +55,7 @@ metaIDEA <- function(IDEAdata){
 
   return_plot$metaIndic <- ggplot(heat_data %>% filter(level == "Indicateur"), aes(id_exploit, indicateur, fill = resultat)) +
     geom_tile(color = "black") +
-    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC"="#A0A0A0")) +
+    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC"="#A0A0A0"),drop = FALSE) +
     labs(x = "Exploitation",y = "Indicateur", fill = "Evaluation") +
     ggpubr::theme_pubr() +
     theme(axis.text.y = element_text(color = "black", size = 12), axis.title = element_text(size = 17, face = "bold"), legend.text = element_text(size = 13), legend.title = element_text(size = 15), legend.position = "top") +
@@ -71,7 +71,7 @@ metaIDEA <- function(IDEAdata){
     ggplot2::guides(alpha = FALSE)+
     ggplot2::geom_col(color = "black") +
     ggplot2::geom_text(ggplot2::aes(x = id_exploit, y = dimension_value,label = label),position = ggplot2::position_stack(vjust = 0.5)) +
-    ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#469FF9","Economique"="#FE962B"))  +
+    ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#469FF9","Economique"="#FE962B"),drop = FALSE)  +
     ggplot2::theme_bw()+
     ggplot2::ylim(0,300)+
     ggplot2::labs(x = "Exploitation", y = "Score", fill = "Evaluation") +
