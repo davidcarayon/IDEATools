@@ -15,23 +15,20 @@ radarPlots <- function(IDEAdata){
 
   singleplots <- function(res_dim){
 
-    indicateurs_ancrage <- c("B10","B3","B9","B8","B7","B6","B15","B14","B19")
-    indicateurs_autonomie <- c("B13","B15","B18","B8","C5","C3","C6","A7","A8","A6")
-    indicateurs_robustesse <- c("A1","A3","A4","A14","C5","C4","C7","A2","C8","C9","A15","B22","B13","B15","B18","B16")
-    indicateurs_responsabilite <- c("B20","B5","B19","B11","B1","B2","B4","A10","A9","A11","C11","B17","B14","B16","B21","B23","A5","A16","A17","A18","A19","B12")
-    indicateurs_capacite <- c("A5","A12","A13","B14","B15","B16","B13","B18","B1","B3","C1","C2","C3","C10")
+
 
     prop_radar <- res_dim %>%
-      dplyr::mutate(Propriete = dplyr::case_when(indicateur %in% indicateurs_ancrage ~ "Ancrage Territorial",
-                                                 indicateur %in% indicateurs_autonomie ~ "Autonomie",
-                                                 indicateur %in% indicateurs_robustesse ~ "Robustesse",
-                                                 indicateur %in% indicateurs_responsabilite ~ "Responsabilité globale",
-                                                 indicateur %in% indicateurs_capacite ~ "Capacité productive et reproductive \nde biens et de services"))  %>%
+      dplyr::mutate(Propriete = dplyr::case_when(indicateur %in% indicateurs_proprietes$indicateurs_ancrage ~ "Ancrage Territorial",
+                                                 indicateur %in% indicateurs_proprietes$indicateurs_autonomie ~ "Autonomie",
+                                                 indicateur %in% indicateurs_proprietes$indicateurs_robustesse ~ "Robustesse",
+                                                 indicateur %in% indicateurs_proprietes$indicateurs_responsabilite ~ "Responsabilité globale",
+                                                 indicateur %in% indicateurs_proprietes$indicateurs_capacite ~ "Capacité productive et reproductive \nde biens et de services"))  %>%
       dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>%
       dplyr::mutate(num_indic = readr::parse_number(indicateur)) %>%
       dplyr::arrange(dplyr::desc(dimension),num_indic) %>%
+      dplyr::inner_join(list_max, by = "indicateur") %>%
+      dplyr::mutate(score_ind = round(value/valeur_max*100,0)) %>%
       dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur)))
-
 
     splotlist <- list()
 
@@ -110,24 +107,24 @@ radarPlots <- function(IDEAdata){
 
   }
 
-  if(IDEAdata$analysis.type == "single") {
+  if(IDEAdata$input.type == "single") {
     res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
     label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
     return_plot <- list()
-    nom <- unique(res_dim$nom_exploit)
+    nom <- unique(res_dim$id_exploit)
     return_plot[[nom]] <- singleplots(res_dim)
 
   }
 
-  if(IDEAdata$analysis.type == "multi") {
-    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(nom_exploit) %>% tidyr::nest()
+  if(IDEAdata$input.type == "folder") {
+    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(id_exploit) %>% tidyr::nest()
     label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
 
     return_plot <- purrr::map(res_dim$data, singleplots)
-    names(return_plot) <- res_dim$nom_exploit
+    names(return_plot) <- res_dim$id_exploit
   }
 
-  return_plot$analysis.type = IDEAdata$analysis.type
+  return_plot$input.type = IDEAdata$input.type
   return_plot$plot.type <- "radar"
   return(return_plot)
 

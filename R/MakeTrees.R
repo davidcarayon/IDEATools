@@ -62,8 +62,8 @@ MakeTrees <- function(IDEAdata){
       rect_style <- tab_rect$rect_style
 
       tab_to_color <- IDEAdata$nodes[[prop]] %>%
-        dplyr::filter(nom_exploit == nom) %>%
-        tidyr::gather(key = indicateur, value = resultat,-nom_exploit) %>%
+        dplyr::filter(id_exploit == nom) %>%
+        tidyr::gather(key = indicateur, value = resultat,-id_exploit) %>%
         dplyr::mutate(indicateur = replace_indicateur(indicateur)) %>%
         dplyr::inner_join(tab_rect, by = "indicateur") %>%
         dplyr::mutate(color = replace_col(resultat)) %>%
@@ -110,25 +110,25 @@ MakeTrees <- function(IDEAdata){
   }
 
   ## On recence les exploitations
-  nom <- unique(IDEAdata$dataset$nom_exploit)
+  nom <- unique(IDEAdata$dataset$id_exploit)
 
   ## Si il n'y a qu'une seule exploitation, le résultat est simple
-  if(IDEAdata$analysis.type == "single") {
+  if(IDEAdata$input.type == "single") {
     result <- list()
     result[[nom]] <- draw_trees(IDEAdata, nom)
-    result$analysis.type = IDEAdata$analysis.type
+    result$input.type = IDEAdata$input.type
     result$plot.type <- "tree"
     return(result)
   }
 
   ## Sinon, on lance une petite boucle
-  if(IDEAdata$analysis.type == "multi") {
+  if(IDEAdata$input.type == "folder") {
 
     result <- list()
     for(i in nom) {
       result[[i]] <- draw_trees(IDEAdata,nom = i)
     }
-    result$analysis.type = IDEAdata$analysis.type
+    result$input.type = IDEAdata$input.type
     result$plot.type <- "tree"
 
     return(result)

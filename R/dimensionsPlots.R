@@ -19,19 +19,18 @@ dimensionsPlots <- function(IDEAdata){
 
     dim_dimensions <- res_dim %>%
       dplyr::group_by(dimension) %>%
-      dplyr::summarise(score_dim = unique(score_dim), max_dim = 100) %>%
+      dplyr::summarise(dimension_value = unique(dimension_value), max_dim = 100) %>%
       dplyr::ungroup() %>%
-      dplyr::arrange(dplyr::desc(dimension)) %>%
       dplyr::mutate(dimension = factor(dimension, levels = c("Agroécologique","Socio-Territoriale","Economique")))
 
-    critiq <- min(res_dim$score_dim)
+    critiq <- min(res_dim$dimension_value)
 
-    splotlist$dimensions <- ggplot2::ggplot(dim_dimensions,ggplot2::aes(x = dimension, y = score_dim, group = factor(dimension))) +
+    splotlist$dimensions <- ggplot2::ggplot(dim_dimensions,ggplot2::aes(x = dimension, y = dimension_value, group = factor(dimension))) +
       ggplot2::geom_bar(ggplot2::aes(x = dimension, y = max_dim,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_hline(yintercept = critiq, color = "red", size = 1.5, linetype = 5)+
       ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#5077FE","Economique"="#FE962B")) +
-      ggplot2::geom_label(ggplot2::aes(label = paste0(score_dim,"/",max_dim)), fill = "white", size = 5) +
+      ggplot2::geom_label(ggplot2::aes(label = paste0(dimension_value,"/",max_dim)), fill = "white", size = 5) +
       ggplot2::theme(axis.line = ggplot2::element_blank())+
       ggplot2::theme_bw()+
       ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "grey75")) +
@@ -48,22 +47,35 @@ dimensionsPlots <- function(IDEAdata){
 
 
 
+
+
+    ae_levels  <- c("Diversité fonctionnelle","Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie","Sobriété dans l'utilisation des ressources","Assurer des conditions favorables à la production\n à moyen et long terme","Réduire les impacts sur la santé humaine et les écosystèmes")
+
+    st_levels <- c("Alimentation","Développement local \net économie circulaire","Emploi et qualité au travail","Ethique et développement humain")
+
+    ec_levels <- c("Viabilité économique et financière","Indépendance","Transmissibilité","Efficience globale")
+
+
+    glob_levels <- c(ae_levels,st_levels,ec_levels)
+
+
     dim_compo <- res_dim %>%
+      dplyr::inner_join(list_max_compo, by = "composante") %>%
       dplyr::mutate(dim = sub("^([[:alpha:]]*).*", "\\1", indicateur)) %>%
       dplyr::mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
                                         yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante)) %>%
       dplyr::mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
                                         yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante)) %>%
       dplyr::group_by(composante) %>%
-      dplyr::summarise(dim = unique(dim),dimension = unique(dimension),valeur_compo = unique(valeur_compo), max_compo = unique(max_compo)) %>%
+      dplyr::summarise(dim = unique(dim),max_compo = unique(max_compo),dimension = unique(dimension),composante_value = unique(composante_value)) %>%
       dplyr::ungroup() %>%
       dplyr::arrange(dplyr::desc(dim)) %>%
-      dplyr::mutate(composante = factor(composante, levels = unique(composante)))
+      dplyr::mutate(composante = factor(composante, levels = rev(glob_levels)))
 
-    splotlist$composantes <- ggplot2::ggplot(dim_compo,ggplot2::aes(x = composante, y = valeur_compo, group = factor(dimension))) +
+    splotlist$composantes <- ggplot2::ggplot(dim_compo,ggplot2::aes(x = composante, y = composante_value, group = factor(dimension))) +
       ggplot2::geom_bar(ggplot2::aes(x = composante, y = max_compo,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
       ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
-      ggplot2::geom_label(ggplot2::aes(label = paste0(valeur_compo,"/",max_compo)), fill = "white", size = 5.5)+
+      ggplot2::geom_label(ggplot2::aes(label = paste0(composante_value,"/",max_compo)), fill = "white", size = 5.5)+
       ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#5077FE","Economique"="#FE962B")) +
       ggplot2::theme(axis.line = ggplot2::element_blank())+
       ggplot2::theme_bw()+
@@ -79,8 +91,7 @@ dimensionsPlots <- function(IDEAdata){
       ggplot2::coord_flip()
 
     dim_indic <- res_dim %>%
-      mutate(composante = recode(composante,"Bouclage de flux \r\nde matières et d'énergie \r\npar une recherche d'autonomie"="Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
-                                 "Développement local \r\net économie circulaire" = "Développement local \net économie circulaire")) %>%
+      dplyr::inner_join(list_max_compo, by = "composante") %>%
       dplyr::inner_join(label_nodes, by = c("indicateur"="code_indicateur", "composante", "dimension")) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
@@ -91,24 +102,39 @@ dimensionsPlots <- function(IDEAdata){
                                         yes = "Réduire les impacts sur la santé humaine\n et les écosystèmes", no = composante)) %>%
       dplyr::mutate(nom_indicateur = wrapit(nom_complet)) %>%
       dplyr::ungroup() %>%
+      dplyr::inner_join(list_max, by = "indicateur") %>%
       dplyr::filter(indicateur %in% liste_indicateurs)  %>%
       dplyr::mutate(num_indic = readr::parse_number(indicateur)) %>%
       dplyr::arrange(dplyr::desc(dimension),dplyr::desc(num_indic)) %>%
       dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur))) %>%
       dplyr::mutate(nom_indicateur = factor(nom_indicateur, levels = unique(nom_indicateur))) %>%
-      dplyr::mutate(composante = paste0("Composante : ",composante)) %>%
       dplyr::mutate(dimension2 = dimension) %>%
       dplyr::group_by(dimension2) %>%
       tidyr::nest()
 
 
-    indic_plot <- function(df){
-      ggplot2::ggplot(df, ggplot2::aes(x = nom_indicateur, y = valeur, fill = dimension)) +
+    indic_plot <- function(dimension2,df){
+
+
+      if(dimension2 == "Socio-Territoriale"){lev = st_levels}
+      if(dimension2 == "Economique"){lev = ec_levels}
+      if(dimension2 == "Agroécologique"){lev = c("Diversité fonctionnelle","Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie","Sobriété dans l'utilisation des ressources","Assurer des conditions favorables à la production\n à moyen et long terme","Réduire les impacts sur la santé humaine\n et les écosystèmes")}
+
+      df <- df %>%
+        dplyr::mutate(composante = factor(composante, levels = rev(lev))) %>%
+        dplyr::mutate(code_compo = as.numeric(composante)) %>%
+        dplyr::mutate(composante = paste0("Composante : ",composante, " (",composante_value,"/",max_compo,")")) %>%
+        dplyr::arrange(code_compo) %>%
+        dplyr::mutate(composante = factor(composante, levels = rev(unique(composante))))
+
+
+
+      ggplot2::ggplot(df, ggplot2::aes(x = nom_indicateur, y = value, fill = dimension)) +
         ggplot2::geom_bar(ggplot2::aes(x = nom_indicateur, y = valeur_max,fill = dimension), alpha = 0.3,color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
         ggplot2::geom_bar(ggplot2::aes(fill = dimension), color = "black", position = ggplot2::position_dodge(width = 0.8),stat = "identity")+
         ggplot2::facet_wrap(~composante, ncol = 1, scales = "free_y")+
         ggplot2::scale_fill_manual(values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B"))+
-        ggplot2::geom_label(ggplot2::aes(label = paste0(valeur,"/",valeur_max)), fill = "white", size = 5)+
+        ggplot2::geom_label(ggplot2::aes(label = paste0(value,"/",valeur_max)), fill = "white", size = 5)+
         ggplot2::theme(axis.line = ggplot2::element_blank())+
         ggplot2::theme_bw()+
         ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "grey75")) +
@@ -124,35 +150,33 @@ dimensionsPlots <- function(IDEAdata){
         ggplot2::coord_flip()
     }
 
-    list_indicators <- purrr::map(dim_indic$data, indic_plot)
+    list_indicators <- purrr::map2(dim_indic$dimension2,dim_indic$data, indic_plot)
     names(list_indicators) <- paste0("indic_",unique(dim_indic$dimension2))
-
-
 
     return(c(splotlist,list_indicators))
 
   }
 
-  if(IDEAdata$analysis.type == "single") {
+  if(IDEAdata$input.type == "single") {
     res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
     label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
     return_plot <- list()
-    nom <- unique(res_dim$nom_exploit)
+    nom <- unique(res_dim$id_exploit)
     return_plot[[nom]] <- singleplots(res_dim)
 
   }
 
-  if(IDEAdata$analysis.type == "multi") {
-    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(nom_exploit) %>% tidyr::nest()
+  if(IDEAdata$input.type == "folder") {
+    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(id_exploit) %>% tidyr::nest()
     label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
 
     return_plot <- purrr::map(res_dim$data, singleplots)
-    names(return_plot) <- res_dim$nom_exploit
+    names(return_plot) <- res_dim$id_exploit
 
 
   }
 
-  return_plot$analysis.type = IDEAdata$analysis.type
+  return_plot$input.type = IDEAdata$input.type
   return_plot$plot.type <- "dim"
   return(return_plot)
 

@@ -60,9 +60,7 @@ anon = params$anon
 IDEAresdim <- IDEATools::dimensionsPlots(IDEAdata)
 IDEAresprop <- IDEATools::MakeTrees(IDEAdata)
 IDEAresrad <- IDEATools::radarPlots(IDEAdata)
-# IDEATools::exportIDEA(IDEAresdim,outdir = outdir)
-# IDEATools::exportIDEA(IDEAresrad,outdir = outdir)
-# IDEATools::exportIDEA(IDEAresprop, outdir = outdir)
+
 res_prop <- IDEAdata$dataset
 res_dim <- IDEAdata$dataset
 metadata <- IDEAdata$metadata
@@ -72,23 +70,16 @@ nodes <- IDEAdata$nodes
 
 
 ```{r results = "asis"}
-nom_files <- nodes$Global$nom_exploit[[1]]
+nom_files <- metadata$MTD_01
 cat(paste0("\\fancyfoot[L]{Exploitation : ",nom_files,"}"))
 ```
 
-\vspace{+3cm}
 \Large
 
 ```{r}
 if (anon == FALSE) {
   
-  names(metadata) = c("nom","A", "B")
-  
-  metadata <- metadata %>% filter(A %in% c("NOM Prénom :","Département :","Type d'exploitation :","Forme sociétaire :","SAU (hors forêt) :")) %>% 
-    mutate(B = ifelse(A == "SAU (hors forêt) :", yes = round(as.numeric(B)) %>% as.character(), no = B))
-
-  names(metadata) = c(" ", "  ","   ")
-  knitr::kable(metadata[,2:3])
+knitr::kable(metadata %>% gather(key = code, value = valeur) %>% inner_join(MTD_legende, by ="code") %>% select(Métadonnée = nom, Valeur = valeur) %>% slice(1:7))
   
   }
 ```
@@ -102,7 +93,7 @@ if (anon == FALSE) {
 \Large
 
 ```{r}
-min_val <- min(res_dim$score_dim)
+min_val <- min(res_dim$dimension_value)
 ```
 
 La note d'IDEA4 obtenue pour cette exploitation est de **`r min_val` / 100**.
@@ -146,7 +137,7 @@ print(IDEAresdim[[1]]$indic_Economique + theme(panel.spacing = unit(1, "lines"))
 ## Arbres éclairé des propriétés
 
 ```{r}
-v <- nodes$Global$nom_exploit[[1]] %>% stringr::str_replace_all(" ","_")
+v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
 ```
 
 \rotatebox{270}{
@@ -221,23 +212,3 @@ print(plist[["Responsabilité globale"]])
 print(plist[["Robustesse"]])
 ```
 
-<!-- \newpage -->
-
-<!-- # Légende -->
-
-<!-- \footnotesize -->
-
-<!-- ```{r} -->
-<!-- label_nodes %>% select(`Code Indicateur`=code_indicateur, `Nom Indicateur`=nom_indicateur, Niveau = level, Dimension = dimension, Composante = composante, dim) %>% -->
-<!--   mutate(no_code = parse_number(`Code Indicateur`)) %>% -->
-<!--   mutate(Niveau = factor(Niveau, levels = c("indicateur","noeud","branche","propriete"))) %>% -->
-<!--   arrange(Niveau,dim,no_code) %>% -->
-<!--   mutate(Dimension = as.character(Dimension)) %>% -->
-<!--   select(-dim, -no_code) %>% -->
-<!--   mutate(Composante = str_remove_all(Composante,"\\n")) %>% -->
-<!--   select(-Composante) %>% -->
-<!--   mutate(Dimension =ifelse(is.na(Dimension),yes = " ",no = Dimension)) %>% -->
-<!--   filter(Niveau == "indicateur") %>% -->
-<!--   select(-Niveau) %>% -->
-<!--   knitr::kable() -->
-<!-- ``` -->
