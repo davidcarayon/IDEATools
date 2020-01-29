@@ -1,6 +1,6 @@
-#' Export IDEA related plots
+#' Export IDEA related plots to local folder
 #'
-#' @param IDEAres output of IDEA plotting functions (either `Maketree()` or `dimensionPlots()`)
+#' @param IDEAres output of any IDEA plotting functions (either `Maketree()`, `dimensionPlots()` or `radarPlots()`)
 #' @param outdir the output directory
 #'
 #' @return Exports plots in png/pdf format in the selected output directory
@@ -8,7 +8,7 @@
 #' @export
 #' @examples
 #' library(IDEATools)
-#' path <- system.file("example.xls", package = "IDEATools")
+#' path <- system.file("example_json.json", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- dimensionsPlots(IDEAdata)
 #' exportIDEA(IDEAres, outdir = "tmp")
@@ -134,6 +134,41 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
     }
 
     purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heights, tab_res$folder,tab_res$png_path), .f = export_radarplot)
+
+
+
+  }
+
+  # meta plots ---------------------------------------------------------
+  if (IDEAres$plot.type == "meta") {
+
+
+    n_exploit <- IDEAres$n_exploit
+
+    dimension_res <- list(
+      metaProp = c(1.49*n_exploit,6.82),
+      metaIndic = c(1.26*n_exploit,10),
+      metaDim = c(1.5*n_exploit, 8.61)
+    )
+
+
+    tab_res <- tibble::tibble(plotname = names(IDEAres), plot = IDEAres) %>%
+      dplyr::filter(!plotname %in% c("input.type","plot.type","n_exploit")) %>%
+      dplyr::mutate(plotname = dplyr::recode(plotname,"metaProp"="Matrice_Propriétés","metaIndic"="Matrice_Indicateurs","metaDim"="Hist_Dimensions")) %>%
+      dplyr::mutate(widths = c(1.49,1.26,1.5)*n_exploit,
+                    heights = c(6.82,10,8.61)) %>%
+      dplyr::mutate(plotname = stringr::str_replace_all(plotname," ","_")) %>%
+      dplyr::mutate(folder = file.path(outdir,plotname)) %>%
+      dplyr::mutate(path = file.path(outdir,plotname)) %>%
+      dplyr::mutate(png_path = glue::glue("{path}.png"))
+
+    export_metaplot <- function(plotname,plot,widths, heights, png_path) {
+
+      print(plot) %>%
+        ggplot2::ggsave(filename=png_path,dpi = "retina", width = widths, height = heights)
+    }
+
+    purrr::pwalk(.l = list(tab_res$plotname,tab_res$plot,tab_res$widths,tab_res$heights,tab_res$png_path), .f = export_metaplot)
 
 
 

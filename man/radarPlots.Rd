@@ -17,7 +17,7 @@ Generate adequate plots for the property approach of the IDEA method
 }
 \examples{
 library(IDEATools)
-path <- system.file("example.xls", package = "IDEATools")
+path <- system.file("example_json.json", package = "IDEATools")
 IDEAdata <- importIDEA(path, anonymous = FALSE)
 IDEAres <- radarPlots(IDEAdata)
 }

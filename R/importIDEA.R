@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' library(IDEATools)
-#' path <- system.file("example.xls", package = "IDEATools")
+#' path <- system.file("example_json.json", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 importIDEA <- function(input, anonymous = FALSE){
 

@@ -2,12 +2,12 @@
 % Please edit documentation in R/exportIDEA.R
 \name{exportIDEA}
 \alias{exportIDEA}
-\title{Export IDEA related plots}
+\title{Export IDEA related plots to local folder}
 \usage{
 exportIDEA(IDEAres, outdir = paste0("RES_", Sys.Date()))
 }
 \arguments{
-\item{IDEAres}{output of IDEA plotting functions (either `Maketree()` or `dimensionPlots()`)}
+\item{IDEAres}{output of any IDEA plotting functions (either `Maketree()`, `dimensionPlots()` or `radarPlots()`)}
 
 \item{outdir}{the output directory}
 }
@@ -15,11 +15,11 @@ exportIDEA(IDEAres, outdir = paste0("RES_", Sys.Date()))
 Exports plots in png/pdf format in the selected output directory
 }
 \description{
-Export IDEA related plots
+Export IDEA related plots to local folder
 }
 \examples{
 library(IDEATools)
-path <- system.file("example.xls", package = "IDEATools")
+path <- system.file("example_json.json", package = "IDEATools")
 IDEAdata <- importIDEA(path, anonymous = FALSE)
 IDEAres <- dimensionsPlots(IDEAdata)
 exportIDEA(IDEAres, outdir = "tmp")

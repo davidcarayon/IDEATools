@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' library(IDEATools)
-#' path <- system.file("example.xls", package = "IDEATools")
+#' path <- system.file("example_json.json", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- dimensionsPlots(IDEAdata)
 dimensionsPlots <- function(IDEAdata){
