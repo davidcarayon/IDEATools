@@ -186,6 +186,13 @@ knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques",
 ```
 \end{minipage}}
 
+\rotatebox{270}{
+\begin{minipage}{\textheight}
+```{r fig.cap= "Vision globale de la lecture par les propriétés avec focus sur les premières branches"}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Global_zoom.pdf"))
+```
+\end{minipage}}
+
 ## Diagamme radar des scores obtenus au sein de chaque propriété
 
 ```{r} 

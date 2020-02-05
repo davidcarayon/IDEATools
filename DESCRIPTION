@@ -1,7 +1,7 @@
 Package: IDEATools
 Type: Package
 Title: R computing tools for the IDEA method
-Version: 0.1.0
+Version: 1.0
 Authors@R: c(
     person("David", "Carayon", email = "david.carayon@irstea.fr", role = c("aut", "cre")))
 Maintainer: David Carayon <david.carayon@irstea.fr>

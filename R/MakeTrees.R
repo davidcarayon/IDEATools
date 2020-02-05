@@ -18,7 +18,7 @@ MakeTrees <- function(IDEAdata){
 
     return_list <- list()
 
-    for (prop in names(IDEAdata$nodes)){
+    for (prop in c(names(IDEAdata$nodes),"Global_zoom")){
 
       liste_indicateurs_prop <- switch(prop,
                                        "Ancrage"=c("B10","B3","B9","B8","B7","B6","B15","B14","B19","AN4","AN2","AN1","AN5","AN3"),
@@ -31,7 +31,8 @@ MakeTrees <- function(IDEAdata){
                                          "A5","A12","A13","B14","B15","B16","B13","B18","B1","B3","C1","C2","C3","C10","CP2","CP3","CP8","CP1","CP4","CP5","CP6","CP7","CP9","CP10",
                                          "A1","A3","A4","A14","C5","C4","C7","A2","C8","C9","A15","B22","B13","B15","B18","B16","R1","R2","R3","R4","R5","R6","R7","R8","R9","R10",
                                          "B20","B5","B19","B11","B1","B2","B4","A10","A9","A11","C11","B17","B14","B16","B21","B23","A5","A16","A17","A18","A19","B12","RG1","RG2","RG3","RG5","RG6","RG8","RG9","RG10","RG12","RG13","RG4","RG7","RG11","RG14","RG15",
-                                         "B10","B3","B9","B8","B7","B6","B15","B14","B19","AN4","AN2","AN1","AN5","AN3")
+                                         "B10","B3","B9","B8","B7","B6","B15","B14","B19","AN4","AN2","AN1","AN5","AN3"),
+                                       "Global_zoom" = c("R2","R7","R9","CP7","CP9","AU3","AU4","AU5","RG4","RG7","RG11","RG14","AN1","AN2","AN4","R10","CP10","AU6","RG15","AN5")
       )
 
 
@@ -43,7 +44,8 @@ MakeTrees <- function(IDEAdata){
                           "Autonomie" = 16,
                           "Robustesse" = 26,
                           "Responsabilité" = 37,
-                          "Capacité" = 24)
+                          "Capacité" = 24,
+                          "Global_zoom"=20)
 
       ## Numéros des lignes où on a un rect qui s'ouvre
       rect_no <- which(stringr::str_detect(car, "    <rect") == TRUE)[1:span_rect]
@@ -61,7 +63,9 @@ MakeTrees <- function(IDEAdata){
 
       rect_style <- tab_rect$rect_style
 
-      tab_to_color <- IDEAdata$nodes[[prop]] %>%
+      filter_prop <- ifelse(prop == "Global_zoom", yes = "Global", no = prop)
+
+      tab_to_color <- IDEAdata$nodes[[filter_prop]] %>%
         dplyr::filter(id_exploit == nom) %>%
         tidyr::gather(key = indicateur, value = resultat,-id_exploit) %>%
         dplyr::mutate(indicateur = replace_indicateur(indicateur)) %>%

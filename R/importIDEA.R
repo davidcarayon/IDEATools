@@ -992,6 +992,10 @@ importFromFile <- function(file){
     dplyr::inner_join(node_41, by = c("id_exploit", "B16", "B1", "A5", "B14")) %>%
     dplyr::inner_join(node_46, by = c("id_exploit", "B15", "B3", "B14", "B8", "B19"))
 
+
+
+
+
   end_nodes <- list("Robustesse" = node_10, "Capacité" = node_20, "Autonomie" = node_26, "Responsabilité" = node_41, "Ancrage" = node_46, Global = node_final)
 
   ## On supprime les noeuds intermédiaires

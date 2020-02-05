@@ -69,7 +69,8 @@ ui = dashboardPage(skin = "blue",
                                           menuSubItem("Capacité Productive",tabName = "cp", icon = icon("sitemap")),
                                           menuSubItem("Responsabilité Globale",tabName = "rg", icon = icon("sitemap")),
                                           menuSubItem("Ancrage Territorial",tabName = "an", icon = icon("sitemap")),
-                                          menuSubItem("Global",tabName = "global", icon = icon("sitemap"))),
+                                          menuSubItem("Global",tabName = "global", icon = icon("sitemap")),
+                                          menuSubItem("Global avec focus",tabName = "global_zoom", icon = icon("sitemap"))),
                                  menuItem("Légende",tabName = "legende",icon = icon("book")))
                    )),
 
@@ -129,7 +130,7 @@ ui = dashboardPage(skin = "blue",
                                    infoBoxOutput("prop4", width = 3),
                                    infoBoxOutput("prop3", width = 3),
                                    width = 12, height = 200,
-                                   footer = uiOutput("globalfooter")),
+                                   footer = uiOutput("globalfooter", inline = TRUE)),
 
                                # Emplacement des 3 liens de téléchargement (rapport imprimable, éditable et le .zip) avec un espace vertical entre
                                fluidRow(),HTML("<br>"),
@@ -171,6 +172,11 @@ ui = dashboardPage(skin = "blue",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("global_tree")), width = 12, height = "1000px")),
+
+                       tabItem(tabName = "global_zoom",
+                               box(
+                                 div(style="display:inline-block;width:100%;text-align: center;",
+                                     imageOutput("global_zoom_tree")), width = 12, height = "1000px")),
 
 
                        ## Composantes
@@ -326,6 +332,9 @@ server = function(input, output, session) {
 
 
   })
+
+
+
   output$dimfooter<- renderText({
 
     inFile <- input$files
@@ -608,6 +617,26 @@ server = function(input, output, session) {
          class="center")
   })
 
+  output$global_zoom_tree <- renderImage({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return(box())
+
+    val <- IDEAdata()$metadata$MTD_01
+    v <- stringr::str_replace_all(val, " ", "_")
+
+    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Global_zoom.png")
+
+    list(src = normalizePath(outfile),
+         contentType = 'image/png',
+         width = 1300,
+         height = 890,
+         alt = "Global zoom",
+         class="center")
+  })
+
   #### Boutons clickables propriétés <-> arbres
   observeEvent(input$button_box_01, {
     newtab <- "robustesse"
@@ -732,7 +761,7 @@ server = function(input, output, session) {
         # case we don't have write permissions to the current working dir (which
         # can happen when deployed).
         tempReport <- file.path(tempdir(), "rapport_individuel.Rmd")
-        template <- system.file("myApp/rapport_individuel2.Rmd", package = "IDEATools")
+        template <- system.file("myApp/rapport_individuel.Rmd", package = "IDEATools")
         file.copy(template, tempReport, overwrite = TRUE)
         # setwd(tempdir())
 

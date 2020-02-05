@@ -41,7 +41,8 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
         Autonomie = c(1439,951),
         Responsabilité=c(1439,951),
         Ancrage= c(1439,951),
-        Global=c(1984,1403)
+        Global=c(1984,1403),
+        Global_zoom = c(1670, 1192)
       )
 
       dim = heuristic_res[[prop]]
