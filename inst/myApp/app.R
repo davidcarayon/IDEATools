@@ -310,7 +310,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return(
 
-        h1(tags$b(div(style="display:inline-block;width:100%;text-align: left;","\U2190 Pour démarrer l'application, charger un calculateur au format .xls ou .xlsx")))
+        h1(tags$b(div(style="display:inline-block;width:100%;text-align: left;","\U2190 Pour démarrer l'application, charger un calculateur au format .xls(x) ou .json")))
       )
 
     dim <- IDEAdata()
@@ -748,7 +748,10 @@ server = function(input, output, session) {
   output$report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
 
-    filename = "rapport_individuel.pdf",
+    filename = function() {
+      v <- IDEAdata()$metadata$MTD_01 %>%  stringr::str_replace_all(" ", "_")
+      paste0("Rapport_IDEA4_",v, ".pdf")
+    },
 
     content = function(file) {
 

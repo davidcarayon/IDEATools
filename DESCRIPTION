@@ -1,12 +1,11 @@
 Package: IDEATools
 Type: Package
-Title: R computing tools for the IDEA method
+Title: Ressources et outils pour le traitement de données IDEA4 sous R
 Version: 1.0
 Authors@R: c(
     person("David", "Carayon", email = "david.carayon@irstea.fr", role = c("aut", "cre")))
-Maintainer: David Carayon <david.carayon@irstea.fr>
-Description: This package provides a set of tools for computing IDEA data records in an R environment.
-    Functions in this package allow to extract data from IDEA4 excel files and convert them to dataframes, drawing heuristic maps and other various plots for reporting. 
+Maintainer: David Carayon <david.carayon@inrae.fr>
+Description: L'objectif du package IDEATools est de proposer des outils et ressources mobilisables sous R afin de manipuler des données issues d'enquêtes réalisées dans le cadre de la méthode IDEA4, notamment les restitutions graphiques en lien avec l'approche par les propriétés de la durabilité. Ce package est également le support d'un applicatif interactif web basé sur la librairie "Shiny", destiné à proposer une interface simple et intuitive à tout utilisateur non inité à R. 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
