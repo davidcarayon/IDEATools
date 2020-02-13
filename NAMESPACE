@@ -2,10 +2,12 @@
 
 export("%>%")
 export(MakeTrees)
+export(QueryWebIDEA)
 export(dimensionsPlots)
 export(exportIDEA)
 export(importIDEA)
 export(metaIDEA)
 export(radarPlots)
 export(runIDEATool)
+export(runWebIDEA)
 importFrom(magrittr,"%>%")
