@@ -4,7 +4,8 @@
 \alias{QueryWebIDEA}
 \title{Query the WEBIDEA database}
 \usage{
-QueryWebIDEA(user = "postgres", password = "", id_organisme = 1,
+QueryWebIDEA(user = "idea_v4_user_readonly",
+  password = "idea_v4_user_readonly_password", id_organisme = 1,
   id_dossier = "654321", annee = 2009)
 }
 \arguments{

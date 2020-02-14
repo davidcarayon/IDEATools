@@ -2,10 +2,9 @@ library(shiny)
 library(shinydashboard)
 library(IDEATools)
 
-ui <- dashboardPage(skin = "yellow",
+ui <- dashboardPage(skin = "black",
     dashboardHeader(title="Production de cartes heuristiques", titleWidth = 350),
     dashboardSidebar(width = 350,
-                     passwordInput("password", "Saisir le mot de passe :"),
                      numericInput("organisme","Saisir l'identifiant de l'organisme", value = 1),
                      textInput("dossier", "Saisir le numéro de dossier", value = "654321"),
                      numericInput("annee","Saisir l'année", value = 2009),
@@ -13,9 +12,6 @@ ui <- dashboardPage(skin = "yellow",
     dashboardBody(
         box(
         div(style="display:inline-block;width:100%;text-align: center;",imageOutput("global_zoom_tree")),height = "900px",width = 12), uiOutput("dl")
-
-
-
         )
 )
 
@@ -23,9 +19,8 @@ server <- function(input, output) {
 
     outdir <- tempdir(getwd())
 
-
     databdd <- eventReactive(input$connect,{
-        d <- QueryWebIDEA(password = input$password, id_organisme = input$organisme,id_dossier = input$dossier,annee = input$annee)
+        d <- QueryWebIDEA(id_organisme = input$organisme,id_dossier = input$dossier,annee = input$annee)
 
         if(nrow(d$dataset) == 0) {return(NULL)}
 
@@ -93,7 +88,7 @@ output$dl <- renderUI({
 
         filename = function() {
             v <- databdd()$metadata$MTD_01 %>%  stringr::str_replace_all(" ", "_")
-            paste0("Cartes_heuristiques_",v, ".zip")
+            paste0("Cartes_heuristiques_",input$dossier,"_",input$annee, ".zip")
         },
 
         content = function(fname) {

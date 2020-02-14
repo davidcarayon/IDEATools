@@ -16,7 +16,7 @@
 #' library(IDEATools)
 #' path <- system.file("example_json.json", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
-QueryWebIDEA <- function(user = "postgres", password = "",id_organisme = 1,id_dossier = "654321",annee = 2009){
+QueryWebIDEA <- function(user = "idea_v4_user_readonly", password = "idea_v4_user_readonly_password",id_organisme = 1,id_dossier = "654321",annee = 2009){
 
 id_dossier = paste0("'",id_dossier,"'")
 
@@ -28,7 +28,7 @@ BDD_IDEA <- DBI::dbConnect(RPostgres::Postgres(),dbname = "idea_v4_db",host="194
 custom_query <- paste0("SELECT i.code, v.valeur FROM valeur_indicateur v JOIN indicateur i ON v.indicateur_id = i.id WHERE v.organisme_id = ",id_organisme," AND v.dossier = ",id_dossier," AND v.annee = ",annee," ORDER BY i.code")
 
 ## Requête
-test <- DBI::dbGetQuery(BDD_IDEA,custom_query) %>% dplyr::tbl_df() %>%
+IDEAQuery <- DBI::dbGetQuery(BDD_IDEA,custom_query) %>% dplyr::tbl_df() %>%
   dplyr::filter(code %in% filtre_json) %>%
   dplyr::mutate(type_indicateur = ifelse(stringr::str_detect(code,"MTD_"), yes = "metadonnees", no = "items"))
 
@@ -36,8 +36,8 @@ test <- DBI::dbGetQuery(BDD_IDEA,custom_query) %>% dplyr::tbl_df() %>%
 DBI::dbDisconnect(BDD_IDEA)
 rm(BDD_IDEA)
 
-items <- subset(test, type_indicateur == "items")
-metadonnees <- subset(test,type_indicateur == "metadonnees")
+items <- subset(IDEAQuery, type_indicateur == "items")
+metadonnees <- subset(IDEAQuery,type_indicateur == "metadonnees")
 
 res <- list(metadonnees = split(metadonnees$valeur,metadonnees$code),
      items = split(items$valeur, items$code))
