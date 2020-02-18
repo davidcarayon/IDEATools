@@ -411,8 +411,9 @@ En cas de problèmes rencontrés avec l’outil, contacter :
 
 # Références
 
-David Carayon (2020). IDEATools: Ressources et outils pour le traitement
-de données IDEA4. R package version 1.0.
+Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif pour
+le calcul, l’automatisation et l’exploitation de données IDEA4. R
+package version 1.0.
 
 Zahm et al. (2019). “Évaluer la durabilité des exploitations agricoles.
 La méthode IDEA v4, un cadre conceptuel combinant dimensions et
