@@ -9,7 +9,7 @@ Description: L'objectif du package IDEATools est de proposer des outils et resso
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Imports: 
     dplyr,
     ggplot2,
@@ -17,6 +17,7 @@ Imports:
     purrr,
     readr,
     readxl,
+    jsonlite,
     stringr,
     stringi,
     tibble,
