@@ -813,6 +813,10 @@ server = function(input, output, session) {
         setwd(outdir)
         fs <- file.path(v,list.files(file.path(outdir,v), recursive=TRUE))
 
+        fs <- setdiff(fs,fs[stringr::str_detect(fs,"Ancrage.pdf")])
+        fs <- setdiff(fs,fs[stringr::str_detect(fs,"CAP.pdf")])
+        fs <- setdiff(fs,fs[stringr::str_detect(fs,"RESP.pdf")])
+
 
         zip(zipfile = fname, files = fs)
 

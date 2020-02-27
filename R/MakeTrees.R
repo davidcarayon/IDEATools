@@ -97,14 +97,6 @@ MakeTrees <- function(IDEAdata){
         car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]],"fill:#ffffff","fill:#A0A0A0")
       }
 
-      num_title_a <- which(stringr::str_detect(car,"Exploitation anonyme")==TRUE)
-      num_title_b <- which(stringr::str_detect(car,"Nom de l'exploitation")==TRUE)
-
-      num_title <- na.omit(c(num_title_a,num_title_b))
-
-      car[num_title] <- stringr::str_replace(car[num_title],"Exploitation anonyme",nom)
-      car[num_title] <- stringr::str_replace(car[num_title],"Nom de l'exploitation",nom)
-
       return_list[[prop]] <- paste(car, collapse = "\n")
 
     }
