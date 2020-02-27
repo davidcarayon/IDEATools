@@ -65,13 +65,13 @@ ui = dashboardPage(skin = "blue",
                                           menuSubItem("Responsabilité Globale",tabName = "radar_rg", icon = icon("chart-pie")),
                                           menuSubItem("Ancrage Territorial",tabName = "radar_an", icon = icon("chart-pie"))),
                                  menuItem("Arbres éclairés", tabName = "tree", icon = icon("project-diagram"),
+                                          menuSubItem("Synthèse",tabName = "global_zoom", icon = icon("sitemap")),
                                           menuSubItem("Robustesse",tabName = "robustesse", icon = icon("sitemap")),
                                           menuSubItem("Autonomie",tabName = "autonomie", icon = icon("sitemap")),
                                           menuSubItem("Capacité Productive",tabName = "cp", icon = icon("sitemap")),
                                           menuSubItem("Responsabilité Globale",tabName = "rg", icon = icon("sitemap")),
                                           menuSubItem("Ancrage Territorial",tabName = "an", icon = icon("sitemap")),
-                                          menuSubItem("Global",tabName = "global", icon = icon("sitemap")),
-                                          menuSubItem("Global avec focus",tabName = "global_zoom", icon = icon("sitemap"))),
+                                          menuSubItem("Global",tabName = "global", icon = icon("sitemap"))),
                                  menuItem("Légende",tabName = "legende",icon = icon("book")))
                    )),
 
@@ -153,32 +153,32 @@ ui = dashboardPage(skin = "blue",
                        tabItem(tabName = "autonomie",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
-                                     imageOutput("auto_tree")), width = 12, height = "820px")),
+                                     imageOutput("auto_tree")), width = 12, height = "720px")),
 
                        tabItem(tabName = "cp",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
-                                     imageOutput("cp_tree")), width = 12, height = "820px")),
+                                     imageOutput("cp_tree")), width = 12, height = "720px")),
 
                        tabItem(tabName = "rg",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
-                                     imageOutput("rg_tree")), width = 12, height = "820px")),
+                                     imageOutput("rg_tree")), width = 12, height = "720px")),
 
                        tabItem(tabName = "an",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
-                                     imageOutput("an_tree")), width = 12, height = "830px")),
+                                     imageOutput("an_tree")), width = 12, height = "730px")),
 
                        tabItem(tabName = "global",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
-                                     imageOutput("global_tree")), width = 12, height = "1000px")),
+                                     imageOutput("global_tree")), width = 12, height = "900px")),
 
                        tabItem(tabName = "global_zoom",
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
-                                     imageOutput("global_zoom_tree")), width = 12, height = "1000px")),
+                                     imageOutput("global_zoom_tree")), width = 12, height = "900px")),
 
 
                        ## Composantes
@@ -330,7 +330,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    actionButton("glob","Consulter l'arbre global", icon = icon("sitemap"))
+    actionButton("glob","Arbre de Synthèse", icon = icon("sitemap"))
 
 
   })
@@ -521,8 +521,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1151,
-         height = 761,
+         width = 1072,
+         height = 767,
          alt = "Robustesse")
   })
   output$auto_tree <- renderImage({
@@ -539,8 +539,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1151,
-         height = 761,
+         width = 1073,
+         height = 601,
          alt = "Autonomie")
   })
   output$cp_tree <- renderImage({
@@ -558,8 +558,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1281,
-         height = 750,
+         width = 1193,
+         height = 652,
          alt = "Capacité productive")
   })
   output$rg_tree <- renderImage({
@@ -576,8 +576,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1151,
-         height = 761,
+         width = 1063,
+         height = 674,
          alt = "Responsabilité globale")
   })
   output$an_tree <- renderImage({
@@ -595,8 +595,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1151,
-         height = 761,
+         width = 1072,
+         height = 601,
          alt = "Ancrage territorial")
   })
   output$global_tree <- renderImage({
@@ -613,8 +613,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1300,
-         height = 890,
+         width = 1158,
+         height = 841,
          alt = "Global",
          class="center")
   })
@@ -633,8 +633,8 @@ server = function(input, output, session) {
 
     list(src = normalizePath(outfile),
          contentType = 'image/svg+xml',
-         width = 1300,
-         height = 890,
+         width = 1244,
+         height = 837,
          alt = "Global zoom",
          class="center")
   })
@@ -661,7 +661,7 @@ server = function(input, output, session) {
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
   observeEvent(input$glob, {
-    newtab <- "global"
+    newtab <- "global_zoom"
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
 

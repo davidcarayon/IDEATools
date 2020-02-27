@@ -58,13 +58,13 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date()), svg = FALSE)
     export_heuristic_map <- function(prop,itemlist,folder,png_path,pdf_path, svg_path){
 
       heuristic_res <- list(
-        Robustesse = c(1439,951),
-        Capacité = c(1596,934),
-        Autonomie = c(1439,951),
-        Responsabilité=c(1439,951),
-        Ancrage= c(1439,951),
-        Global=c(1984,1403),
-        Global_zoom = c(1670, 1192)
+        Robustesse = c(1072,767),
+        Capacité = c(1193,652),
+        Autonomie = c(1073,601),
+        Responsabilité=c(1063,674),
+        Ancrage= c(1072,601),
+        Global=c(1488,1052),
+        Global_zoom = c(829, 558)
       )
 
 

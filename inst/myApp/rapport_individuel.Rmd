@@ -200,7 +200,7 @@ knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",pa
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= "Arbre éclairé global de la lecture par les propriétés avec un focus sur les premières branches d'agrégation"}
+```{r fig.cap= "Synthèse de la lecture par les propriétés avec un focus sur les premières branches d'agrégation"}
 knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global_zoom.pdf")))
 ```
 \end{minipage}}
