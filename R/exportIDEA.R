@@ -2,8 +2,9 @@
 #'
 #' @param IDEAres output of any IDEA plotting functions (either `Maketree()`, `dimensionPlots()` or `radarPlots()`)
 #' @param outdir the output directory
+#' @param svg Should a svg output be exported for trees ?
 #'
-#' @return Exports plots in png/pdf format in the selected output directory
+#' @return Exports plots in png/pdf/svg format in the selected output directory
 #' @importFrom magrittr %>%
 #' @export
 #' @examples
@@ -12,7 +13,7 @@
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- dimensionsPlots(IDEAdata)
 #' exportIDEA(IDEAres, outdir = "tmp")
-exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
+exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date()), svg = FALSE) {
 
   # On va toujours créer un dossier par exploitation
   # On stockera les graphes "meta" à la racine
@@ -22,18 +23,39 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
   # Heuristic maps ----------------------------------------------------------
   if (IDEAres$plot.type == "tree") {
 
+
+
+
+    convert_prop <- function(prop){
+      if(prop %in% c("Capacité","Responsabilité","Ancrage")) {
+
+        newprop <- dplyr::case_when(prop == "Capacité" ~ "Capacité productive et reproductive de biens et de services",
+                prop == "Responsabilité" ~ "Responsabilité globale",
+                prop == "Ancrage" ~ "Ancrage Territorial")
+
+        return(newprop)
+      } else {
+        return(prop)
+      }
+    }
+
+
     tab_res <- tibble::tibble(name = names(IDEAres), itemlist = IDEAres) %>%
       dplyr::filter(!name %in% c("input.type","plot.type")) %>%
       dplyr::mutate(prop = purrr::map(itemlist, names)) %>%
       tidyr::unnest(c(itemlist,prop)) %>%
       # dplyr::mutate(prop = stringi::stri_trans_general(prop,"Latin-ASCII")) %>%
       dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
-      dplyr::mutate(folder = file.path(outdir,name,"Propriétés","Cartes_heuristiques")) %>%
-      dplyr::mutate(path = file.path(outdir,name,"Propriétés","Cartes_heuristiques",prop)) %>%
+      dplyr::mutate(folder = file.path(outdir,name,"Propriétés","Arbres_éclairés")) %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(prop_new = convert_prop(prop)) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(path = file.path(outdir,name,"Propriétés","Arbres_éclairés",glue::glue("{name}_{prop_new}"))) %>%
+      dplyr::mutate(svg_path = glue::glue("{path}.svg")) %>%
       dplyr::mutate(png_path = glue::glue("{path}.png"),
                     pdf_path = glue::glue("{path}.pdf"))
 
-    export_heuristic_map <- function(prop,itemlist,folder,png_path,pdf_path){
+    export_heuristic_map <- function(prop,itemlist,folder,png_path,pdf_path, svg_path){
 
       heuristic_res <- list(
         Robustesse = c(1439,951),
@@ -45,17 +67,19 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
         Global_zoom = c(1670, 1192)
       )
 
-      dim = heuristic_res[[prop]]
-      ff <- charToRaw(itemlist)
 
+      dim = heuristic_res[[prop]]
 
       if (!dir.exists(folder)){dir.create(folder, recursive = TRUE)}
+      writeLines(itemlist,svg_path)
+      rsvg::rsvg_png(svg_path,png_path, width = dim[1], height = dim[2])
+      rsvg::rsvg_pdf(svg_path, pdf_path)
 
-      rsvg::rsvg_png(ff,png_path, width = dim[1], height = dim[2])
-      rsvg::rsvg_pdf(ff, pdf_path)
+      if(svg == FALSE) {file.remove(svg_path)}
+
     }
 
-    purrr::pwalk(.l = list(tab_res$prop,tab_res$itemlist,tab_res$folder,tab_res$png_path,tab_res$pdf_path),.f = export_heuristic_map)
+    purrr::pwalk(.l = list(tab_res$prop,tab_res$itemlist,tab_res$folder,tab_res$png_path,tab_res$pdf_path, tab_res$svg_path),.f = export_heuristic_map)
 
 
   }
@@ -83,7 +107,7 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
                     heights = rep(c(5.6,10.5,13.5,9,12),n_exploit)) %>%
       dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
       dplyr::mutate(folder = file.path(outdir,name,"Dimensions")) %>%
-      dplyr::mutate(path = file.path(outdir,name,"Dimensions",plotname)) %>%
+      dplyr::mutate(path = file.path(outdir,name,"Dimensions",glue::glue("{name}_{plotname}"))) %>%
       dplyr::mutate(png_path = glue::glue("{path}.png"))
 
     export_dimplot <- function(plotname,plot,widths, heights, folder, png_path) {
@@ -123,7 +147,7 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_",Sys.Date())) {
                     heights = rep(c(7.61,7.61,7.61,7.61,7.61),n_exploit)) %>%
       dplyr::mutate(name = stringr::str_replace_all(name," ","_")) %>%
       dplyr::mutate(folder = file.path(outdir,name,"Propriétés")) %>%
-      dplyr::mutate(path = file.path(outdir,name,"Propriétés",plotname)) %>%
+      dplyr::mutate(path = file.path(outdir,name,"Propriétés",glue::glue("{name}_Radar_{plotname}"))) %>%
       dplyr::mutate(png_path = glue::glue("{path}.png"))
 
     export_radarplot <- function(plotname,plot,widths, heights, folder, png_path) {

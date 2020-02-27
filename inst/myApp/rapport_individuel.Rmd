@@ -1,6 +1,6 @@
 ---
 title: "Diagnostic IDEA4"
-date: "`r format(Sys.Date(), '%d %B %Y')`"
+date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
 output:
   pdf_document:
     highlight: zenburn
@@ -25,8 +25,8 @@ header-includes:
 - \pagestyle{fancy}
 - \fancyfoot[C]{Diagnostic IDEA4 - `r format(Sys.Date(), "%d %B %Y")`}
 - \fancyfoot[R]{Page \thepage / \pageref{LastPage}}
-mainfont: Carlito
-subtitle: Eléments de sortie d'analyse individuelle - Version 0.1
+mainfont: Raleway
+subtitle: Eléments de sortie d'analyse individuelle - Version 1.0
 params:
   outdir : "tmp"
   data: "data"
@@ -65,6 +65,17 @@ res_prop <- IDEAdata$dataset
 res_dim <- IDEAdata$dataset
 metadata <- IDEAdata$metadata
 nodes <- IDEAdata$nodes
+
+v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
+
+ff <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Ancrage Territorial.pdf"))
+file.rename(from = ff, to = file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Ancrage.pdf")))
+
+ff <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Capacité productive et reproductive de biens et de services.pdf"))
+file.rename(from = ff, to = file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","CAP.pdf")))
+
+ff <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Responsabilité globale.pdf"))
+file.rename(from = ff, to = file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","RESP.pdf")))
 
 ```
 
@@ -134,7 +145,7 @@ print(IDEAresdim[[1]]$indic_Economique + theme(panel.spacing = unit(1, "lines"))
 
 # Lecture par les propriétés
 
-## Arbres éclairé des propriétés
+## Arbres éclairés des propriétés
 
 ```{r}
 v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
@@ -145,51 +156,52 @@ v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
 \begin{minipage}{0.85\textheight}
 
 
-```{r fig.cap= 'Carte heuristique colorée de la propriété "Ancrage territorial"'}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Ancrage.pdf"))
+```{r fig.cap= 'Arbre éclairé de la propriété "Ancrage territorial"'}
+
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Ancrage.pdf")), auto_pdf = TRUE)
 ```
 
 \end{minipage}}
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= 'Carte heuristique colorée de la propriété "Autonomie"'}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Autonomie.pdf"))
+```{r fig.cap= 'Arbre éclairé de la propriété "Autonomie"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Autonomie.pdf")))
 ```
 \end{minipage}}
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= 'Carte heuristique colorée de la propriété "Capacité productive et reproductive de biens et services"'}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Capacité.pdf"))
+```{r fig.cap= 'Arbre éclairé de la propriété "Capacité productive et reproductive de biens et services"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","CAP.pdf")), auto_pdf = TRUE)
 ```
 \end{minipage}}
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= 'Carte heuristique colorée de la propriété "Responsabilité globale"'}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Responsabilité.pdf"))
+```{r fig.cap= 'Arbre éclairé de la propriété "Responsabilité globale"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","RESP.pdf")))
 ```
 \end{minipage}}
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= 'Carte heuristique colorée de la propriété "Robustesse"'}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Robustesse.pdf"))
+```{r fig.cap= 'Arbre éclairé de la propriété "Robustesse"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Robustesse.pdf")), auto_pdf = TRUE)
 ```
 \end{minipage}}
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= 'Carte heuristique colorée globale de la lecture par les propriétés'}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Global.pdf"))
+```{r fig.cap= 'Arbre éclairé global de la lecture par les propriétés'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global.pdf")))
 ```
 \end{minipage}}
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}
-```{r fig.cap= "Carte heuristique colorée globale de la lecture par les propriétés avec un focus sur les premières branches d'agrégation"}
-knitr::include_graphics(file.path(outdir,v,"Propriétés","Cartes_heuristiques","Global_zoom.pdf"))
+```{r fig.cap= "Arbre éclairé global de la lecture par les propriétés avec un focus sur les premières branches d'agrégation"}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global_zoom.pdf")))
 ```
 \end{minipage}}
 

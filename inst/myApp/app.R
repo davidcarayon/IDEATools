@@ -1,6 +1,7 @@
 library(shiny)
 library(shinydashboard)
 library(flexdashboard)
+library(shinyWidgets)
 library(dplyr)
 library(tidyr)
 library(stringr)
@@ -63,7 +64,7 @@ ui = dashboardPage(skin = "blue",
                                           menuSubItem("Capacité Productive",tabName = "radar_cp", icon = icon("chart-pie")),
                                           menuSubItem("Responsabilité Globale",tabName = "radar_rg", icon = icon("chart-pie")),
                                           menuSubItem("Ancrage Territorial",tabName = "radar_an", icon = icon("chart-pie"))),
-                                 menuItem("Cartes heuristiques", tabName = "tree", icon = icon("project-diagram"),
+                                 menuItem("Arbres éclairés", tabName = "tree", icon = icon("project-diagram"),
                                           menuSubItem("Robustesse",tabName = "robustesse", icon = icon("sitemap")),
                                           menuSubItem("Autonomie",tabName = "autonomie", icon = icon("sitemap")),
                                           menuSubItem("Capacité Productive",tabName = "cp", icon = icon("sitemap")),
@@ -77,6 +78,7 @@ ui = dashboardPage(skin = "blue",
 
                    ## Corps du dashboard
                    dashboardBody(
+
 
                      ## Définition des tags de style
                      tags$style(
@@ -123,7 +125,7 @@ ui = dashboardPage(skin = "blue",
                                box(flexdashboard::gaugeOutput("plt3"),width=4, title="Durabilité Economique", height = "300px"),
 
                                # Emplacement des 5 infobox de propriétés + un footer
-                               box(title = "Qualification des 5 propriétés de la durabilité pour l'exploitation (cliquer sur une propriété pour obtenir sa carte heuristique détaillée) :",
+                               box(title = "Qualification des 5 propriétés de la durabilité pour l'exploitation (cliquer sur une propriété pour obtenir son arbre détaillé) :",
                                    infoBoxOutput("prop1", width = 2),
                                    infoBoxOutput("prop2", width = 2),
                                    infoBoxOutput("prop5", width = 2),
@@ -254,9 +256,9 @@ server = function(input, output, session) {
 
   ## Tracé des arbres et export dans le répertoire temporaire avec barre de progression
   observeEvent(input$files, {
-    withProgress(message = "Coloration des cartes heuristiques...", detail = "Merci de patienter quelques instants", value = 0.2, {
+    withProgress(message = "Coloration des arbres éclairés...", detail = "Merci de patienter quelques instants", value = 0.2, {
 
-      IDEATools::MakeTrees(IDEAdata()) %>% IDEATools::exportIDEA(outdir = outdir)
+      IDEATools::MakeTrees(IDEAdata()) %>% IDEATools::exportIDEA(outdir = outdir, svg = TRUE)
       incProgress(0.8)})
 
 
@@ -328,7 +330,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    actionButton("glob","Consulter la carte heuristique globale", icon = icon("sitemap"))
+    actionButton("glob","Consulter l'arbre global", icon = icon("sitemap"))
 
 
   })
@@ -355,7 +357,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    downloadButton("report", "Générer le rapport imprimable (.pdf)", style = "width:100%;")
+    downloadButton("report", "Générer le rapport imprimable (.pdf)", style = "padding:8px; width:100%")
 
 
   })
@@ -366,7 +368,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    downloadButton("zipfile", "Générer le pack de figures (.zip)", style = "width:100%;")
+    downloadButton("zipfile", "Générer le pack de figures (.zip)", style = "padding:8px; width:100%")
 
 
   })
@@ -515,10 +517,10 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Robustesse.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Robustesse.svg"))
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1151,
          height = 761,
          alt = "Robustesse")
@@ -533,10 +535,10 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Autonomie.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Autonomie.svg"))
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1151,
          height = 761,
          alt = "Autonomie")
@@ -551,11 +553,11 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Capacité.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Capacité productive et reproductive de biens et de services.svg"))
 
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1281,
          height = 750,
          alt = "Capacité productive")
@@ -570,10 +572,10 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Responsabilité.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Responsabilité globale.svg"))
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1151,
          height = 761,
          alt = "Responsabilité globale")
@@ -588,11 +590,11 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Ancrage.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Ancrage Territorial.svg"))
 
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1151,
          height = 761,
          alt = "Ancrage territorial")
@@ -607,10 +609,10 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Global.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global.svg"))
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1300,
          height = 890,
          alt = "Global",
@@ -627,10 +629,10 @@ server = function(input, output, session) {
     val <- IDEAdata()$metadata$MTD_01
     v <- stringr::str_replace_all(val, " ", "_")
 
-    outfile <- file.path(outdir,v,"Propriétés","Cartes_heuristiques","Global_zoom.png")
+    outfile <- file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global_zoom.svg"))
 
     list(src = normalizePath(outfile),
-         contentType = 'image/png',
+         contentType = 'image/svg+xml',
          width = 1300,
          height = 890,
          alt = "Global zoom",

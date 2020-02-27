@@ -4,15 +4,17 @@
 \alias{exportIDEA}
 \title{Export IDEA related plots to local folder}
 \usage{
-exportIDEA(IDEAres, outdir = paste0("RES_", Sys.Date()))
+exportIDEA(IDEAres, outdir = paste0("RES_", Sys.Date()), svg = FALSE)
 }
 \arguments{
 \item{IDEAres}{output of any IDEA plotting functions (either `Maketree()`, `dimensionPlots()` or `radarPlots()`)}
 
 \item{outdir}{the output directory}
+
+\item{svg}{Should a svg output be exported for trees ?}
 }
 \value{
-Exports plots in png/pdf format in the selected output directory
+Exports plots in png/pdf/svg format in the selected output directory
 }
 \description{
 Export IDEA related plots to local folder
