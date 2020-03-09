@@ -43,10 +43,10 @@ css3 <- HTML("
 
 
 # Define UI for application
-ui = dashboardPage(skin = "blue",
+ui = dashboardPage(skin = "green",
 
                    ## Le header
-                   dashboardHeader(title="Applicatif IDEA4", titleWidth = 300),
+                   dashboardHeader(title="IDEATools", titleWidth = 300),
 
                    ## Le sidebar, avec l'input, des item et subitem
                    dashboardSidebar(width = 350,h4(
@@ -97,6 +97,14 @@ ui = dashboardPage(skin = "blue",
                      tags$head(tags$style(css)),
                      tags$head(tags$style(css2)),
                      tags$head(tags$style(css3)),
+                     tags$head(tags$style(".progress-bar{background-color:#2666cc2666cc;}")),
+                     tags$head(tags$style(HTML('.logo {
+                              background-color: #2666cc !important;
+                              }
+                              .navbar {
+                              background-color: #2666cc !important;
+                              }
+                              '))),
 
 
 
@@ -191,13 +199,13 @@ ui = dashboardPage(skin = "blue",
 
                        tabItem(tabName = "indic_eco",
                                h1("Indicateurs économiques"),
-                               box(plotOutput("indic_eco", height = "800px"), width = 12)),
+                               box(plotOutput("indic_eco", height = "800px",  width = "70%"), width = 12)),
                        tabItem(tabName = "indic_st",
                                h1("Indicateurs Socio-Territoriaux"),
-                               box(plotOutput("indic_st", height = "880px"), width = 12)),
+                               box(plotOutput("indic_st", height = "880px",  width = "70%"), width = 12)),
                        tabItem(tabName = "indic_ae",
                                h1("Indicateurs Agroécologiques"),
-                               box(plotOutput("indic_ae", height = "800px"), width = 12)),
+                               box(plotOutput("indic_ae", height = "800px",  width = "70%"), width = 12)),
 
 
                        ### Détail des indicateurs par propriété
@@ -228,6 +236,8 @@ ui = dashboardPage(skin = "blue",
 
 # Define server logic
 server = function(input, output, session) {
+
+
 
   ## Définition du répertoire temporaire utilisé pour exporter les images/rapports
   outdir <- tempdir(getwd())
@@ -330,7 +340,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    actionButton("glob","Arbre de Synthèse", icon = icon("sitemap"))
+    actionButton("glob","Arbre de synthèse", icon = icon("sitemap"), style = "font-size:120%; width:35%; padding:8px;")
 
 
   })
@@ -357,7 +367,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    downloadButton("report", "Générer le rapport imprimable (.pdf)", style = "padding:8px; width:100%")
+    downloadButton("report", "Générer le rapport imprimable (.pdf)", style = "font-size:120%; width:100%; padding:8px")
 
 
   })
@@ -368,7 +378,7 @@ server = function(input, output, session) {
     if (is.null(inFile))
       return()
 
-    downloadButton("zipfile", "Générer le pack de figures (.zip)", style = "padding:8px; width:100%")
+    downloadButton("zipfile", "Générer le pack de figures (.zip)", style = "font-size:120%; width:100%; padding:8px")
 
 
   })
@@ -668,7 +678,7 @@ server = function(input, output, session) {
   ## Plots dimension
   output$composantes <- renderPlot({
 
-    p <- IDEAresdim()[[1]]$composantes
+    p <- IDEAresdim()[[1]]$composantes + theme(legend.text = element_text(family = "Roboto"))
 
     print(p)
 
@@ -676,15 +686,14 @@ server = function(input, output, session) {
   })
   output$indic_eco <- renderPlot({
 
-    p <- IDEAresdim()[[1]]$indic_Economique+ facet_wrap(~composante, ncol = 2, scales = "free_y")+ theme(panel.spacing = unit(1, "lines"))
-
+    p <- IDEAresdim()[[1]]$indic_Economique
     print(p)
 
 
   })
   output$indic_st <- renderPlot({
 
-    p <- IDEAresdim()[[1]]$`indic_Socio-Territoriale` + facet_wrap(~composante, ncol = 2, scales = "free_y") + theme(panel.spacing = unit(1, "lines"))
+    p <- IDEAresdim()[[1]]$`indic_Socio-Territoriale`
 
     print(p)
 
@@ -692,7 +701,7 @@ server = function(input, output, session) {
   })
   output$indic_ae <- renderPlot({
 
-    p <- IDEAresdim()[[1]]$indic_Agroécologique+ facet_wrap(~composante, ncol = 2, scales = "free_y")+ theme(panel.spacing = unit(1, "lines"))
+    p <- IDEAresdim()[[1]]$indic_Agroécologique
 
     print(p)
 
@@ -702,23 +711,23 @@ server = function(input, output, session) {
 
   ## Radar propriétés
   output$robust_radar <- renderPlot({
-    p <- IDEAresrad()[[1]]$Robustesse
+    p <- IDEAresrad()[[1]]$Robustesse  + theme(legend.text = element_text(family = "Roboto"))
     print(p)
   })
   output$auto_radar <- renderPlot({
-    p <- IDEAresrad()[[1]]$Autonomie
+    p <- IDEAresrad()[[1]]$Autonomie  + theme(legend.text = element_text(family = "Roboto"))
     print(p)
   })
   output$cp_radar <- renderPlot({
-    p <- IDEAresrad()[[1]]$`Capacité productive et reproductive \nde biens et de services`
+    p <- IDEAresrad()[[1]]$`Capacité productive et reproductive \nde biens et de services`  + theme(legend.text = element_text(family = "Roboto"))
     print(p)
   })
   output$rg_radar <- renderPlot({
-    p <- IDEAresrad()[[1]]$`Responsabilité globale`
+    p <- IDEAresrad()[[1]]$`Responsabilité globale`  + theme(legend.text = element_text(family = "Roboto"))
     print(p)
   })
   output$an_radar <- renderPlot({
-    p <- IDEAresrad()[[1]]$`Ancrage Territorial`
+    p <- IDEAresrad()[[1]]$`Ancrage Territorial`  + theme(legend.text = element_text(family = "Roboto"))
     print(p)
   })
 

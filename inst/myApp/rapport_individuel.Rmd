@@ -123,9 +123,9 @@ print(IDEAresdim[[1]]$composantes)
 
 ## Résultats pour les indicateurs
 
-### Indicateurs AgroEcologiques
+### Indicateurs Agroécologiques
 
-```{r fig.cap= "Scores obtenus pour les indicateurs Agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=12}
+```{r fig.cap= "Scores obtenus pour les indicateurs Agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=11}
 print(IDEAresdim[[1]]$indic_Agroécologique+ theme(panel.spacing = unit(1, "lines")))
 ```
 
@@ -150,6 +150,8 @@ print(IDEAresdim[[1]]$indic_Economique + theme(panel.spacing = unit(1, "lines"))
 ```{r}
 v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
 ```
+
+\center
 
 \rotatebox{270}{
 
