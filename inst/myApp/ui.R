@@ -111,37 +111,44 @@ ui = dashboardPage(skin = "green",
                        # Ensemble de tab liés aux cartes heuristiques, avec un bouton de retour à la synthèse. Chaque subtab est encapsulé dans un div centré, lui-même dans une box
                        tabItem(tabName = "tree",fluidPage()),
 
-                       tabItem(tabName = "robustesse",
+                       tabItem(tabName = "robustesse",h4(uiOutput("return_4")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("robust_tree")), width = 12, height = "820px")),
 
-                       tabItem(tabName = "autonomie",
+                       tabItem(tabName = "autonomie",h4(uiOutput("return_5")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("auto_tree")), width = 12, height = "720px")),
 
-                       tabItem(tabName = "cp",
+                       tabItem(tabName = "cp",h4(uiOutput("return_6")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("cp_tree")), width = 12, height = "720px")),
 
-                       tabItem(tabName = "rg",
+                       tabItem(tabName = "rg",h4(uiOutput("return_7")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("rg_tree")), width = 12, height = "720px")),
 
-                       tabItem(tabName = "an",
+                       tabItem(tabName = "an",h4(uiOutput("return_8")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("an_tree")), width = 12, height = "730px")),
 
-                       tabItem(tabName = "global",
+                       tabItem(tabName = "global",h4(uiOutput("return_9")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("global_tree")), width = 12, height = "900px")),
 
-                       tabItem(tabName = "global_zoom",
+                       tabItem(tabName = "global_zoom",h4(uiOutput("return_10")),
+                               br(),
                                box(
                                  div(style="display:inline-block;width:100%;text-align: center;",
                                      imageOutput("global_zoom_tree")), width = 12, height = "900px")),
@@ -149,6 +156,8 @@ ui = dashboardPage(skin = "green",
 
                        ## Composantes
                        tabItem(tabName = "compo",
+                               h1("Composantes"), h4(uiOutput("return_0")),
+                               br(),
                                box(plotOutput("composantes", height = "800px"), width = 12)),
 
 
@@ -158,52 +167,63 @@ ui = dashboardPage(skin = "green",
                        tabItem(tabName = "indic_eco",
                                h1("Indicateurs Economiques"), h4(uiOutput("return_1")),
                                br(),
+                               column(
                                box(title = textOutput("title_c10"),
-                                   uiOutput("plots_c10"), width = 6),
+                                   uiOutput("plots_c10"), width = 12),
                                box(title = textOutput("title_c11"),
-                                   uiOutput("plots_c11"), width = 6),
+                                   uiOutput("plots_c11"), width = 12), width = 6),
+                               column(
                                box(title = textOutput("title_c12"),
-                                   uiOutput("plots_c12"), width = 6),
+                                   uiOutput("plots_c12"), width = 12),
                                box(title = textOutput("title_c13"),
-                                   uiOutput("plots_c13"), width = 6)),
+                                   uiOutput("plots_c13"), width = 12), width = 6)),
                        tabItem(tabName = "indic_st",
                                h1("Indicateurs Socio-Territoriaux"), h4(uiOutput("return_2")),
                                br(),
+                               column(
                                box(title = textOutput("title_c6"),
-                                   uiOutput("plots_c6"), width = 6),
+                                   uiOutput("plots_c6"), width = 12),
                                box(title = textOutput("title_c7"),
-                                   uiOutput("plots_c7"), width = 6),
+                                   uiOutput("plots_c7"), width = 12), width = 6),
+                               column(
                                box(title = textOutput("title_c8"),
-                                   uiOutput("plots_c8"), width = 6),
+                                   uiOutput("plots_c8"), width = 12),
                                box(title = textOutput("title_c9"),
-                                   uiOutput("plots_c9"), width = 6)),
+                                   uiOutput("plots_c9"), width = 12), width = 6)),
                        tabItem(tabName = "indic_ae",
                                h1("Indicateurs Agroécologiques"), h4(uiOutput("return_3")),
                                br(),
+                               column(
                                box(title = textOutput("title_c1"),
-                                 uiOutput("plots_c1"), width = 6),
+                                 uiOutput("plots_c1"), width = 12),
                                box(title = textOutput("title_c2"),
-                                   uiOutput("plots_c2"), width = 6),
+                                   uiOutput("plots_c2"), width = 12),
                                box(title = textOutput("title_c3"),
-                                   uiOutput("plots_c3"), width = 6),
+                                   uiOutput("plots_c3"), width = 12), width = 6),
+                               column(
                                box(title = textOutput("title_c4"),
-                                   uiOutput("plots_c4"), width = 6),
+                                   uiOutput("plots_c4"), width = 12),
                                box(title = textOutput("title_c5"),
-                                   uiOutput("plots_c5"), width = 6)
+                                   uiOutput("plots_c5"), width = 12), width = 6)
                        ),
 
 
                        ### Détail des indicateurs par propriété
                        tabItem(tabName = "prop_indic",fluidPage()),
-                       tabItem(tabName = "radar_robustesse",
+                       tabItem(tabName = "radar_robustesse",h4(uiOutput("return_11")),
+                               br(),
                                box(plotOutput("robust_radar",height = "841px", width = "1314"), width = 12, height = "850px")),
-                       tabItem(tabName = "radar_autonomie",
+                       tabItem(tabName = "radar_autonomie",h4(uiOutput("return_12")),
+                               br(),
                                box(plotOutput("auto_radar",height = "800px"), width = 12, height = "820px")),
-                       tabItem(tabName = "radar_cp",
+                       tabItem(tabName = "radar_cp",h4(uiOutput("return_13")),
+                               br(),
                                box(plotOutput("cp_radar",height = "800px"), width = 12, height = "820px")),
-                       tabItem(tabName = "radar_rg",
+                       tabItem(tabName = "radar_rg",h4(uiOutput("return_14")),
+                               br(),
                                box(plotOutput("rg_radar",height = "800px"), width = 12, height = "820px")),
-                       tabItem(tabName = "radar_an",
+                       tabItem(tabName = "radar_an",h4(uiOutput("return_15")),
+                               br(),
                                box(plotOutput("an_radar",height = "800px"), width = 12, height = "820px")),
 
 

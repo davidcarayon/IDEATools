@@ -151,7 +151,18 @@ server = function(input, output, session) {
 
 
 
-    output$return_1 <- renderUI({
+  output$return_0 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_0","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_1 <- renderUI({
 
       inFile <- input$files
 
@@ -162,7 +173,7 @@ server = function(input, output, session) {
 
 
     })
-    output$return_2 <- renderUI({
+  output$return_2 <- renderUI({
 
       inFile <- input$files
 
@@ -173,7 +184,7 @@ server = function(input, output, session) {
 
 
     })
-    output$return_3 <- renderUI({
+  output$return_3 <- renderUI({
 
       inFile <- input$files
 
@@ -184,6 +195,138 @@ server = function(input, output, session) {
 
 
     })
+  output$return_4 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_4","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_5 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_5","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_6 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_6","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_7 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_7","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_8 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_8","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_9 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_9","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_10 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_10","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_11 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_11","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_12 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_12","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_13 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_13","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_14 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_14","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
+  output$return_15 <- renderUI({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    actionLink("return_15","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+
+
+  })
 
 
   output$dimfooter<- renderText({
@@ -539,17 +682,17 @@ server = function(input, output, session) {
     })
 
     output$title_c10 <- renderText({
-      d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Economique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(4)
+      d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Economique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(1)
       paste0(d$composante," (",d$composante_value,"/",d$max_compo,")")
 
     })
     output$title_c11 <- renderText({
-      d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Economique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(4)
+      d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Economique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(2)
       paste0(d$composante," (",d$composante_value,"/",d$max_compo,")")
 
     })
     output$title_c12 <- renderText({
-      d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Economique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(4)
+      d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Economique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(3)
       paste0(d$composante," (",d$composante_value,"/",d$max_compo,")")
 
     })
@@ -892,6 +1035,11 @@ server = function(input, output, session) {
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
 
+
+  observeEvent(input$return_0, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
   observeEvent(input$return_1, {
     newtab <- "synthese"
     updateTabItems(session,inputId="tabs",selected = newtab)
@@ -906,6 +1054,55 @@ server = function(input, output, session) {
     newtab <- "synthese"
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
+  observeEvent(input$return_4, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_5, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_6, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_7, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_8, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_9, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_10, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_11, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_12, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_13, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_14, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+  observeEvent(input$return_15, {
+    newtab <- "synthese"
+    updateTabItems(session,inputId="tabs",selected = newtab)
+  })
+
 
 
   ## Plots dimension
