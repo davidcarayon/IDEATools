@@ -13,10 +13,12 @@ importIDEA(input, anonymous = FALSE)
 }
 \value{
 a named list, containing :
-    analysis.type : a string which can be "single" or "folder" depending on the input type.
-    dataset : a tibble dataframe with the extracted data
-    nodes : results of the property analysis
-    metadata : metadata extracted from the input
+\describe{
+  \item{input.type}{a string which can be "single" or "folder" depending on the input type.}
+  \item{dataset}{a tibble dataframe with the extracted data}
+  \item{nodes}{results of the property analysis}
+  \item{metadata}{metadata extracted from the input}
+}
 }
 \description{
 Import IDEA4 data

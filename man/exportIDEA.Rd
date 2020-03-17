@@ -11,7 +11,7 @@ exportIDEA(IDEAres, outdir = paste0("RES_", Sys.Date()), svg = FALSE)
 
 \item{outdir}{the output directory}
 
-\item{svg}{Should a svg output be exported for trees ?}
+\item{svg}{Should an svg output be exported for trees ?}
 }
 \value{
 Exports plots in png/pdf/svg format in the selected output directory

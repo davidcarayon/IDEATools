@@ -1,6 +1,10 @@
+# Définition de l'interface utilisateur de l'outil IDEATools
+# Auteur : David CARAYON (INRAE)
+# Licence : GPL-3
+
+## Chargement des packages et autres données
 source("global.R")
 
-# Define UI for application
 ui = dashboardPage(skin = "green",
 
                    ## Le header
@@ -161,50 +165,52 @@ ui = dashboardPage(skin = "green",
                                box(plotOutput("composantes", height = "800px"), width = 12)),
 
 
-                       ## Détail des indicateurs par dimension
+                       ## Détail des indicateurs par dimension. Ce sont des progress bar dynamiques et le titre de la box est lui aussi automatique
                        tabItem(tabName = "indic",fluidPage()),
 
                        tabItem(tabName = "indic_eco",
                                h1("Indicateurs Economiques"), h4(uiOutput("return_1")),
                                br(),
                                column(
-                               box(title = textOutput("title_c10"),
-                                   uiOutput("plots_c10"), width = 12),
-                               box(title = textOutput("title_c11"),
-                                   uiOutput("plots_c11"), width = 12), width = 6),
+                                 box(title = textOutput("title_c10"),
+                                     uiOutput("plots_c10"), width = 12),
+                                 box(title = textOutput("title_c11"),
+                                     uiOutput("plots_c11"), width = 12), width = 6),
                                column(
-                               box(title = textOutput("title_c12"),
-                                   uiOutput("plots_c12"), width = 12),
-                               box(title = textOutput("title_c13"),
-                                   uiOutput("plots_c13"), width = 12), width = 6)),
+                                 box(title = textOutput("title_c12"),
+                                     uiOutput("plots_c12"), width = 12),
+                                 box(title = textOutput("title_c13"),
+                                     uiOutput("plots_c13"), width = 12), width = 6)),
+
                        tabItem(tabName = "indic_st",
                                h1("Indicateurs Socio-Territoriaux"), h4(uiOutput("return_2")),
                                br(),
                                column(
-                               box(title = textOutput("title_c6"),
-                                   uiOutput("plots_c6"), width = 12),
-                               box(title = textOutput("title_c7"),
-                                   uiOutput("plots_c7"), width = 12), width = 6),
+                                 box(title = textOutput("title_c6"),
+                                     uiOutput("plots_c6"), width = 12),
+                                 box(title = textOutput("title_c7"),
+                                     uiOutput("plots_c7"), width = 12), width = 6),
                                column(
-                               box(title = textOutput("title_c8"),
-                                   uiOutput("plots_c8"), width = 12),
-                               box(title = textOutput("title_c9"),
-                                   uiOutput("plots_c9"), width = 12), width = 6)),
+                                 box(title = textOutput("title_c8"),
+                                     uiOutput("plots_c8"), width = 12),
+                                 box(title = textOutput("title_c9"),
+                                     uiOutput("plots_c9"), width = 12), width = 6)),
+
                        tabItem(tabName = "indic_ae",
                                h1("Indicateurs Agroécologiques"), h4(uiOutput("return_3")),
                                br(),
                                column(
-                               box(title = textOutput("title_c1"),
-                                 uiOutput("plots_c1"), width = 12),
-                               box(title = textOutput("title_c2"),
-                                   uiOutput("plots_c2"), width = 12),
-                               box(title = textOutput("title_c3"),
-                                   uiOutput("plots_c3"), width = 12), width = 6),
+                                 box(title = textOutput("title_c1"),
+                                     uiOutput("plots_c1"), width = 12),
+                                 box(title = textOutput("title_c2"),
+                                     uiOutput("plots_c2"), width = 12),
+                                 box(title = textOutput("title_c3"),
+                                     uiOutput("plots_c3"), width = 12), width = 6),
                                column(
-                               box(title = textOutput("title_c4"),
-                                   uiOutput("plots_c4"), width = 12),
-                               box(title = textOutput("title_c5"),
-                                   uiOutput("plots_c5"), width = 12), width = 6)
+                                 box(title = textOutput("title_c4"),
+                                     uiOutput("plots_c4"), width = 12),
+                                 box(title = textOutput("title_c5"),
+                                     uiOutput("plots_c5"), width = 12), width = 6)
                        ),
 
 
@@ -232,9 +238,8 @@ ui = dashboardPage(skin = "green",
                                h1("Légende des indicateurs"),
                                DT::dataTableOutput("legende_out",height = "800px"))
                      )
-
-
                    )
+
 )
 
 

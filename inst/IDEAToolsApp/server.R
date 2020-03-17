@@ -1,12 +1,17 @@
+# Définition des de la logique serveur de l'outil IDEATools.
+# Auteur : David CARAYON (INRAE)
+# Licence : GPL-3
+
+## Chargement des packages et données
 source("global.R")
 
 # Define server logic
 server = function(input, output, session) {
 
   ## Définition du répertoire temporaire utilisé pour exporter les images/rapports
-  outdir <- tempdir(getwd())
+  outdir <- tempdir()
 
-  ## Import des données de l'input
+  ## Import des données de l'input utilisateur
   IDEAdata <- eventReactive(input$files, {
 
     IDEATools::importIDEA(input = input$files$datapath, anonymous = FALSE)
@@ -27,17 +32,14 @@ server = function(input, output, session) {
 
   })
 
-  ## Tracé des arbres et export dans le répertoire temporaire avec barre de progression
+  ## Tracé des arbres et export dans le répertoire temporaire avec barre de progression (au format SVG pour affichage web)
   observeEvent(input$files, {
     withProgress(message = "Coloration des arbres éclairés...", detail = "Merci de patienter quelques instants", value = 0.2, {
-
       IDEATools::MakeTrees(IDEAdata()) %>% IDEATools::exportIDEA(outdir = outdir, svg = TRUE)
       incProgress(0.8)})
-
-
   })
 
-  #### Gauges de dimension
+  #### Définition des 3 gauges de dimension
   output$plt1 <- renderGauge({
 
     ae <- IDEAdata()$dataset %>% distinct(id_exploit,dimension,dimension_value) %>% filter(dimension == "Agroécologique") %>% pull(dimension_value) %>% round()
@@ -62,7 +64,9 @@ server = function(input, output, session) {
   })
 
 
-  #### Infos textuelles
+  #### Infos textuelles dynamiques
+
+  ## Note finale IDEA
   output$info <- renderText({
 
     inFile <- input$files
@@ -78,6 +82,21 @@ server = function(input, output, session) {
 
 
   })
+
+  ## Footer expliquant le choix de la valeur limitante pour le score de performance globale
+  output$dimfooter<- renderText({
+
+    inFile <- input$files
+
+    if (is.null(inFile))
+      return()
+
+    "NB : La note retenue correspond à la valeur la plus faible obtenue parmi les 3 dimensions de la durabilité ci-dessous."
+
+
+  })
+
+  ## Nom de l'exploitation
   output$exploit<- renderUI({
 
     inFile <- input$files
@@ -97,6 +116,7 @@ server = function(input, output, session) {
 
   })
 
+  ## Titre des box des indicateurs de chaque dimension
   output$title_ae <- renderUI({
 
     inFile <- input$files
@@ -137,6 +157,7 @@ server = function(input, output, session) {
 
   })
 
+  ## Footer de la synthèse des propriétés qui renvoie à l'arbre synthétique
   output$globalfooter<- renderUI({
 
     inFile <- input$files
@@ -149,8 +170,7 @@ server = function(input, output, session) {
 
   })
 
-
-
+  ## Définition des 15 boutons de retour à la page d'accueil (Une page HTML n'accepte pas qu'un objet avec le même id soit dupliqué...)
   output$return_0 <- renderUI({
 
     inFile <- input$files
@@ -164,37 +184,37 @@ server = function(input, output, session) {
   })
   output$return_1 <- renderUI({
 
-      inFile <- input$files
+    inFile <- input$files
 
-      if (is.null(inFile))
-        return()
+    if (is.null(inFile))
+      return()
 
-      actionLink("return_1","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+    actionLink("return_1","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
 
 
-    })
+  })
   output$return_2 <- renderUI({
 
-      inFile <- input$files
+    inFile <- input$files
 
-      if (is.null(inFile))
-        return()
+    if (is.null(inFile))
+      return()
 
-      actionLink("return_2","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+    actionLink("return_2","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
 
 
-    })
+  })
   output$return_3 <- renderUI({
 
-      inFile <- input$files
+    inFile <- input$files
 
-      if (is.null(inFile))
-        return()
+    if (is.null(inFile))
+      return()
 
-      actionLink("return_3","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
+    actionLink("return_3","Retour à la synthèse", icon = icon("backward"), style = "font-size:120%; width:35%; padding:8px;")
 
 
-    })
+  })
   output$return_4 <- renderUI({
 
     inFile <- input$files
@@ -329,21 +349,7 @@ server = function(input, output, session) {
   })
 
 
-  output$dimfooter<- renderText({
-
-    inFile <- input$files
-
-    if (is.null(inFile))
-      return()
-
-    "NB : La note retenue correspond à la valeur la plus faible obtenue parmi les 3 dimensions de la durabilité ci-dessous."
-
-
-  })
-
-
-
-  # Espace indicateurs ------------------------------------------------------
+  ## Définition des progress bar d'indicateurs, regroupés par dimension
   output$plots_c1 <- renderUI({
 
     d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Agroécologique") %>% dplyr::inner_join(list_max, by = "indicateur")
@@ -632,7 +638,8 @@ server = function(input, output, session) {
 
   })
 
-  ## Création des titres à partir de l'input
+  ## Création des titres de chaque box de composante de manière dynamique
+  ## (le titre contient le score obtenu pour la composante)
   observeEvent(input$files,{
     output$title_c1 <- renderText({
       d <- IDEAdata()$dataset %>% dplyr::filter(dimension == "Agroécologique") %>% distinct(composante, composante_value) %>% inner_join(list_max_compo, by = "composante") %>% slice(1)
@@ -701,13 +708,10 @@ server = function(input, output, session) {
       paste0(d$composante," (",d$composante_value,"/",d$max_compo,")")
 
     })
-
-
-
   })
 
 
-  #### Téléchargements de rapports et de zip
+  #### Téléchargements de rapports (dl) et de zip (dl2)
   output$dl <- renderUI({
 
     inFile <- input$files
@@ -864,7 +868,7 @@ server = function(input, output, session) {
   })
 
 
-  #### Affichage des arbres
+  #### Affichage des arbres (Insertion d'une image format svg)
   output$robust_tree <- renderImage({
 
     inFile <- input$files
@@ -997,6 +1001,8 @@ server = function(input, output, session) {
   })
 
   #### Définition des changements de tab au click
+
+  ## Renvoie vers les arbres éclairés
   observeEvent(input$button_box_01, {
     newtab <- "robustesse"
     updateTabItems(session,inputId="tabs",selected = newtab)
@@ -1022,6 +1028,7 @@ server = function(input, output, session) {
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
 
+  ## Renvoie vers les indicateurs
   observeEvent(input$detail_ae, {
     newtab <- "indic_ae"
     updateTabItems(session,inputId="tabs",selected = newtab)
@@ -1035,7 +1042,7 @@ server = function(input, output, session) {
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
 
-
+  ## Renvoie vers la page d'accueil
   observeEvent(input$return_0, {
     newtab <- "synthese"
     updateTabItems(session,inputId="tabs",selected = newtab)
@@ -1044,12 +1051,10 @@ server = function(input, output, session) {
     newtab <- "synthese"
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
-
   observeEvent(input$return_2, {
     newtab <- "synthese"
     updateTabItems(session,inputId="tabs",selected = newtab)
   })
-
   observeEvent(input$return_3, {
     newtab <- "synthese"
     updateTabItems(session,inputId="tabs",selected = newtab)
@@ -1105,7 +1110,7 @@ server = function(input, output, session) {
 
 
 
-  ## Plots dimension
+  ## Plots dimension (ceux des indicateurs ne sont actuellement plus utilisés côté UI, remplacés par des progress bar)
   output$composantes <- renderPlot({
 
     p <- IDEAresdim()[[1]]$composantes + theme(legend.text = element_text(family = "Roboto"))
@@ -1138,7 +1143,7 @@ server = function(input, output, session) {
   })
 
 
-  ## Radar propriétés
+  ## Radars propriétés
   output$robust_radar <- renderPlot({
     p <- IDEAresrad()[[1]]$Robustesse  + theme(legend.text = element_text(family = "Roboto"))
     print(p)
@@ -1182,8 +1187,6 @@ server = function(input, output, session) {
   })
 
 
-
-
   # Rapport automatisé ------------------------------------------------------
 
   output$report <- downloadHandler(
@@ -1201,22 +1204,16 @@ server = function(input, output, session) {
 
         inFile <- input$files
 
-        # Copy the report file to a temporary directory before processing it, in
-        # case we don't have write permissions to the current working dir (which
-        # can happen when deployed).
         tempReport <- file.path(tempdir(), "rapport_individuel.Rmd")
-        template <- system.file("myApp/rapport_individuel.Rmd", package = "IDEATools")
+        template <- system.file("IDEAToolsApp/rapport_individuel.Rmd", package = "IDEATools")
         file.copy(template, tempReport, overwrite = TRUE)
-        # setwd(tempdir())
 
-        # Set up parameters to pass to Rmd document
+        # Définition des paramètres pour le rendu
         params <- list(data = IDEAdata(),
                        outdir = outdir,
                        anon = FALSE)
 
-        # Knit the document, passing in the `params` list, and eval it in a
-        # child of the global environment (this isolates the code in the document
-        # from the code in this app).
+        # Rendu du document dans un sous-environnement isolé
         rmarkdown::render(tempReport, output_file = file,
                           params = params,
                           envir = new.env(parent = globalenv())
@@ -1230,7 +1227,6 @@ server = function(input, output, session) {
 
   # Téléchargement .zip -----------------------------------------------------
   output$zipfile <- downloadHandler(
-    # For PDF output, change this to "report.pdf"
 
     filename = function() {
       v <- IDEAdata()$metadata$MTD_01 %>%  stringr::str_replace_all(" ", "_")
@@ -1238,25 +1234,29 @@ server = function(input, output, session) {
     },
 
     content = function(fname) {
-      # Copy the report file to a temporary directory before processing it, in
-      # case we don't have write permissions to the current working dir (which
-      # can happen when deployed).
 
       withProgress(message = "Production des figures en cours........", detail = "Merci de patienter quelques instants", value = 0.2,{
 
+
+        ## Production des figures nécessaires à l'archive
         v <- IDEAdata()$metadata$MTD_01 %>%  stringr::str_replace_all(" ", "_")
         IDEAresdim() %>% IDEATools::exportIDEA(outdir = outdir)
         IDEAresrad() %>% IDEATools::exportIDEA(outdir = outdir)
         IDEATools::MakeTrees(IDEAdata()) %>% IDEATools::exportIDEA(outdir = outdir)
 
+
+        ## Définition du chemin des fichiers à archiver
         setwd(outdir)
         fs <- file.path(v,list.files(file.path(outdir,v), recursive=TRUE))
 
+        ## Ces trois fichiers sont générés en plus de leur version "correctement nommée" pour la production du rapport,
+        ## qui est codé en LaTeX et a besoin de chemin de fichiers sans accents ni espaces...
+        ## Il n'ont pas à être dans l'archive zip
         fs <- setdiff(fs,fs[stringr::str_detect(fs,"Ancrage.pdf")])
         fs <- setdiff(fs,fs[stringr::str_detect(fs,"CAP.pdf")])
         fs <- setdiff(fs,fs[stringr::str_detect(fs,"RESP.pdf")])
 
-
+        # Export du zip
         zip(zipfile = fname, files = fs)
 
         incProgress(0.8)

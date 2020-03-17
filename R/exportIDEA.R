@@ -2,7 +2,7 @@
 #'
 #' @param IDEAres output of any IDEA plotting functions (either `Maketree()`, `dimensionPlots()` or `radarPlots()`)
 #' @param outdir the output directory
-#' @param svg Should a svg output be exported for trees ?
+#' @param svg Should an svg output be exported for trees ?
 #'
 #' @return Exports plots in png/pdf/svg format in the selected output directory
 #' @importFrom magrittr %>%

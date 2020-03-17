@@ -200,3 +200,28 @@ find_pos <- function(start,end,choice,car){
 
 
 }
+
+
+## Légende associée aux métadonnées du fichier .json
+MTD_legende <- tibble::tribble(
+  ~code,                                   ~nom,                                                      ~etendue,
+  "MTD_00",      "Version du calculateur utilisée",                                                    "Alpha 10",
+  "MTD_01",             "Identifiant exploitation",                                                       "Num 6",
+  "MTD_02",                                  "SAU",                                           "0 à 10 000 (2 dc)",
+  "MTD_03",                                  "UTH",                                           "0 à 10 000 (2 dc)",
+  "MTD_04",                                "UTH F",                                              "0 à 100 (2 dc)",
+  "MTD_05", "Tranche d’âge du chef d’exploitation", "«-25»,«25-35»,«35-45», «45-55»,«55-65» et «65+»",
+  "MTD_06",      "Typologie d'exploitation (OTEX)",                                       "Codes OTEX simplifiés",
+  "MTD_07",      "Surface en herbe en % de la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_08",               "Capital d’exploitation",                                             "0 à 100000 000",
+  "MTD_09",                                  "EBE",                                    "– 1000 000 à 10000 000",
+  "MTD_10",                     "Résultat courant",                                    "– 1000 000 à 10000 000",
+  "MTD_11",      "Zone géographique (département)",                                      "liste des départements",
+  "MTD_12",         "Atelier hors sol: oui / non",                                                      "0 ou 1",
+  "MTD_13",                      "Année d'enquête",                                                       "Num 4",
+  "MTD_14",                       "Type d’élevage",       "0 - pas d’élevage / 1 – monogastrique / 2 - herbivore",
+  "MTD_15",              "Part des PP dans la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_16", "Usage des produits phytos: oui /non",                                                      "0 ou 1"
+)
+
+

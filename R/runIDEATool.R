@@ -3,7 +3,7 @@
 #' @importFrom magrittr %>%
 #' @export
 runIDEATool <- function() {
-  appDir <- system.file("myApp", package = "IDEATools")
+  appDir <- system.file("IDEAToolsApp", package = "IDEATools")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing `IDEATools`.", call. = FALSE)
   }

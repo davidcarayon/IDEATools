@@ -1,3 +1,7 @@
+# Définition des ressources communes à l'interface graphique et à la logique serveur de l'outil IDEATools.
+# Auteur : David CARAYON (INRAE)
+# Licence : GPL-3
+
 library(shiny)
 library(shinydashboard)
 library(flexdashboard)
@@ -11,6 +15,8 @@ library(IDEATools)
 library(DT)
 
 ## Définition de fonctions perso et de styles CSS à inserer dans l'UI
+
+# Définition des couleurs pour les infobox propriétés
 replace_col <- function(resultat) {
   res <- dplyr::case_when(
     resultat == "NC" ~ "grey",
@@ -22,6 +28,8 @@ replace_col <- function(resultat) {
   )
   return(res)
 }
+
+# Modifie les capacités de base de shiny
 options(shiny.maxRequestSize=30*1024^2)
 
 ## CSS pour le style des gauges
@@ -42,6 +50,7 @@ css3 <- HTML("
 .shiny-download-link {width: 100%;}")
 
 
+## On définit manuellement les valeurs max de chaque indicateur
 list_max <- tibble::tribble(
   ~indicateur, ~valeur_max,
   "A1",           5,
@@ -99,6 +108,7 @@ list_max <- tibble::tribble(
   "C11",           8
 )
 
+## Idem pour les composantes
 list_max_compo <- tibble::tribble(
   ~composante, ~max_compo,
   "Diversité fonctionnelle",         20,
@@ -117,10 +127,9 @@ list_max_compo <- tibble::tribble(
 )
 
 
+## Liste manuelle des indicateurs propriétés
 indicateurs_proprietes <- list(c("B10", "B3", "B9", "B8", "B7", "B6", "B15", "B14", "B19"),
      c("B13", "B15", "B18", "B8", "C5", "C3", "C6", "A7", "A8", "A6"),
      c("A1", "A3", "A4", "A14", "C5", "C4", "C7", "A2", "C8", "C9", "A15", "B22", "B13", "B15", "B18", "B16"),
      c("B20", "B5", "B19", "B11", "B1", "B2", "B4", "A10", "A9", "A11", "C11", "B17", "B14", "B16", "B21", "B23", "A5", "A16", "A17", "A18", "A19", "B12"),
      c("A5", "A12", "A13", "B14", "B15", "B16", "B13", "B18", "B1", "B3", "C1", "C2", "C3", "C10"))
-
-

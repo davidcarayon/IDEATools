@@ -3,7 +3,7 @@ Type: Package
 Title: Ressources et outils pour le traitement de données IDEA4 sous R
 Version: 1.0
 Authors@R: c(
-    person("David", "Carayon", email = "david.carayon@irstea.fr", role = c("aut", "cre")))
+    person("David", "Carayon", email = "david.carayon@inrae.fr", role = c("aut", "cre")))
 Maintainer: David Carayon <david.carayon@inrae.fr>
 Description: L'objectif du package IDEATools est de proposer des outils et ressources mobilisables sous R afin de manipuler des données issues d'enquêtes réalisées dans le cadre de la méthode IDEA4, notamment les restitutions graphiques en lien avec l'approche par les propriétés de la durabilité. Ce package est également le support d'un applicatif interactif web basé sur la librairie "Shiny", destiné à proposer une interface simple et intuitive à tout utilisateur non inité à R. 
 License: GPL-3
@@ -26,9 +26,8 @@ Imports:
     rsvg,
     shiny,
     shinydashboard,
+    shinyWidgets,
     DT,
     ggpubr,
     rmarkdown,
-    flexdashboard,
-    DBI,
-    RPostgres
+    flexdashboard
