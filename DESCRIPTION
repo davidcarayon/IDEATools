@@ -7,6 +7,7 @@ Authors@R: c(
 Maintainer: David Carayon <david.carayon@inrae.fr>
 Description: L'objectif du package IDEATools est de proposer des outils et ressources mobilisables sous R afin de manipuler des données issues d'enquêtes réalisées dans le cadre de la méthode IDEA4, notamment les restitutions graphiques en lien avec l'approche par les propriétés de la durabilité. Ce package est également le support d'un applicatif interactif web basé sur la librairie "Shiny", destiné à proposer une interface simple et intuitive à tout utilisateur non inité à R. 
 License: GPL-3
+Depends: R (>= 2.10)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
@@ -24,6 +25,7 @@ Imports:
     tidyr,
     magrittr,
     rsvg,
+    glue,
     shiny,
     shinydashboard,
     shinyWidgets,

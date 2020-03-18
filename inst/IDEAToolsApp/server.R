@@ -5,7 +5,19 @@
 ## Chargement des packages et données
 source("global.R")
 
-# Define server logic
+#'  Define server logic
+#'
+#' @import shiny
+#' @import shinythemes
+#' @import shinydashboard
+#' @import flexdashboard
+#' @import shinyWidgets
+#' @import dplyr
+#' @import stringr
+#' @import ggplot2
+#' @import readr
+#' @import IDEATools
+#' @import DT
 server = function(input, output, session) {
 
   ## Définition du répertoire temporaire utilisé pour exporter les images/rapports
@@ -362,7 +374,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = FALSE, size = "xs")
 
     }
 
@@ -383,7 +395,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = FALSE, size = "xs")
 
     }
 
@@ -405,7 +417,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = FALSE, size = "xs")
 
     }
 
@@ -427,7 +439,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = FALSE, size = "xs")
 
     }
 
@@ -449,7 +461,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "success",display_pct = FALSE, size = "xs")
 
     }
 
@@ -472,7 +484,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = FALSE, size = "xs")
 
     }
 
@@ -494,7 +506,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = FALSE, size = "xs")
 
     }
 
@@ -516,7 +528,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = FALSE, size = "xs")
 
     }
 
@@ -538,7 +550,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "primary",display_pct = FALSE, size = "xs")
 
     }
 
@@ -561,7 +573,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = FALSE, size = "xs")
 
     }
 
@@ -583,7 +595,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = FALSE, size = "xs")
 
     }
 
@@ -605,7 +617,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = FALSE, size = "xs")
 
     }
 
@@ -627,7 +639,7 @@ server = function(input, output, session) {
       maxval <- d %>% filter(indicateur == i) %>% pull(valeur_max)
       lab <- d %>% filter(indicateur == i) %>% mutate(nom_complet = paste0(indicateur," - ",nom_indicateur)) %>% pull(nom_complet)
 
-      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = TRUE)
+      plot_output_list[[i]] <- progressBar(id = i, value = val, total = maxval,title = lab, status = "warning",display_pct = FALSE, size = "xs")
 
     }
 

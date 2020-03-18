@@ -11,6 +11,7 @@
   \item{nom_complet}{the code and full name of the indicator collapsed together}
   \item{level}{The levels of the given indicator in the heuristic map}
   \item{dimension}{Dimension of the indicator}
+  \item{dim}{Abbreviated dimension}
   \item{composante}{compound of the indicator}
 }}
 \usage{

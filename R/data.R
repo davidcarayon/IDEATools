@@ -6,7 +6,10 @@
 #' \describe{
 #'   \item{indicateur}{code of the indicator}
 #'   \item{nom_indicateur}{full name of the indicator}
-#'   \item{TD to F}{thresholds}
+#'   \item{TD}{threshold for très défavorable}
+#'   \item{D}{threshold for défavorable}
+#'   \item{I}{threshold for intermédiaire}
+#'   \item{F}{threshold for favorable}
 #' }
 "categ"
 
@@ -28,6 +31,7 @@
 #'   \item{nom_complet}{the code and full name of the indicator collapsed together}
 #'   \item{level}{The levels of the given indicator in the heuristic map}
 #'   \item{dimension}{Dimension of the indicator}
+#'   \item{dim}{Abbreviated dimension}
 #'   \item{composante}{compound of the indicator}
 #' }
 "label_nodes"

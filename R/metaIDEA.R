@@ -4,6 +4,11 @@
 #'
 #' @return a named list of plots
 #' @importFrom magrittr %>%
+#' @importFrom dplyr n_distinct mutate inner_join arrange case_when distinct bind_rows filter
+#' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual labs theme element_text element_rect scale_alpha_manual guides geom_col geom_text position_stack theme_bw ylim coord_flip
+#' @importFrom ggpubr theme_pubr
+#' @importFrom readr parse_number
+#' @importFrom tidyr gather
 #' @export
 #'
 #' @examples
@@ -11,11 +16,6 @@
 #' path <- system.file("", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- metaIDEA(IDEAdata)
-#' @importFrom dplyr n_distinct mutate inner_join arrange case_when distinct bind_rows filter
-#' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual labs theme element_text element_rect scale_alpha_manual guides geom_col geom_text position_stack theme_bw ylim coord_flip
-#' @importFrom ggpubr theme_pubr
-#' @importFrom readr parse_number
-#' @importFrom tidyr gather
 metaIDEA <- function(IDEAdata) {
   if (IDEAdata$input.type == "single") {
     stop("Erreur: les données d'entrée ne correspondent pas à un collectif")

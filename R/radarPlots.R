@@ -4,6 +4,14 @@
 #'
 #' @return a named list of plots
 #' @importFrom magrittr %>%
+#' @importFrom dplyr mutate case_when arrange desc inner_join filter select rowwise ungroup group_by
+#' @importFrom ggplot2 ggplot aes geom_rect geom_col theme_bw geom_text scale_fill_manual theme element_blank element_text scale_y_continuous labs coord_polar
+#' @importFrom ggpubr ggtexttable ttheme colnames_style rownames_style tbody_style ggarrange
+#' @importFrom glue glue
+#' @importFrom purrr map
+#' @importFrom readr parse_number
+#' @importFrom stringr str_remove_all
+#' @importFrom tidyr nest
 #' @export
 #'
 #' @examples
@@ -11,23 +19,21 @@
 #' path <- system.file("example_json.json", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- radarPlots(IDEAdata)
-radarPlots <- function(IDEAdata){
-
-  singleplots <- function(res_dim){
-
-
-
+radarPlots <- function(IDEAdata) {
+  singleplots <- function(res_dim) {
     prop_radar <- res_dim %>%
-      dplyr::mutate(Propriete = dplyr::case_when(indicateur %in% indicateurs_proprietes$indicateurs_ancrage ~ "Ancrage Territorial",
-                                                 indicateur %in% indicateurs_proprietes$indicateurs_autonomie ~ "Autonomie",
-                                                 indicateur %in% indicateurs_proprietes$indicateurs_robustesse ~ "Robustesse",
-                                                 indicateur %in% indicateurs_proprietes$indicateurs_responsabilite ~ "Responsabilité globale",
-                                                 indicateur %in% indicateurs_proprietes$indicateurs_capacite ~ "Capacité productive et reproductive \nde biens et de services"))  %>%
-      dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>%
+      dplyr::mutate(Propriete = dplyr::case_when(
+        indicateur %in% indicateurs_proprietes$indicateurs_ancrage ~ "Ancrage Territorial",
+        indicateur %in% indicateurs_proprietes$indicateurs_autonomie ~ "Autonomie",
+        indicateur %in% indicateurs_proprietes$indicateurs_robustesse ~ "Robustesse",
+        indicateur %in% indicateurs_proprietes$indicateurs_responsabilite ~ "Responsabilité globale",
+        indicateur %in% indicateurs_proprietes$indicateurs_capacite ~ "Capacité productive et reproductive \nde biens et de services"
+      )) %>%
+      dplyr::mutate(dimension = stringr::str_remove_all(dimension, "Durabilité ")) %>%
       dplyr::mutate(num_indic = readr::parse_number(indicateur)) %>%
-      dplyr::arrange(dplyr::desc(dimension),num_indic) %>%
+      dplyr::arrange(dplyr::desc(dimension), num_indic) %>%
       dplyr::inner_join(list_max, by = "indicateur") %>%
-      dplyr::mutate(score_ind = round(value/valeur_max*100,0)) %>%
+      dplyr::mutate(score_ind = round(value / valeur_max * 100, 0)) %>%
       dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur)))
 
     splotlist <- list()
@@ -38,94 +44,95 @@ radarPlots <- function(IDEAdata){
       label_data <- prop_radar %>% dplyr::filter(Propriete == i)
       label_data$id <- seq(1, nrow(label_data))
       number_of_bar <- nrow(label_data)
-      angle <- 90 - 360 * (label_data$id-0.5) /number_of_bar     # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
-      label_data$hjust <- ifelse( angle < -90, 1, 0)
-      label_data$angle <- ifelse(angle < -90, angle+180, angle)
-      label_data = label_data %>% dplyr::filter(score_ind > 5)
+      angle <- 90 - 360 * (label_data$id - 0.5) / number_of_bar # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
+      label_data$hjust <- ifelse(angle < -90, 1, 0)
+      label_data$angle <- ifelse(angle < -90, angle + 180, angle)
+      label_data <- label_data %>% dplyr::filter(score_ind > 5)
 
 
       ## Build the table
-      mytable <- prop_radar %>% dplyr::filter(Propriete == i) %>% dplyr::select(indicateur) %>% dplyr::mutate(code_indicateur = as.character(indicateur)) %>%
+      mytable <- prop_radar %>%
+        dplyr::filter(Propriete == i) %>%
+        dplyr::select(indicateur) %>%
+        dplyr::mutate(code_indicateur = as.character(indicateur)) %>%
         dplyr::inner_join(label_nodes, by = "code_indicateur") %>%
         dplyr::rowwise() %>%
         dplyr::mutate(nom_indicateur = wrapit(nom_indicateur)) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(no = readr::parse_number(code_indicateur)) %>%
-        dplyr::arrange(dim,no) %>%
-        dplyr::select(Code = code_indicateur,`Nom de l'indicateur` = nom_indicateur)
+        dplyr::arrange(dim, no) %>%
+        dplyr::select(Code = code_indicateur, `Nom de l'indicateur` = nom_indicateur)
 
 
       colors <- list(
-        Robustesse = c(rep("#2e9c15",6),rep("#5077FE",2),rep("#FE962B",4)),
-        `Capacité productive et reproductive \nde biens et de services` = c(rep("#2e9c15",2),rep("#FE962B",3)),
-        Autonomie = c(rep("#2e9c15",3),rep("#5077FE",2),rep("#FE962B",3)),
-        `Responsabilité globale`=c(rep("#2e9c15",8),rep("#5077FE",10),"#FE962B"),
-        `Ancrage Territorial`= c(rep("#5077FE",9))
+        Robustesse = c(rep("#2e9c15", 6), rep("#5077FE", 2), rep("#FE962B", 4)),
+        `Capacité productive et reproductive \nde biens et de services` = c(rep("#2e9c15", 2), rep("#FE962B", 3)),
+        Autonomie = c(rep("#2e9c15", 3), rep("#5077FE", 2), rep("#FE962B", 3)),
+        `Responsabilité globale` = c(rep("#2e9c15", 8), rep("#5077FE", 10), "#FE962B"),
+        `Ancrage Territorial` = c(rep("#5077FE", 9))
       )
 
 
       mycols <- colors[[i]]
 
 
-      tab <- ggpubr::ggtexttable(mytable,rows = NULL,theme = ggpubr::ttheme(
-        colnames.style = ggpubr::colnames_style(color = "black",size = 17, fill = "transparent",linecolor = "black"),
-        rownames.style = ggpubr::rownames_style(fill = "transparent", size = 15, linecolor="black"),
-        tbody.style = ggpubr::tbody_style(fill = mycols, size = 15, linecolor="black")))
+      tab <- ggpubr::ggtexttable(mytable, rows = NULL, theme = ggpubr::ttheme(
+        colnames.style = ggpubr::colnames_style(color = "black", size = 17, fill = "transparent", linecolor = "black"),
+        rownames.style = ggpubr::rownames_style(fill = "transparent", size = 15, linecolor = "black"),
+        tbody.style = ggpubr::tbody_style(fill = mycols, size = 15, linecolor = "black")
+      ))
 
 
       p <- ggplot2::ggplot(prop_radar %>% dplyr::filter(Propriete == i), ggplot2::aes(x = indicateur, y = score_ind, fill = dimension)) +
-        ggplot2::geom_rect(xmin = -Inf, ymin = -20, xmax = Inf, ymax = 100, fill = "white", color = "white")+
-        ggplot2::geom_col(ggplot2::aes(x = indicateur, y = 100, fill = dimension),alpha = 0.3, color = "black")+
+        ggplot2::geom_rect(xmin = -Inf, ymin = -20, xmax = Inf, ymax = 100, fill = "white", color = "white") +
+        ggplot2::geom_col(ggplot2::aes(x = indicateur, y = 100, fill = dimension), alpha = 0.3, color = "black") +
         ggplot2::geom_col() +
-        ggplot2::theme_bw()+
-        ggplot2::geom_text(data=label_data, ggplot2::aes(x=id, y=score_ind+1, label=paste0(round(score_ind),"%"), hjust=hjust), color="black", fontface="bold",alpha=1, size=4.2, angle= label_data$angle, inherit.aes = FALSE) +
+        ggplot2::theme_bw() +
+        ggplot2::geom_text(data = label_data, ggplot2::aes(x = id, y = score_ind + 1, label = paste0(round(score_ind), "%"), hjust = hjust), color = "black", fontface = "bold", alpha = 1, size = 4.2, angle = label_data$angle, inherit.aes = FALSE) +
         # ggplot2::geom_hline(yintercept = c(100), color = "black", size = 1.5, linetype = 1)+
-        ggplot2::scale_fill_manual(limits = c("Agroécologique","Socio-Territoriale","Economique"),values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
+        ggplot2::scale_fill_manual(limits = c("Agroécologique", "Socio-Territoriale", "Economique"), values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
         ggplot2::theme(
           axis.title = ggplot2::element_blank(),
-          plot.title = ggplot2::element_text(size = 14,hjust = 0.5, face = "bold"),
+          plot.title = ggplot2::element_text(size = 14, hjust = 0.5, face = "bold"),
           legend.text = ggplot2::element_text(size = 13),
           legend.title = ggplot2::element_text(size = 15),
           axis.text.y = ggplot2::element_blank(),
           axis.ticks.y = ggplot2::element_blank(),
           panel.grid.major.y = ggplot2::element_blank()
-
         ) +
-        ggplot2::scale_y_continuous(limits = c(-20,130),breaks = c(0,20,40,60,80,100))+
-        ggplot2::theme(axis.text = ggplot2::element_text(size = 13, color = "black", face = "bold"))  +
-        ggplot2::labs(fill = "Dimension", title = glue::glue('Indicateurs de la propriété "{i}"'), caption = "NB : Les scores inférieurs à 5% ne sont pas indiqués")+
-        ggplot2::theme(legend.position = "top")+
+        ggplot2::scale_y_continuous(limits = c(-20, 130), breaks = c(0, 20, 40, 60, 80, 100)) +
+        ggplot2::theme(axis.text = ggplot2::element_text(size = 13, color = "black", face = "bold")) +
+        ggplot2::labs(fill = "Dimension", title = glue::glue('Indicateurs de la propriété "{i}"'), caption = "NB : Les scores inférieurs à 5% ne sont pas indiqués") +
+        ggplot2::theme(legend.position = "top") +
         ggplot2::coord_polar()
 
 
-      splotlist[[i]] <- ggpubr::ggarrange(p,tab)
-
-
+      splotlist[[i]] <- ggpubr::ggarrange(p, tab)
     }
 
     return(splotlist)
-
   }
 
-  if(IDEAdata$input.type == "single") {
-    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
-    label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
+  if (IDEAdata$input.type == "single") {
+    res_dim <- IDEAdata$dataset %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension, "Durabilité "))
+    label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension, "Durabilité "))
     return_plot <- list()
     nom <- unique(res_dim$id_exploit)
     return_plot[[nom]] <- singleplots(res_dim)
-
   }
 
-  if(IDEAdata$input.type == "folder") {
-    res_dim <- IDEAdata$dataset %>%  dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité ")) %>% dplyr::group_by(id_exploit) %>% tidyr::nest()
-    label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension,"Durabilité "))
+  if (IDEAdata$input.type == "folder") {
+    res_dim <- IDEAdata$dataset %>%
+      dplyr::mutate(dimension = stringr::str_remove_all(dimension, "Durabilité ")) %>%
+      dplyr::group_by(id_exploit) %>%
+      tidyr::nest()
+    label_nodes <- label_nodes %>% dplyr::mutate(dimension = stringr::str_remove_all(dimension, "Durabilité "))
 
     return_plot <- purrr::map(res_dim$data, singleplots)
     names(return_plot) <- res_dim$id_exploit
   }
 
-  return_plot$input.type = IDEAdata$input.type
+  return_plot$input.type <- IDEAdata$input.type
   return_plot$plot.type <- "radar"
   return(return_plot)
-
 }

@@ -8,7 +8,10 @@
 \describe{
   \item{indicateur}{code of the indicator}
   \item{nom_indicateur}{full name of the indicator}
-  \item{TD to F}{thresholds}
+  \item{TD}{threshold for très défavorable}
+  \item{D}{threshold for défavorable}
+  \item{I}{threshold for intermédiaire}
+  \item{F}{threshold for favorable}
 }}
 \usage{
 categ

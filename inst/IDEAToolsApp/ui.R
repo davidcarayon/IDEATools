@@ -2,10 +2,21 @@
 # Auteur : David CARAYON (INRAE)
 # Licence : GPL-3
 
-## Chargement des packages et autres données
-source("global.R")
 
-ui = function(){
+#' Define UI
+#'
+#' @import shiny
+#' @import shinythemes
+#' @import shinydashboard
+#' @import flexdashboard
+#' @import shinyWidgets
+#' @import dplyr
+#' @import stringr
+#' @import ggplot2
+#' @import readr
+#' @import IDEATools
+#' @import DT
+ui <- function(){
 
   dashboardPage(skin = "green",
 
@@ -92,9 +103,9 @@ ui = function(){
                                br(),br(),fluidRow(),HTML("<br>"),HTML("<br>"),
 
                                # Emplacement des 3 gauges
-                               box(flexdashboard::gaugeOutput("plt1"),width=4, title= uiOutput("title_ae"), height = "300px"),
-                               box(flexdashboard::gaugeOutput("plt2"),width=4, title= uiOutput("title_st"), height = "300px"),
-                               box(flexdashboard::gaugeOutput("plt3"),width=4, title= uiOutput("title_eco"), height = "300px"),
+                               box(gaugeOutput("plt1"),width=4, title= uiOutput("title_ae"), height = "300px"),
+                               box(gaugeOutput("plt2"),width=4, title= uiOutput("title_st"), height = "300px"),
+                               box(gaugeOutput("plt3"),width=4, title= uiOutput("title_eco"), height = "300px"),
 
                                # Emplacement des 5 infobox de propriétés + un footer
                                box(title = "Qualification des 5 propriétés de la durabilité pour l'exploitation (cliquer sur une propriété pour obtenir son arbre détaillé) :",
