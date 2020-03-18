@@ -5,19 +5,20 @@
 ## Chargement des packages et données
 source("global.R")
 
-#'  Define server logic
-#'
-#' @import shiny
-#' @import shinythemes
-#' @import shinydashboard
-#' @import flexdashboard
-#' @import shinyWidgets
-#' @import dplyr
-#' @import stringr
-#' @import ggplot2
-#' @import readr
-#' @import IDEATools
-#' @import DT
+
+library(shiny)
+library(shinythemes)
+library(shinydashboard)
+library(flexdashboard)
+library(shinyWidgets)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(readr)
+library(IDEATools)
+library(DT)
+
+# Define server logic
 server = function(input, output, session) {
 
   ## Définition du répertoire temporaire utilisé pour exporter les images/rapports

@@ -41,7 +41,7 @@ options(shiny.maxRequestSize=30*1024^2)
 ```
 
 
-```{r}
+```{r ressources}
 ## Légende associée aux métadonnées du fichier .json
 MTD_legende <- tibble::tribble(
   ~code,                                   ~nom,                                                      ~etendue,
@@ -63,6 +63,7 @@ MTD_legende <- tibble::tribble(
   "MTD_15",              "Part des PP dans la SAU",                                              "0 à 100 (2 dc)",
   "MTD_16", "Usage des produits phytos: oui /non",                                                      "0 ou 1"
 )
+
 ```
 
 
@@ -102,12 +103,13 @@ nom_files <- metadata$MTD_01
 cat(paste0("\\fancyfoot[L]{Exploitation : ",nom_files,"}"))
 ```
 
-\Large
+\vspace{10mm}
 
 ```{r}
+
 if (anon == FALSE) {
   
-knitr::kable(metadata %>% tidyr::gather(key = code, value = valeur) %>% dplyr::inner_join(MTD_legende, by ="code") %>% dplyr::select(Métadonnée = nom, Valeur = valeur) %>% dplyr::slice(1:7))
+knitr::kable(metadata %>% tidyr::gather(key = code, value = valeur) %>% dplyr::inner_join(MTD_legende, by ="code") %>% dplyr::select(`Métadonnée` = nom, Valeur = valeur) %>% dplyr::slice(1:7))
   
   }
 ```
@@ -142,13 +144,15 @@ print(IDEAresdim[[1]]$composantes)
 
 ### Indicateurs Agroécologiques
 
-```{r fig.cap= "Scores obtenus pour les indicateurs Agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=11}
+```{r fig.cap= "Scores obtenus pour les indicateurs Agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=12}
 print(IDEAresdim[[1]]$indic_Agroécologique+ ggplot2::theme(panel.spacing = ggplot2::unit(1, "lines")))
 ```
 
+\let\cleardoublepage\clearpage
+
 ### Indicateurs Socio-Territoriaux
 
-```{r fig.cap= "Scores obtenus pour les indicateurs Socio-territoriaux, regroupés par composante", fig.width = 10.69, fig.height=13.5}
+```{r fig.cap= "Scores obtenus pour les indicateurs Socio-territoriaux, regroupés par composante", fig.width = 10.69, fig.height=12.5}
 print(IDEAresdim[[1]]$`indic_Socio-Territoriale`+ ggplot2::theme(panel.spacing = ggplot2::unit(1, "lines")))
 ```
 

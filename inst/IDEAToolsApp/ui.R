@@ -3,19 +3,20 @@
 # Licence : GPL-3
 
 
-#' Define UI
-#'
-#' @import shiny
-#' @import shinythemes
-#' @import shinydashboard
-#' @import flexdashboard
-#' @import shinyWidgets
-#' @import dplyr
-#' @import stringr
-#' @import ggplot2
-#' @import readr
-#' @import IDEATools
-#' @import DT
+
+library(shiny)
+library(shinythemes)
+library(shinydashboard)
+library(flexdashboard)
+library(shinyWidgets)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(readr)
+library(IDEATools)
+library(DT)
+
+# Define UI
 ui <- function(){
 
   dashboardPage(skin = "green",
