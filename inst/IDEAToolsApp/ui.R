@@ -5,7 +5,9 @@
 ## Chargement des packages et autres données
 source("global.R")
 
-ui = dashboardPage(skin = "green",
+ui = function(){
+
+  dashboardPage(skin = "green",
 
                    ## Le header
                    dashboardHeader(title="IDEATools", titleWidth = 300),
@@ -242,5 +244,5 @@ ui = dashboardPage(skin = "green",
 
 )
 
-
+}
 

@@ -17,7 +17,7 @@ Generate adequate plots for group analysis with the IDEA method
 }
 \examples{
 library(IDEATools)
-path <- system.file("example_json.json", package = "IDEATools")
+path <- system.file("", package = "IDEATools")
 IDEAdata <- importIDEA(path, anonymous = FALSE)
 IDEAres <- metaIDEA(IDEAdata)
 }

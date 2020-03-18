@@ -8,13 +8,21 @@
 #'
 #' @examples
 #' library(IDEATools)
-#' path <- system.file("example_json.json", package = "IDEATools")
+#' path <- system.file("", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- metaIDEA(IDEAdata)
-metaIDEA <- function(IDEAdata){
-
-  if(IDEAdata$input.type == "single"){stop("Erreur: les données d'entrée ne correspondent pas à un collectif")}
-  if(dplyr::n_distinct(IDEAdata$dataset$id_exploit) < 2){stop("Erreur: le nombre d'exploitations doit être supérieur ou égal à 2")}
+#' @importFrom dplyr n_distinct mutate inner_join arrange case_when distinct bind_rows filter
+#' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual labs theme element_text element_rect scale_alpha_manual guides geom_col geom_text position_stack theme_bw ylim coord_flip
+#' @importFrom ggpubr theme_pubr
+#' @importFrom readr parse_number
+#' @importFrom tidyr gather
+metaIDEA <- function(IDEAdata) {
+  if (IDEAdata$input.type == "single") {
+    stop("Erreur: les données d'entrée ne correspondent pas à un collectif")
+  }
+  if (n_distinct(IDEAdata$dataset$id_exploit) < 2) {
+    stop("Erreur: le nombre d'exploitations doit être supérieur ou égal à 2")
+  }
 
   return_plot <- list()
 
@@ -23,31 +31,33 @@ metaIDEA <- function(IDEAdata){
   heat_data <- nodes$Global %>%
     gather(key = indicateur, value = resultat, -id_exploit) %>%
     mutate(indicateur = replace_indicateur(indicateur)) %>%
-    inner_join(label_nodes, by = c("indicateur"="code_indicateur")) %>%
+    inner_join(label_nodes, by = c("indicateur" = "code_indicateur")) %>%
     mutate(resultat = factor(resultat, levels = c("très favorable", "favorable", "intermédiaire", "défavorable", "très défavorable", "NC"))) %>%
     mutate(nom_indicateur = ifelse(nom_indicateur == "Capacité productive et reproductive de biens et de services", yes = "Capacité productive et \n reproductive de biens et de \n services", no = nom_indicateur)) %>%
-    mutate(num_indic = readr::parse_number(indicateur)) %>%
-    arrange(dim,num_indic) %>%
+    mutate(num_indic = parse_number(indicateur)) %>%
+    arrange(dim, num_indic) %>%
     mutate(indicateur = factor(indicateur, levels = unique(indicateur))) %>%
-    mutate(level = case_when(level == "indicateur" ~ "Indicateur",
-                             level == "propriete" ~ "Propriété"))
+    mutate(level = case_when(
+      level == "indicateur" ~ "Indicateur",
+      level == "propriete" ~ "Propriété"
+    ))
 
+  dim <- IDEAdata$dataset %>% distinct(id_exploit, dimension, dimension_value)
 
-
-  dim <- IDEAdata$dataset %>% dplyr::distinct(id_exploit,dimension,dimension_value)
-
-  dim2 <- dplyr::bind_rows(dim %>% dplyr::mutate(dimension_value = 100-dimension_value) %>% dplyr::mutate(alpha = "a"), dim %>% dplyr::mutate(alpha = "b")) %>% dplyr::arrange(id_exploit,dimension) %>% dplyr::mutate(label = ifelse(alpha == "a", yes = "", no = paste0(dimension_value,"/100")))
+  dim2 <- bind_rows(dim %>% mutate(dimension_value = 100 - dimension_value) %>% mutate(alpha = "a"), dim %>% mutate(alpha = "b")) %>%
+    arrange(id_exploit, dimension) %>%
+    mutate(label = ifelse(alpha == "a", yes = "", no = paste0(dimension_value, "/100")))
 
 
 
 
   return_plot$metaProp <- ggplot(heat_data %>% filter(level == "Propriété"), aes(id_exploit, nom_indicateur, fill = resultat)) +
     geom_tile(color = "black") +
-    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC"="#A0A0A0"),drop = FALSE) +
-    labs(x = "Exploitation",y = "Propriété", fill = "Evaluation") +
-    ggpubr::theme_pubr() +
+    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC" = "#A0A0A0"), drop = FALSE) +
+    labs(x = "Exploitation", y = "Propriété", fill = "Evaluation") +
+    theme_pubr() +
     theme(axis.text.y = element_text(color = "black", size = 13), axis.title = element_text(size = 17, face = "bold"), legend.text = element_text(size = 13), legend.title = element_text(size = 15), legend.position = "top") +
-    theme(axis.text.x = element_text(color = "black", size = 11,angle = 90)) +
+    theme(axis.text.x = element_text(color = "black", size = 11, angle = 90)) +
     theme(plot.background = element_rect(color = "transparent")) +
     theme(strip.text = element_text(size = 12, face = "bold", color = "black")) +
     theme(strip.background = element_rect(color = "black", fill = "white"))
@@ -55,41 +65,41 @@ metaIDEA <- function(IDEAdata){
 
   return_plot$metaIndic <- ggplot(heat_data %>% filter(level == "Indicateur"), aes(id_exploit, indicateur, fill = resultat)) +
     geom_tile(color = "black") +
-    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC"="#A0A0A0"),drop = FALSE) +
-    labs(x = "Exploitation",y = "Indicateur", fill = "Evaluation") +
-    ggpubr::theme_pubr() +
+    scale_fill_manual(values = c("favorable" = "#1CDA53", "défavorable" = "#FF6348", "intermédiaire" = "#FFA300", "très défavorable" = "#FF0000", "très favorable" = "#0D8A00", "NC" = "#A0A0A0"), drop = FALSE) +
+    labs(x = "Exploitation", y = "Indicateur", fill = "Evaluation") +
+    theme_pubr() +
     theme(axis.text.y = element_text(color = "black", size = 12), axis.title = element_text(size = 17, face = "bold"), legend.text = element_text(size = 13), legend.title = element_text(size = 15), legend.position = "top") +
-    theme(axis.text.x = element_text(color = "black", size = 13,angle = 90)) +
+    theme(axis.text.x = element_text(color = "black", size = 13, angle = 90)) +
     theme(plot.background = element_rect(color = "transparent")) +
     theme(strip.text = element_text(size = 12, face = "bold", color = "black")) +
     theme(strip.background = element_rect(color = "black", fill = "white"))
 
 
 
-  return_plot$metaDim <- ggplot2::ggplot(dim2,ggplot2::aes(x = id_exploit, y = dimension_value, label = label, fill = dimension, alpha = alpha)) +
-    ggplot2::scale_alpha_manual(values = c(0.6,1))+
-    ggplot2::guides(alpha = FALSE)+
-    ggplot2::geom_col(color = "black") +
-    ggplot2::geom_text(ggplot2::aes(x = id_exploit, y = dimension_value,label = label),position = ggplot2::position_stack(vjust = 0.5)) +
-    ggplot2::scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#469FF9","Economique"="#FE962B"),drop = FALSE)  +
-    ggplot2::theme_bw()+
-    ggplot2::ylim(0,300)+
-    ggplot2::labs(x = "Exploitation", y = "Score", fill = "Evaluation") +
-    ggplot2::theme(axis.title = ggplot2::element_text(size = 17),
-                   legend.text = ggplot2::element_text(size = 13),
-                   legend.title = ggplot2::element_text(size = 15),
-                   strip.text = ggplot2::element_text(size = 9, face = "bold")) +
-    ggplot2::theme(axis.text = ggplot2::element_text(size = 13, color = "black"))+
-    ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white", color = "black")) +
-    ggplot2::theme(legend.position = "bottom") +
-    ggplot2::coord_flip()
+  return_plot$metaDim <- ggplot(dim2, aes(x = id_exploit, y = dimension_value, label = label, fill = dimension, alpha = alpha)) +
+    scale_alpha_manual(values = c(0.6, 1)) +
+    guides(alpha = FALSE) +
+    geom_col(color = "black") +
+    geom_text(aes(x = id_exploit, y = dimension_value, label = label), position = position_stack(vjust = 0.5)) +
+    scale_fill_manual(values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#469FF9", "Economique" = "#FE962B"), drop = FALSE) +
+    theme_bw() +
+    ylim(0, 300) +
+    labs(x = "Exploitation", y = "Score", fill = "Evaluation") +
+    theme(
+      axis.title = element_text(size = 17),
+      legend.text = element_text(size = 13),
+      legend.title = element_text(size = 15),
+      strip.text = element_text(size = 9, face = "bold")
+    ) +
+    theme(axis.text = element_text(size = 13, color = "black")) +
+    theme(strip.background = element_rect(fill = "white", color = "black")) +
+    theme(legend.position = "bottom") +
+    coord_flip()
 
 
-  return_plot$input.type = IDEAdata$input.type
+  return_plot$input.type <- IDEAdata$input.type
   return_plot$plot.type <- "meta"
-  return_plot$n_exploit <- dplyr::n_distinct(IDEAdata$dataset$id_exploit)
+  return_plot$n_exploit <- n_distinct(IDEAdata$dataset$id_exploit)
 
   return(return_plot)
-
-
 }
