@@ -186,44 +186,44 @@ ui <- function(){
                                h1("Indicateurs Economiques"), h4(uiOutput("return_1")),
                                br(),
                                column(
-                                 box(title = textOutput("title_c10"),
+                                 box(title = tags$b(textOutput("title_c10")),
                                      uiOutput("plots_c10"), width = 12),
-                                 box(title = textOutput("title_c11"),
+                                 box(title = tags$b(textOutput("title_c11")),
                                      uiOutput("plots_c11"), width = 12), width = 6),
                                column(
-                                 box(title = textOutput("title_c12"),
+                                 box(title = tags$b(textOutput("title_c12")),
                                      uiOutput("plots_c12"), width = 12),
-                                 box(title = textOutput("title_c13"),
+                                 box(title = tags$b(textOutput("title_c13")),
                                      uiOutput("plots_c13"), width = 12), width = 6)),
 
                        tabItem(tabName = "indic_st",
                                h1("Indicateurs Socio-Territoriaux"), h4(uiOutput("return_2")),
                                br(),
                                column(
-                                 box(title = textOutput("title_c6"),
+                                 box(title = tags$b(textOutput("title_c6")),
                                      uiOutput("plots_c6"), width = 12),
-                                 box(title = textOutput("title_c7"),
+                                 box(title = tags$b(textOutput("title_c7")),
                                      uiOutput("plots_c7"), width = 12), width = 6),
                                column(
-                                 box(title = textOutput("title_c8"),
+                                 box(title = tags$b(textOutput("title_c8")),
                                      uiOutput("plots_c8"), width = 12),
-                                 box(title = textOutput("title_c9"),
+                                 box(title = tags$b(textOutput("title_c9")),
                                      uiOutput("plots_c9"), width = 12), width = 6)),
 
                        tabItem(tabName = "indic_ae",
                                h1("Indicateurs Agroécologiques"), h4(uiOutput("return_3")),
                                br(),
                                column(
-                                 box(title = textOutput("title_c1"),
+                                 box(title = tags$b(textOutput("title_c1")),
                                      uiOutput("plots_c1"), width = 12),
-                                 box(title = textOutput("title_c2"),
+                                 box(title = tags$b(textOutput("title_c2")),
                                      uiOutput("plots_c2"), width = 12),
-                                 box(title = textOutput("title_c3"),
+                                 box(title = tags$b(textOutput("title_c3")),
                                      uiOutput("plots_c3"), width = 12), width = 6),
                                column(
-                                 box(title = textOutput("title_c4"),
+                                 box(title = tags$b(textOutput("title_c4")),
                                      uiOutput("plots_c4"), width = 12),
-                                 box(title = textOutput("title_c5"),
+                                 box(title = tags$b(textOutput("title_c5")),
                                      uiOutput("plots_c5"), width = 12), width = 6)
                        ),
 

@@ -37,7 +37,8 @@ dimensionsPlots <- function(IDEAdata) {
       geom_label(aes(label = paste0(dimension_value, "/", max_dim)), fill = "white", size = 5) +
       theme(axis.line = element_blank()) +
       theme_bw() +
-      theme(panel.grid.major = element_line(color = "grey75")) +
+      theme(panel.grid.major.y  = element_line(color = "grey90"),
+            panel.grid.major.x = element_blank()) +
       theme(
         axis.title.x = element_blank(),
         legend.text = element_text(size = 13),
@@ -87,7 +88,10 @@ dimensionsPlots <- function(IDEAdata) {
       scale_fill_manual(values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
       theme(axis.line = element_blank()) +
       theme_bw() +
-      theme(panel.grid.major = element_line(color = "grey75")) +
+      theme(panel.grid.major.x  = element_line(color = "grey90"),
+            panel.grid.major.y = element_blank()) +
+      theme(panel.grid.minor.x = element_line(color = "grey90"),
+            panel.grid.minor.y = element_blank()) +
       theme(
         axis.title.y = element_blank(),
         legend.text = element_text(size = 15),
@@ -154,7 +158,10 @@ dimensionsPlots <- function(IDEAdata) {
         geom_label(aes(label = paste0(value, "/", valeur_max)), fill = "white", size = 5) +
         theme(axis.line = element_blank()) +
         theme_bw() +
-        theme(panel.grid.major = element_line(color = "grey75")) +
+        theme(panel.grid.major.x  = element_line(color = "grey90"),
+              panel.grid.major.y = element_blank()) +
+        theme(panel.grid.minor.x = element_line(color = "grey90"),
+              panel.grid.minor.y = element_blank()) +
         theme(
           axis.title.y = element_blank(),
           legend.text = element_text(size = 13),
