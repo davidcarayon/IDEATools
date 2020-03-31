@@ -28,6 +28,7 @@
 #' path <- system.file("example_json.json", package = "IDEATools")
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 importIDEA <- function(input, anonymous = FALSE) {
+
   input <- normalizePath(input)
 
   # Analysis type -----------------------------------------------------------
@@ -166,6 +167,10 @@ importIDEA <- function(input, anonymous = FALSE) {
       ## Compile metadata and dataset in the output list
       res_list$metadata <- metadata
       res_list$dataset <- dataset
+
+
+
+
     } else if (filetype %in% c("xls", "xlsx")) {
       Version_no <- suppressMessages(read_excel(file, sheet = "Notice") %>% clean_names() %>% select(x11)) %>%
         as.data.frame() %>%
