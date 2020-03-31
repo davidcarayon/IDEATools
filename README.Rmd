@@ -1,6 +1,7 @@
 ---
 output: 
-  github_document: default
+  github_document:
+    df_print: kable
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -89,11 +90,10 @@ Cette évaluation par les propriétés repose sur deux types de tables qui ont �
 
 ```{r echo = FALSE}
 library(IDEATools)
-library(gt)
 
 data("categ")
 
-head(categ) %>% gt()
+head(categ) 
 ```
 
 - L'ensemble des 46 tableaux de contingence élaborées par le biais du logiciel DEXi, puis également stockés sous forme de liste sous R :
@@ -109,7 +109,7 @@ data("decision_rules_total")
 ```{r}
 names(decision_rules_total)
 
-head(decision_rules_total$node_1) %>% gt()
+head(decision_rules_total$node_1)
 ```
 
 ## `MakeTrees()` 
