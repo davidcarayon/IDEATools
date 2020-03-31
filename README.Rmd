@@ -1,7 +1,6 @@
 ---
 output: 
-  github_document:
-    df_print: kable
+  github_document: default
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -80,7 +79,7 @@ Les autres packages R mobilisés dans ce module sont :
 - `{dplyr}`, `{tidyr}`, `{stringr}` et `{janitor}` pour la manipulation de données
 - `{purrr}` pour les traitement itératifs dans le cas de traitements multiples
 
-### Pré-calcul à l'importation.
+### Pré-calcul à l'importation
 
 Les calculateur Excel sont uniquement développés pour traiter l'approche par les dimensions. De ce fait, à l'import de ces fichiers, aucun résultat n'est disponible pour l'approche par les propriétés. Plutôt que de développer un nouveau module qui procéderait à cette évaluation, il semblait plus judicieux d'implémenter cette évaluation dès l'importation. De ce fait, en fin d'import, toutes les données liées à l'évaluation sont disponibles, les modules suivants ne se concentrent que sur les restitutions graphiques.
 
