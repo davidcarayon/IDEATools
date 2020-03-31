@@ -44,6 +44,7 @@ replace_col <- function(resultat) {
 ## Re-scales indicators according to the max authorized value
 ScaleIndicator <- function(indic,value) {
   max = list_max %>% dplyr::filter(indicateur == indic) %>% dplyr::pull(valeur_max)
+  value =  round(value + 1e-10)
   scaled_value = ifelse(value > max, yes = max, no = value)
   if(scaled_value < 0){scaled_value = 0}
   return(scaled_value)
