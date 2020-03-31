@@ -306,6 +306,14 @@ importIDEA <- function(input, anonymous = FALSE) {
         metadata$MTD_15 <- NA
         metadata$MTD_16 <- NA
 
+        if(metadata$MTD_14 == "oui") {
+          metadata$MTD_14 <- 1
+        }
+
+        if(metadata$MTD_14 == "non") {
+          metadata$MTD_14 <- 0
+        }
+
         if (metadata$MTD_14 == "0 - pas d'élevage") {
           metadata$MTD_14 <- 0
         }
@@ -370,7 +378,6 @@ importIDEA <- function(input, anonymous = FALSE) {
         results_dexi <- categ %>%
           mutate(id_exploit = metadata$MTD_01) %>%
           inner_join(results, by = "indicateur") %>%
-          mutate(unscaled_value = round(unscaled_value, 0)) %>%
           mutate(categorie_dexi = pmap_chr(list(TD, D, I, F, unscaled_value), Score2Dexi)) %>%
           select(id_exploit, dimension, indicateur, nom_indicateur, unscaled_value, categorie_dexi)
 
@@ -380,7 +387,6 @@ importIDEA <- function(input, anonymous = FALSE) {
           select(indicateur, unscaled_value, categorie_dexi) %>%
           inner_join(label_nodes, by = c("indicateur" = "code_indicateur")) %>%
           mutate(id_exploit = metadata$MTD_01) %>%
-          mutate(unscaled_value = round(unscaled_value, 0)) %>%
           mutate(value = map2_dbl(indicateur, unscaled_value, ScaleIndicator)) %>%
           select(id_exploit, dimension, composante, indicateur, nom_indicateur, unscaled_value, categorie_dexi, value) %>%
           ## Adding indicator values to calculate composantes
