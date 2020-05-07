@@ -194,15 +194,15 @@ importIDEA <- function(input, anonymous = FALSE) {
           pull(2) %>%
           as.character()
 
-        if (metadata$MTD_14 == "0 - pas d'élevage") {
+        if (metadata$MTD_14 == "0 - pas d'élevage" | metadata$MTD_14 == "pas d'élevage") {
           metadata$MTD_14 <- "0"
         }
 
-        if (metadata$MTD_14 == "2 - herbivore") {
+        if (metadata$MTD_14 == "2 - herbivore" | metadata$MTD_14 == "herbivore") {
           metadata$MTD_14 <- "2"
         }
 
-        if (metadata$MTD_14 == "1 - monogastrique") {
+        if (metadata$MTD_14 == "1 - monogastrique" | metadata$MTD_14 == "monogastrique") {
           metadata$MTD_14 <- "1"
         }
 

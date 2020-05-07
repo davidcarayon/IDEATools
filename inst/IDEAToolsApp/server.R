@@ -45,7 +45,7 @@ server = function(input, output, session) {
 
   })
 
-  ## Tracé des arbres et export dans le répertoire temporaire avec barre de progression (au format SVG pour affichage web)
+  ## Tracé des arbres et export dans le répertoire temporaire avec barre de progression (au format SVG     pour affichage web)
   observeEvent(input$files, {
     withProgress(message = "Coloration des arbres éclairés...", detail = "Merci de patienter quelques instants", value = 0.2, {
       IDEATools::MakeTrees(IDEAdata()) %>% IDEATools::exportIDEA(outdir = outdir, svg = TRUE)

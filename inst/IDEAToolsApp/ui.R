@@ -2,8 +2,6 @@
 # Auteur : David CARAYON (INRAE)
 # Licence : GPL-3
 
-
-
 library(shiny)
 library(shinythemes)
 library(shinydashboard)
