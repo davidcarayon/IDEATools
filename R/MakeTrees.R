@@ -65,7 +65,6 @@ MakeTrees <- function(IDEAdata) {
         ungroup() %>%
         mutate(indicateur = liste_indicateurs_prop)
 
-
       rect_style <- tab_rect$rect_style
 
       filter_prop <- ifelse(prop == "Global_zoom", yes = "Global", no = prop)
