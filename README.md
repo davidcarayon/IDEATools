@@ -375,21 +375,7 @@ Après avoir importé un calculateur via le bouton d’import en haut à
 gauche, l’application devrait après un bref temps de chargement
 ressembler à la capture d’écran ci-dessus :
 
-![](www/app1.png)
-
-<br> <br>
-
-Il est alors possible d’explorer la synthèse des résultats (première
-page), puis de rentrer dans le détail de chacun de ces résultats par un
-clic sur les résultats. L’ensemble des résultats détaillés est
-accessible via les différents onglets sur la gauche.
-
-![](www/app2.png)
-
-> Note : chacun des graphiques dans l’application peut être manuellement
-> récupéré par un clic droit \> Sauvegarder l’image sous. Néanmoins, il
-> convient de privilégier l’approche ci-dessous permettant de
-> télécharger l’ensemble des figures.
+![](www/capture_shinyIDEA_4compact.png)
 
 Une fois l’exploration des résultats terminés, ceux-ci peuvent
 maintenant être exportés de deux façons :
