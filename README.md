@@ -22,10 +22,9 @@ devtools::install_github("davidcarayon/IDEATools")
 
 # Description des modules
 
-Sept principaux modules ont été développés et s’interconnectent tout au
+Six principaux modules ont été développés et s’interconnectent tout au
 long de la chaîne de traitement depuis l’import des calculateurs jusqu’à
-la visualisation des résultats. Le septième module produit une interface
-web interactive mobilisant l’ensemble des 6 autres modules.
+la visualisation des résultats.
 
 ![](www/dessin_modules.png)
 
@@ -344,65 +343,6 @@ MakeTrees(IDEAdata) %>% exportIDEA()
 
 radarPlots(IDEAdata) %>% exportIDEA()
 ```
-
-# Application web interactive
-
-Afin de simplifier l’utilisation de ce package qui, en l’état, réservé
-aux utilisateurs du langage R, un applicatif de calcul basé sur la
-librairie `{shiny}` a été également développé et intégré dans ce
-package. Celui-ci peut être exécuté d’une simple commande qui va ouvrir
-une seconde page Rstudio, qui peut être ensuite ouverte dans votre
-navigateur web préféré.
-
-Shiny est un package R permettant de produire des applications
-interactives pour le web à partir de code R. Pour faire simple, le
-package va traduire le code R en mélange de code HTML/CSS/Javascript,
-les langages du web et de l’interactivité. Comme tout produit R, il est
-donc entièrement personnalisable à condition de disposer de certaines
-compétences en HTML/CSS/JS. Son principal avantage est donc de mêler la
-puissance calculatoire et statistique de R avec des format de diffusion
-et communication bien plus attrayant pour un public non
-chercheur/ingénieur.
-
-L’application peut être lancée par cette simple commande :
-
-``` r
-
-runIDEATool()
-```
-
-Après avoir importé un calculateur via le bouton d’import en haut à
-gauche, l’application devrait après un bref temps de chargement
-ressembler à la capture d’écran ci-dessus :
-
-![](www/capture_shinyIDEA_4compact.png)
-
-Une fois l’exploration des résultats terminés, ceux-ci peuvent
-maintenant être exportés de deux façons :
-
-  - Par le biais d’un rapport pré-édité (environ 16 pages) qui sera
-    automatiquement mis à jour avec les données relatives au calculateur
-    importé. Celui-ci présente d’abord les métadonnées générales, puis
-    affiche successivement l’ensemble des résultats relatifs aux
-    propriétés et aux dimensions :
-
-![](www/app3.png)
-
-La technologie utilisée est `{rmarkdown}` qui fait appel à un moteur
-`LaTeX` pour produire le rapport, ce qui peut expliquer un temps de
-rendu assez long selon l’ordinateur utilisé (jusqu’à 30 secondes).
-
-  - Par le téléchargement d’une archive .zip contenant l’ensemble des
-    figures présentes dans le rapport. Afin d’éviter tout conflit de
-    fichiers, les figures sont à nouveau produites avant d’être
-    encapsulées et téléchargées, ce qui demande quelques secondes de
-    calcul côté serveur. Ce délai reste néanmoins plus court que pour la
-    production du rapport automatisé.
-
-Cette application n’est actuellement disponible que pour un utilisateur
-du package R. Elle n’est pas encore disponible en ligne car elle
-nécessite de disposer d’un serveur pour l’héberger. Les solutions
-d’hébergement sont actuellement en cours de prospection.
 
 # A propos
 
