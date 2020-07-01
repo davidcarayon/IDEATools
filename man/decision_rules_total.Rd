@@ -4,7 +4,9 @@
 \name{decision_rules_total}
 \alias{decision_rules_total}
 \title{List used to convert indicators to properties}
-\format{A list of length 47}
+\format{
+A list of length 47
+}
 \usage{
 decision_rules_total
 }

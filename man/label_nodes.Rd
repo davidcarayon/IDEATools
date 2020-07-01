@@ -4,7 +4,8 @@
 \name{label_nodes}
 \alias{label_nodes}
 \title{Table gathering all metadata on IDEA variables}
-\format{A data frame with 99 rows and 7 variables:
+\format{
+A data frame with 99 rows and 7 variables:
 \describe{
   \item{code_indicateur}{code of the indicator}
   \item{nom_indicateur}{full name of the indicator}
@@ -13,7 +14,8 @@
   \item{dimension}{Dimension of the indicator}
   \item{dim}{Abbreviated dimension}
   \item{composante}{compound of the indicator}
-}}
+}
+}
 \usage{
 label_nodes
 }

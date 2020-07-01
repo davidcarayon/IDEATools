@@ -4,7 +4,8 @@
 \name{categ}
 \alias{categ}
 \title{Table used to convert unscaled values to categories}
-\format{A data frame with 53 rows and 6 variables:
+\format{
+A data frame with 53 rows and 6 variables:
 \describe{
   \item{indicateur}{code of the indicator}
   \item{nom_indicateur}{full name of the indicator}
@@ -12,7 +13,8 @@
   \item{D}{threshold for défavorable}
   \item{I}{threshold for intermédiaire}
   \item{F}{threshold for favorable}
-}}
+}
+}
 \usage{
 categ
 }
