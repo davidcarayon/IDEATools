@@ -43,6 +43,7 @@ importIDEA <- function(input, anonymous = FALSE) {
 
   ## Define custom function that imports a single file
   importFromFile <- function(file) {
+
     filetype <- file_ext(file)
 
     res_list <- list()
@@ -100,20 +101,34 @@ importIDEA <- function(input, anonymous = FALSE) {
       ## Read the json file
       res <- fromJSON(file)
 
+      ## Rajoute une exception avec la nouvelle version du calculateur qui exporte en pourcentage
+      Version_3 <- str_split(res$metadonnees$MTD_00, "\\.")[[1]][3] %>% as.numeric()
+
+
+      if(Version_3 >= 5) {
+        res$metadonnees$MTD_15 = res$metadonnees$MTD_15 / 100
+      }
+
       ## Extract metadata and wrap them in a 1-line dataframe
       metadata <- res$metadonnees %>%
         bind_cols() %>%
         mutate_all(as.character)
 
+      # Si l'identifiant est vide ou 0, alors code aléatoire
       if (metadata$MTD_01 %in% c("0", NA)) {
         metadata$MTD_01 <- stri_rand_strings(1, 5, "[A-Z]")
       }
+
+
+      ## Transformation du champs d'export
       if (metadata$MTD_14 == "0 - pas d'élevage") {
         metadata$MTD_14 <- "0"
       }
+
       if (metadata$MTD_14 == "2 - herbivore") {
         metadata$MTD_14 <- "2"
       }
+
       if (metadata$MTD_14 == "1 - monogastrique") {
         metadata$MTD_14 <- "1"
       }
@@ -207,8 +222,16 @@ importIDEA <- function(input, anonymous = FALSE) {
         }
 
 
+        ## Si la case id_exploit est vide ou 0, alors code aléatoire.
         if (metadata$MTD_01 %in% c("0", NA)) {
           metadata$MTD_01 <- stri_rand_strings(1, 5, "[A-Z]")
+        }
+
+        ## Rajoute une exception avec la nouvelle version du calculateur qui exporte en pourcentage
+        Version_3 <- str_split(res$metadonnees$MTD_00, "\\.")[[1]][3] %>% as.numeric()
+
+        if(Version_3 >= 5) {
+          res$metadonnees$MTD_15 = res$metadonnees$MTD_15 / 100
         }
 
         items <- BDD %>%
