@@ -50,6 +50,7 @@ importIDEA <- function(input, anonymous = FALSE) {
 
     ## Agregates items into indicators
     Item2Indic <- function(indicateur, df) {
+
       df <- df %>% arrange(item)
 
       items <- df$value %>% as.numeric()
@@ -64,8 +65,8 @@ importIDEA <- function(input, anonymous = FALSE) {
         if (indicateur == "A7") {
           value <- case_when(
             metadata$MTD_14 == 0 ~ 0,
-            metadata$MTD_14 == 1 ~ round(0.7 * items[1] + 0.3 * items[2] + 1e-10),
-            metadata$MTD_14 == 2 ~ as.numeric(items[2])
+            metadata$MTD_14 == 2 ~ round(0.7 * items[1] + 0.3 * items[2] + 1e-10),
+            metadata$MTD_14 == 1 ~ as.numeric(items[2])
           )
         }
         if (indicateur == "A8") {
@@ -228,10 +229,10 @@ importIDEA <- function(input, anonymous = FALSE) {
         }
 
         ## Rajoute une exception avec la nouvelle version du calculateur qui exporte en pourcentage
-        Version_3 <- str_split(res$metadonnees$MTD_00, "\\.")[[1]][3] %>% as.numeric()
+        Version_3 <- str_split(Version_no, "\\.")[[1]][3] %>% as.numeric()
 
         if(Version_3 >= 5) {
-          res$metadonnees$MTD_15 = res$metadonnees$MTD_15 / 100
+          metadata$MTD_15 = as.character(as.numeric(metadata$MTD_15) / 100)
         }
 
         items <- BDD %>%
