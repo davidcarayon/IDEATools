@@ -84,6 +84,7 @@ Score2Dexi <- function(TD, D, I, F, score) {
 
 ## Re-scales the composante value according to the max authorized value
 ScaleComposante <- function(compo,value) {
+  Encoding(list_max_compo$composante) <- "UTF-8"
   max = list_max_compo %>% dplyr::filter(composante == compo) %>% dplyr::pull(max_compo)
   scaled_value = ifelse(value > max, yes = max, no = value)
   if(scaled_value < 0){scaled_value = 0}
