@@ -18,6 +18,9 @@
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 #' IDEAres <- dimensionsPlots(IDEAdata)
 dimensionsPlots <- function(IDEAdata) {
+
+  Encoding(list_max_compo$composante) <- "UTF-8"
+
   singleplots <- function(res_dim) {
     splotlist <- list()
 
