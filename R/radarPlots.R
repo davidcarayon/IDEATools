@@ -21,14 +21,9 @@
 #' IDEAres <- radarPlots(IDEAdata)
 radarPlots <- function(IDEAdata) {
   singleplots <- function(res_dim) {
+
+
     prop_radar <- res_dim %>%
-      dplyr::mutate(Propriete = dplyr::case_when(
-        indicateur %in% indicateurs_proprietes$indicateurs_ancrage ~ "Ancrage Territorial",
-        indicateur %in% indicateurs_proprietes$indicateurs_autonomie ~ "Autonomie",
-        indicateur %in% indicateurs_proprietes$indicateurs_robustesse ~ "Robustesse",
-        indicateur %in% indicateurs_proprietes$indicateurs_responsabilite ~ "Responsabilité globale",
-        indicateur %in% indicateurs_proprietes$indicateurs_capacite ~ "Capacité productive et reproductive \nde biens et de services"
-      )) %>%
       dplyr::mutate(dimension = stringr::str_remove_all(dimension, "Durabilité ")) %>%
       dplyr::mutate(num_indic = readr::parse_number(indicateur)) %>%
       dplyr::arrange(dplyr::desc(dimension), num_indic) %>%
@@ -36,12 +31,26 @@ radarPlots <- function(IDEAdata) {
       dplyr::mutate(score_ind = round(value / valeur_max * 100, 0)) %>%
       dplyr::mutate(indicateur = factor(indicateur, levels = unique(indicateur)))
 
+
+    noms_props <- c("Ancrage Territorial","Autonomie","Robustesse","Responsabilité globale","Capacité productive et reproductive \nde biens et de services")
+
+
     splotlist <- list()
 
-    for (i in unique(prop_radar$Propriete)) {
+    for (i in noms_props) {
+
+
+      filtering <- dplyr::case_when(i == "Ancrage Territorial" ~ "indicateurs_ancrage",
+                             i == "Autonomie" ~ "indicateurs_autonomie",
+                             i == "Robustesse" ~ "indicateurs_robustesse",
+                             i == "Responsabilité globale" ~ "indicateurs_responsabilite",
+                             i == "Capacité productive et reproductive \nde biens et de services" ~ "indicateurs_capacite")
+
+
+      prop_name <- indicateurs_proprietes[[filtering]]
 
       # Get the name and the y position of each label
-      label_data <- prop_radar %>% dplyr::filter(Propriete == i)
+      label_data <- prop_radar %>% dplyr::filter(indicateur %in% prop_name)
       label_data$id <- seq(1, nrow(label_data))
       number_of_bar <- nrow(label_data)
       angle <- 90 - 360 * (label_data$id - 0.5) / number_of_bar # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
@@ -52,7 +61,7 @@ radarPlots <- function(IDEAdata) {
 
       ## Build the table
       mytable <- prop_radar %>%
-        dplyr::filter(Propriete == i) %>%
+        dplyr::filter(indicateur %in% prop_name) %>%
         dplyr::select(indicateur) %>%
         dplyr::mutate(code_indicateur = as.character(indicateur)) %>%
         dplyr::inner_join(label_nodes, by = "code_indicateur") %>%
@@ -65,10 +74,10 @@ radarPlots <- function(IDEAdata) {
 
 
       colors <- list(
-        Robustesse = c(rep("#2e9c15", 6), rep("#5077FE", 2), rep("#FE962B", 4)),
-        `Capacité productive et reproductive \nde biens et de services` = c(rep("#2e9c15", 2), rep("#FE962B", 3)),
-        Autonomie = c(rep("#2e9c15", 3), rep("#5077FE", 2), rep("#FE962B", 3)),
-        `Responsabilité globale` = c(rep("#2e9c15", 8), rep("#5077FE", 10), "#FE962B"),
+        Robustesse = c(rep("#2e9c15", 6), rep("#5077FE", 5), rep("#FE962B", 5)),
+        `Capacité productive et reproductive \nde biens et de services` = c(rep("#2e9c15", 3), rep("#5077FE", 7), rep("#FE962B", 4)),
+        Autonomie = c(rep("#2e9c15", 3), rep("#5077FE", 4), rep("#FE962B", 3)),
+        `Responsabilité globale` = c(rep("#2e9c15", 8), rep("#5077FE", 13), "#FE962B"),
         `Ancrage Territorial` = c(rep("#5077FE", 9))
       )
 
@@ -83,7 +92,7 @@ radarPlots <- function(IDEAdata) {
       ))
 
 
-      p <- ggplot2::ggplot(prop_radar %>% dplyr::filter(Propriete == i), ggplot2::aes(x = indicateur, y = score_ind, fill = dimension)) +
+      p <- ggplot2::ggplot(prop_radar %>% dplyr::filter(indicateur %in% prop_name), ggplot2::aes(x = indicateur, y = score_ind, fill = dimension)) +
         ggplot2::geom_rect(xmin = -Inf, ymin = -20, xmax = Inf, ymax = 100, fill = "white", color = "white") +
         ggplot2::geom_col(ggplot2::aes(x = indicateur, y = 100, fill = dimension), alpha = 0.3, color = "black") +
         ggplot2::geom_col() +
