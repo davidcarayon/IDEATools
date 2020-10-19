@@ -1,7 +1,7 @@
 Package: IDEATools
 Type: Package
 Title: Ressources et outils pour le traitement de données IDEA4 sous R
-Version: 1.0
+Version: 1.1
 Authors@R: c(
     person("David", "Carayon", email = "david.carayon@inrae.fr", role = c("aut", "cre")))
 Maintainer: David Carayon <david.carayon@inrae.fr>

@@ -48,7 +48,7 @@ importIDEA <- function(input, anonymous = FALSE) {
 
     res_list <- list()
 
-    ## Agregates items into indicators
+    ## Aggregates items into indicators
     Item2Indic <- function(indicateur, df) {
 
       df <- df %>% arrange(item)
