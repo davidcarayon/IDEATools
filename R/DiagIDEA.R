@@ -20,8 +20,8 @@
 #' @examples
 #' library(IDEATools)
 #' path <- system.file("example_json.json", package = "IDEATools")
-#' Diag <- DiagIDEA(path,"tmp", meta = FALSE, export = FALSE)
-DiagIDEA <- function(input, output = paste0("RES_", Sys.Date()), dimensions = TRUE, trees = TRUE, radar = TRUE,meta = TRUE, export = TRUE) {
+#' Diag <- DiagIDEA(path,"tmp", meta = FALSE, export = "NULL")
+DiagIDEA <- function(input, output = paste0("RES_", Sys.Date()), dimensions = TRUE, trees = TRUE, radar = TRUE,meta = TRUE, export = "NULL") {
 
   IDEAdata <- importIDEA(input)
 
@@ -30,29 +30,45 @@ DiagIDEA <- function(input, output = paste0("RES_", Sys.Date()), dimensions = TR
   rad <- NULL
   met <- NULL
 
+  if(export == "Report") {
 
-  if(dimensions) {
-    dim <- dimensionsPlots(IDEAdata)
-    if(export){exportIDEA(dim,output)}
+    MakeReport(IDEAdata, silent = FALSE)
+
   }
 
-  if(trees) {
-    tree <- MakeTrees(IDEAdata)
-    if(export){exportIDEA(tree,output)}
-  }
+  if(export == "Excel") {
 
+    MakeExcel(input, silent = FALSE)
 
-  if(radar) {
-    rad <- radarPlots(IDEAdata)
-    if(export){exportIDEA(rad,output)}
   }
 
 
-  if(meta) {
-    met <- metaIDEA(IDEAdata)
-    if(export){exportIDEA(met,output)}
+  if(export%in% c("Images","NULL")) {
+
+    if(dimensions) {
+      dim <- dimensionsPlots(IDEAdata)
+      if(export == "Images"){exportIDEA(dim,output)}
+    }
+
+    if(trees) {
+      tree <- MakeTrees(IDEAdata)
+      if(export == "Images"){exportIDEA(tree,output)}
+    }
+
+
+    if(radar) {
+      rad <- radarPlots(IDEAdata)
+      if(export == "Images"){exportIDEA(rad,output)}
+    }
+
+
+    if(meta) {
+      met <- metaIDEA(IDEAdata)
+      if(export == "Images"){exportIDEA(met,output)}
+    }
+
   }
 
-  if(export == FALSE){return(list(dimensions=dim,trees = tree,radars = rad,meta = met))}
+  if(export == "NULL"){return(list(dimensions=dim,trees = tree,radars = rad,meta = met))}
 
 }

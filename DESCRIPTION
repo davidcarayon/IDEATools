@@ -26,10 +26,6 @@ Imports:
     magrittr,
     rsvg,
     glue,
-    shiny,
-    shinydashboard,
-    shinyWidgets,
-    DT,
     ggpubr,
     rmarkdown,
-    flexdashboard
+    openxlsx
