@@ -5,7 +5,8 @@
 #' @return a named list of plots
 #' @importFrom magrittr %>%
 #' @importFrom dplyr n_distinct mutate inner_join arrange case_when distinct bind_rows filter
-#' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual labs theme element_text element_rect scale_alpha_manual guides geom_col geom_text position_stack theme_bw ylim coord_flip
+#' @import ggplot2
+#' @importFrom ggrepel geom_label_repel
 #' @importFrom ggpubr theme_pubr
 #' @importFrom readr parse_number
 #' @importFrom tidyr gather
@@ -43,6 +44,44 @@ metaIDEA <- function(IDEAdata) {
     ))
 
   dim <- IDEAdata$dataset %>% distinct(id_exploit, dimension, dimension_value)
+
+  n_exploit <- n_distinct(dim$id_exploit)
+
+  df_compo <- IDEAdata$dataset %>%
+    distinct(id_exploit,dimension,composante,composante_value)%>%
+    inner_join(list_max_compo, by = "composante") %>%
+    mutate(dimension = factor(dimension, levels = c("Agroécologique","Socio-Territoriale","Economique")))
+
+  ae_levels <- c("Diversité fonctionnelle", "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", "Sobriété dans l'utilisation des ressources", "Assurer des conditions favorables à la production\n à moyen et long terme", "Réduire les impacts sur la santé humaine et les écosystèmes")
+
+  st_levels <- c("Alimentation", "Développement local \net économie circulaire", "Emploi et qualité au travail", "Ethique et développement humain")
+
+  ec_levels <- c("Viabilité économique et financière", "Indépendance", "Transmissibilité", "Efficience globale")
+
+  glob_levels <- c(ae_levels, st_levels, ec_levels)
+
+  df_compo2 <- df_compo %>%
+    mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
+                               yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante
+    )) %>%
+    mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                               yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante
+    )) %>%
+    arrange(dimension, composante) %>%
+    mutate(composante = factor(composante, levels = glob_levels)) %>%
+    mutate(dim_num = as.numeric(dimension)) %>%
+    mutate(compo_num = as.numeric(composante)) %>%
+    mutate(min_compo = 0)
+
+  df_indic <- IDEAdata$dataset %>%
+    distinct(id_exploit,dimension,indicateur,value)%>%
+    inner_join(list_max, by = "indicateur") %>%
+    inner_join(label_nodes %>% select(code_indicateur,nom_complet),by = c("indicateur"="code_indicateur")) %>%
+    mutate(dimension = factor(dimension, levels = c("Agroécologique","Socio-Territoriale","Economique"))) %>%
+    mutate(indic_no = parse_number(nom_complet)) %>%
+    arrange(dimension,indic_no) %>%
+    mutate(nom_complet = factor(nom_complet, levels = unique(nom_complet)))
+
 
   dim2 <- bind_rows(dim %>% mutate(dimension_value = 100 - dimension_value) %>% mutate(alpha = "a"), dim %>% mutate(alpha = "b")) %>%
     arrange(id_exploit, dimension) %>%
@@ -95,6 +134,140 @@ metaIDEA <- function(IDEAdata) {
     theme(strip.background = element_rect(fill = "white", color = "black")) +
     theme(legend.position = "bottom") +
     coord_flip()
+
+  moys <- dim %>% group_by(dimension) %>% summarise(Moyenne = mean(dimension_value))
+
+  return_plot$boxplot_dim <- ggplot(dim, aes(x = dimension, y = dimension_value)) +
+    stat_boxplot(geom = "errorbar", width = 0.3) +
+    geom_boxplot(color = "black", aes(fill = dimension), width = 0.8) +
+    geom_point(data = moys, aes(x = dimension, y = Moyenne), size = 4, color = "darkred",shape = 18) +
+    ggrepel::geom_label_repel(data = moys, aes(x = dimension, y = Moyenne, label = paste0("Moyenne = ",round(Moyenne,1))), nudge_x = 0.5, nudge_y = 5) +
+    theme_tq_cust() +
+    scale_fill_manual(values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
+    theme(axis.title.x = element_blank()) +
+    labs(y = "Valeur de la dimension",fill = "Dimension", caption = paste0("(N = ",n_exploit,")")) +
+    scale_y_continuous(breaks = seq(0,100,10), limits = c(0,100))
+
+
+
+
+  moys <- df_compo2 %>% group_by(dimension,composante) %>% summarise(Moyenne = mean(composante_value)) %>%
+    mutate(compo_num = as.numeric(composante))
+
+  return_plot$boxplot_compo <- ggplot(df_compo2, aes(x = reorder(composante,-compo_num), y = composante_value)) +
+    stat_boxplot(geom = "errorbar", width = 0.3) +
+    geom_boxplot(color = "black", aes(fill = dimension), width = 0.8) +
+    geom_point(data = moys, aes(x = reorder(composante,-compo_num), y = Moyenne,color = "Moyenne"), size = 4, shape = 18) +
+    geom_point(aes(y = max_compo),shape = 93, size = 5, color = "red") +
+    geom_point(aes(y = min_compo),shape = 91, size = 5, color = "red") +
+    theme_tq_cust() +
+    scale_fill_manual(values = c("Agroécologique" = "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B")) +
+    scale_color_manual(values = c("darkred")) +
+    theme(axis.title.y = element_blank()) +
+    labs(y= "Valeur de la composante",fill = "Dimension", color = "Légende", caption = paste0("(N = ",n_exploit,")")) +
+    coord_flip() +
+    guides(fill = FALSE) +
+    facet_wrap(~dimension, ncol = 1, scales = 'free', drop = TRUE) +
+    scale_y_continuous(breaks = seq(0,100,5))
+
+
+
+  dat <- IDEAdata$dataset %>% filter(dimension == "Agroécologique") %>% select(composante,indicateur,value, composante_value) %>%
+    inner_join(list_max, by = "indicateur") %>%
+    inner_join(label_nodes %>% select(code_indicateur,nom_complet),by = c("indicateur"="code_indicateur")) %>%
+    mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
+                               yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante
+    )) %>%
+    mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                               yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante
+    )) %>%
+    mutate(composante = factor(composante, levels = glob_levels)) %>%
+    mutate(indic_no = parse_number(nom_complet)) %>%
+    arrange(composante,indic_no) %>%
+    rowwise() %>%
+    mutate(nom_complet = wrapit(nom_complet)) %>%
+    ungroup() %>%
+    mutate(nom_complet = factor(nom_complet, levels = unique(nom_complet)))
+
+  moys <- dat %>% group_by(composante,nom_complet,indic_no) %>% summarise(Moyenne = mean(value))
+
+  return_plot$boxplot_AE <- ggplot(dat, aes(x = reorder(nom_complet,-indic_no), y = value)) +
+    stat_boxplot(geom = "errorbar", width = 0.3) +
+    geom_boxplot(color = "black",fill = "#2e9c15", width = 0.8) +
+    geom_point(aes(y = 0),shape = 91, size = 5, color = "red") +
+    geom_point(aes(y = valeur_max),shape = 93, size = 5, color = "red") +
+    geom_point(data = moys, aes(x = reorder(nom_complet,-indic_no), y = Moyenne,color = "Moyenne"), size = 4, shape = 18) +
+    scale_color_manual(values = "darkred") +
+    coord_flip()+
+    facet_wrap(~composante, ncol = 1, scales = "free") +
+    theme_tq_cust() +
+    scale_y_continuous(breaks = seq(0,10,1)) +
+    labs(x = "Indicateurs regroupés par composante", y = "Valeur de l'indicateur", color = "Légende", caption = paste0("(N = ",n_exploit,")"))
+
+  dat <- IDEAdata$dataset %>% filter(dimension == "Socio-Territoriale") %>% select(composante,indicateur,value, composante_value) %>%
+    inner_join(list_max, by = "indicateur") %>%
+    inner_join(label_nodes %>% select(code_indicateur,nom_complet),by = c("indicateur"="code_indicateur")) %>%
+    mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
+                               yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante
+    )) %>%
+    mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                               yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante
+    )) %>%
+    mutate(composante = factor(composante, levels = glob_levels)) %>%
+    mutate(indic_no = parse_number(nom_complet)) %>%
+    arrange(composante,indic_no) %>%
+    rowwise() %>%
+    mutate(nom_complet = wrapit(nom_complet)) %>%
+    ungroup() %>%
+    mutate(nom_complet = factor(nom_complet, levels = unique(nom_complet)))
+
+  moys <- dat %>% group_by(composante,nom_complet,indic_no) %>% summarise(Moyenne = mean(value))
+
+  return_plot$boxplot_ST <- ggplot(dat, aes(x = reorder(nom_complet,-indic_no), y = value)) +
+    stat_boxplot(geom = "errorbar", width = 0.3) +
+    geom_boxplot(color = "black",fill = "#5077FE", width = 0.8) +
+    geom_point(aes(y = 0),shape = 91, size = 5, color = "red") +
+    geom_point(aes(y = valeur_max),shape = 93, size = 5, color = "red") +
+    scale_color_manual(values = "darkred") +
+    geom_point(data = moys, aes(x = reorder(nom_complet,-indic_no), y = Moyenne,color = "Moyenne"), size = 4, shape = 18) +
+    coord_flip()+
+    facet_wrap(~composante, ncol = 1, scales = "free") +
+    theme_tq_cust() +
+    scale_y_continuous(breaks = seq(0,10,1)) +
+    labs(x = "Indicateurs regroupés par composante", y = "Valeur de l'indicateur", color = "Légende", caption = paste0("(N = ",n_exploit,")"))
+
+
+  dat <- IDEAdata$dataset %>% filter(dimension == "Economique") %>% select(composante,indicateur,value, composante_value) %>%
+    inner_join(list_max, by = "indicateur") %>%
+    inner_join(label_nodes %>% select(code_indicateur,nom_complet),by = c("indicateur"="code_indicateur")) %>%
+    mutate(composante = ifelse(composante == "Assurer des conditions favorables à la production à moyen et long terme",
+                               yes = "Assurer des conditions favorables à la production\n à moyen et long terme", no = composante
+    )) %>%
+    mutate(composante = ifelse(composante == "Bouclage de flux \nde matières et d'énergie \npar une recherche d'autonomie",
+                               yes = "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", no = composante
+    )) %>%
+    mutate(composante = factor(composante, levels = glob_levels)) %>%
+    mutate(indic_no = parse_number(nom_complet)) %>%
+    arrange(composante,indic_no) %>%
+    rowwise() %>%
+    mutate(nom_complet = wrapit(nom_complet)) %>%
+    ungroup() %>%
+    mutate(nom_complet = factor(nom_complet, levels = unique(nom_complet)))
+
+  moys <- dat %>% group_by(composante,nom_complet,indic_no) %>% summarise(Moyenne = mean(value))
+
+  return_plot$boxplot_EC <- ggplot(dat, aes(x = reorder(nom_complet,-indic_no), y = value)) +
+    stat_boxplot(geom = "errorbar", width = 0.3) +
+    geom_boxplot(color = "black",fill = "#FE962B", width = 0.8) +
+    geom_point(aes(y = 0),shape = 91, size = 5, color = "red") +
+    geom_point(aes(y = valeur_max),shape = 93, size = 5, color = "red") +
+    scale_color_manual(values = "darkred") +
+    geom_point(data = moys, aes(x = reorder(nom_complet,-indic_no), y = Moyenne,color = "Moyenne"), size = 4, shape = 18) +
+    coord_flip()+
+    facet_wrap(~composante, ncol = 1, scales = "free") +
+    theme_tq_cust() +
+    scale_y_continuous(breaks = seq(0,10,1)) +
+    labs(x = "Indicateurs regroupés par composante", y = "Valeur de l'indicateur", color = "Légende", caption = paste0("(N = ",n_exploit,")"))
 
 
   return_plot$input.type <- IDEAdata$input.type

@@ -8,10 +8,11 @@ DiagIDEA(
   input,
   output = paste0("RES_", Sys.Date()),
   dimensions = TRUE,
+  polar = TRUE,
   trees = TRUE,
   radar = TRUE,
   meta = TRUE,
-  export = "NULL"
+  export = FALSE
 )
 }
 \arguments{
@@ -44,5 +45,5 @@ Wrapper function for IDEATools
 \examples{
 library(IDEATools)
 path <- system.file("example_json.json", package = "IDEATools")
-Diag <- DiagIDEA(path,"tmp", meta = FALSE, export = "NULL")
+Diag <- DiagIDEA(path,"tmp", meta = FALSE, export = FALSE)
 }

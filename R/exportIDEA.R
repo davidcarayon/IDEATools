@@ -124,8 +124,7 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_", Sys.Date()), svg = FALSE
         dir.create(folder, recursive = TRUE)
       }
 
-      print(plot) %>%
-        ggsave(filename = png_path, dpi = "retina", width = widths, height = heights)
+        ggsave(plot, filename = png_path, dpi = "retina", width = widths, height = heights)
     }
 
     pwalk(.l = list(tab_res$plotname, tab_res$plot, tab_res$widths, tab_res$heights, tab_res$folder, tab_res$png_path), .f = export_dimplot)
@@ -161,9 +160,7 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_", Sys.Date()), svg = FALSE
       if (!dir.exists(folder)) {
         dir.create(folder, recursive = TRUE)
       }
-
-      print(plot) %>%
-        ggsave(filename = png_path, dpi = "retina", width = widths, height = heights)
+        ggsave(plot,filename = png_path, dpi = "retina", width = widths, height = heights)
     }
 
     pwalk(.l = list(tab_res$plotname, tab_res$plot, tab_res$widths, tab_res$heights, tab_res$folder, tab_res$png_path), .f = export_radarplot)
@@ -176,16 +173,21 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_", Sys.Date()), svg = FALSE
     dimension_res <- list(
       metaProp = c(10.4, 6.82),
       metaIndic = c(8.8, 10),
-      metaDim = c(10.5, 8.61)
+      metaDim = c(10.5, 13),
+      boxplot_dim = c(7.95,6.91),
+      boxplot_compo = c(11.3,8.94),
+      boxplot_AE = c(11.9,12.5),
+      boxplot_ST = c(11.9,14),
+      boxplot_EC = c(11.9, 11)
     )
 
 
     tab_res <- tibble(plotname = names(IDEAres), plot = IDEAres) %>%
       filter(!plotname %in% c("input.type", "plot.type", "n_exploit")) %>%
-      mutate(plotname = recode(plotname, "metaProp" = "Matrice_Propriétés", "metaIndic" = "Matrice_Indicateurs", "metaDim" = "Hist_Dimensions")) %>%
+      mutate(plotname = recode(plotname, "metaProp" = "Matrice_Propriétés", "metaIndic" = "Matrice_Indicateurs", "metaDim" = "Hist_Dimensions",boxplot_dim = "Distribution_dimensions",boxplot_compo = "Distribution_composantes", boxplot_AE = "Distribution_indicateurs_agroecologiques",boxplot_ST = "Distribution_indicateurs_socio_territoriaux",boxplot_EC = "Distribution_indicateurs_economiques")) %>%
       mutate(
-        widths = c(10.4, 8.8, 10.5),
-        heights = c(6.82, 10, 8.61)
+        widths = c(10.4, 8.8, 10.5,7.95,11.3,11.9,11.9,11.9),
+        heights = c(6.82, 10, 8.61,6.91,8.94,12.5,14,11)
       ) %>%
       mutate(plotname = str_replace_all(plotname, " ", "_")) %>%
       mutate(folder = file.path(outdir, plotname)) %>%
@@ -193,10 +195,39 @@ exportIDEA <- function(IDEAres, outdir = paste0("RES_", Sys.Date()), svg = FALSE
       mutate(png_path = glue("{path}.png"))
 
     export_metaplot <- function(plotname, plot, widths, heights, png_path) {
-      print(plot) %>%
-        ggsave(filename = png_path, dpi = "retina", width = widths, height = heights)
+
+        ggsave(plot, filename = png_path, dpi = "retina", width = widths, height = heights)
     }
 
     pwalk(.l = list(tab_res$plotname, tab_res$plot, tab_res$widths, tab_res$heights, tab_res$png_path), .f = export_metaplot)
   }
+
+  # Polar component ---------------------------------------------------------
+  if(IDEAres$plot.type == "PolarComponent") {
+
+    n_exploit <- n_distinct(names(IDEAres)) - 2
+
+    tab_res <- tibble(name = names(IDEAres), plot = IDEAres) %>%
+      filter(!name %in% c("input.type", "plot.type")) %>%
+      mutate(
+        widths = rep(c(8), n_exploit),
+        heights = rep(c(8), n_exploit)
+      ) %>%
+      mutate(name = str_replace_all(name, " ", "_")) %>%
+      mutate(folder = file.path(outdir, name, "Dimensions")) %>%
+      mutate(path = file.path(outdir, name, "Dimensions", glue("{name}_Composantes_polaires"))) %>%
+      mutate(png_path = glue("{path}.png"))
+
+    export_polar <- function(plot, widths, heights, folder, png_path) {
+      if (!dir.exists(folder)) {
+        dir.create(folder, recursive = TRUE)
+      }
+        ggsave(plot, filename = png_path, dpi = "retina", width = widths, height = heights)
+    }
+
+    pwalk(.l = list(tab_res$plot, tab_res$widths, tab_res$heights, tab_res$folder, tab_res$png_path), .f = export_polar)
+
+  }
+
+
 }

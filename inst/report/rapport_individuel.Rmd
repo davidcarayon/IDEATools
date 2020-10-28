@@ -77,6 +77,7 @@ anon = params$anon
 ```{r calcul IDEA, include = FALSE}
 IDEAresdim <- IDEATools::dimensionsPlots(IDEAdata)
 IDEAresrad <- IDEATools::radarPlots(IDEAdata)
+IDEApol <- IDEATools::PolarComponent(IDEAdata)
 
 res_prop <- IDEAdata$dataset
 res_dim <- IDEAdata$dataset
@@ -108,7 +109,13 @@ cat(paste0("\\fancyfoot[L]{Exploitation : ",nom_files,"}"))
 
 if (anon == FALSE) {
   
-tab <- metadata %>% tidyr::gather(key = code, value = valeur) %>% dplyr::inner_join(MTD_legende, by ="code") %>% dplyr::select(`Métadonnée` = nom, Valeur = valeur) %>% rowwise() %>% mutate(Valeur = tidyr::replace_na(Valeur, "Iconnu(e)")) %>% ungroup()
+tab <- metadata %>%
+  tidyr::gather(key = code, value = valeur) %>%
+  dplyr::inner_join(MTD_legende, by ="code") %>%
+  dplyr::select(`Métadonnée` = nom, Valeur = valeur) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Valeur = tidyr::replace_na(Valeur, "Iconnu(e)")) %>% 
+  dplyr::ungroup()
   
   }
 ```
@@ -149,6 +156,15 @@ print(IDEAresdim[[1]]$dimensions)
 
 ```{r fig.cap= "Scores obtenus pour chaque composante de la durabilité", fig.width = 13.69, fig.height=10.5}
 print(IDEAresdim[[1]]$composantes)
+```
+
+
+## Résultats pour les composantes (polarisée)
+
+\vspace{+3em}
+
+```{r fig.cap= "Version polarisée des résultats par composantes", fig.width = 13, fig.height=13, fig.align="center"}
+print(IDEApol[[1]])
 ```
 
 ## Résultats pour les indicateurs

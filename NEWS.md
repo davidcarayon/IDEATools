@@ -1,6 +1,7 @@
 # IDEATools 1.1
 
 * Added a `NEWS.md` file to track changes to the package.
-* Added a new function for PDF reporting : `MakeReport()`
-* Added a new function for Excel reporting : `MakeExcel()` which adds a new dependency to `{openxlsx}`
-* Added a new wrapper function, `DiagIDEA()` that allows users to complete a full IDEA diagnostic with only one line of code.
+* Added a two new functions for PDF reporting : `MakeReport()` and `MakeGroupReport`
+* Added a two new functions for Excel reporting : `MakeExcel()` and `MakeGroupExcel` which adds a new dependency to `{openxlsx}`
+* Added a new wrapper function, `DiagIDEA()` that allows users to complete a full IDEA diagnostic with only one line of code. *NOTE : This function does not yet implement the new excel and pdf reporting functions.*
+* Added a new pkgdown site

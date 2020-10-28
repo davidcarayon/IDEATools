@@ -28,4 +28,8 @@ Imports:
     glue,
     ggpubr,
     rmarkdown,
-    openxlsx
+    knitr,
+    openxlsx,
+    ggrepel,
+    ggimage,
+    pdftools
