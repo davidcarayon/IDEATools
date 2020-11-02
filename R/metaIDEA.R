@@ -25,6 +25,9 @@ metaIDEA <- function(IDEAdata) {
     stop("Erreur: le nombre d'exploitations doit être supérieur ou égal à 2")
   }
 
+
+  Encoding(list_max_compo$composante) <- "UTF-8"
+
   return_plot <- list()
 
   nodes <- IDEAdata$nodes

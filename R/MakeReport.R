@@ -20,6 +20,8 @@
 #' MakeReport(path)
 MakeReport <- function(input, output_dir = getwd(), silent = FALSE) {
 
+  Encoding(list_max_compo$composante) <- "UTF-8"
+
   if (!dir.exists(output_dir)) {
     dir.create(output_dir)
   }

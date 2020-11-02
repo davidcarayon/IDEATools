@@ -20,6 +20,7 @@
 #' MakeGroupExcel(path)
 MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe" , silent = FALSE) {
 
+  Encoding(list_max_compo$composante) <- "UTF-8"
 
   if(!silent){
     cat(" (1/5) Import des données...\n")

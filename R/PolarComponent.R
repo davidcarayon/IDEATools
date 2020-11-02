@@ -29,6 +29,8 @@ PolarComponent <- function(IDEAdata) {
   temp_pdf <- file.path(tempdir(),"plot.pdf")
 
 
+  Encoding(list_max_compo$composante) <- "UTF-8"
+
   singleplots <- function(dataset) {
 
     component_data <- dataset %>% distinct(composante,dimension,composante_value) %>%

@@ -19,6 +19,8 @@
 #' MakeExcel(path)
 MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE) {
 
+  Encoding(list_max_compo$composante) <- "UTF-8"
+
   extension <- tools::file_ext(input)
 
   if(!extension %in% c("xls","json","xlsx")) {
