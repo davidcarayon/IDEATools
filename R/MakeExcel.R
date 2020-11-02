@@ -11,6 +11,7 @@
 #' @import stringr
 #' @import tidyr
 #' @import dplyr
+#' @import cli
 #' @export
 #'
 #' @examples
@@ -38,8 +39,10 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
 
   }
 
+  cli_h1("Reporting des données IDEA vers un fichier excel (Version 1.1)")
+
   if(!silent){
-    cat(" (1/4) Production des figures IDEA...\n")
+    cat_bullet("(1/4) Production des figures IDEA")
   }
 
 
@@ -84,7 +87,7 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
 
 
   if(!silent){
-    cat(" (2/4) Ecriture des figures IDEA dans un répertoire temporaire...\n")
+    cat_bullet("(2/4) Ecriture des figures IDEA dans un répertoire temporaire")
   }
 
 
@@ -95,7 +98,7 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
   exportIDEA(polar,"tmp")
 
   if(!silent){
-    cat(" (3/4) Création et remplissage des nouveaux onglets...")
+    cat_bullet("(3/4) Création et remplissage des nouveaux onglets...")
   }
 
 
@@ -453,12 +456,12 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
   insertImage(wb,"Responsabilité globale", file = img, startRow = 41, startCol = "B", width = 23.42, height = 11.07, units = "cm")
 
   if(!silent){
-    cat("OK\n")
+    cat_bullet("(3.5/4) Données correctement transférées", bullet = "tick", bullet_col = "green")
   }
 
 
   if(!silent){
-    cat(" (4/4) Ecriture du fichier excel...\n")
+    cat_bullet("(4/4) Ecriture du fichier excel")
   }
 
   if (!dir.exists(output_dir)) {
@@ -471,9 +474,9 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
 
 
   if(!silent){
-    cat(paste0("Le document excel a été exporté sous le nom de '",file.path(output_dir,file),"' dans le répertoire choisi.\n"))
+    cat_bullet(paste0("Le document excel a été exporté à l'adresse '",file.path(output_dir,file)), bullet = "info", bullet_col = "green")
   }
 
-
+  cli_h1("Fin de l'algorithme")
 
 }

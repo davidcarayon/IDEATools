@@ -12,6 +12,7 @@
 #' @import tidyr
 #' @import dplyr
 #' @import ggplot2
+#' @import cli
 #' @export
 #'
 #' @examples
@@ -22,8 +23,10 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
 
   Encoding(list_max_compo$composante) <- "UTF-8"
 
+  cli_h1("Reporting de groupe de données IDEA vers un fichier excel (Version 1.1)")
+
   if(!silent){
-    cat(" (1/5) Import des données...\n")
+    cat_bullet("(1/5) Import des données...")
   }
   IDEAdata <- importIDEA(input)
 
@@ -31,7 +34,7 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
 
 
   if(!silent){
-    cat(" (2/5) Production des figures de groupe...\n")
+    cat_bullet("(2/5) Production des figures de groupe")
   }
   meta <- metaIDEA(IDEAdata)
 
@@ -74,14 +77,14 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
 
 
   if(!silent){
-    cat(" (3/5) Ecriture des figures de groupe dans un répertoire temporaire...\n")
+    cat_bullet("(3/5) Ecriture des figures de groupe dans un répertoire temporaire")
   }
 
   # Production des graphes IDEA
   exportIDEA(meta,"tmp")
 
   if(!silent){
-    cat(" (4/5) Création et remplissage des nouveaux onglets...")
+    cat_bullet("(4/5) Création et remplissage des nouveaux onglets...")
   }
 
 
@@ -457,7 +460,7 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
 
 
   if(!silent){
-    cat("OK\n")
+    cat_bullet("Données correctement transférées", bullet = "tick", bullet_col = "green")
   }
 
 
@@ -477,7 +480,7 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
   unlink("tmp",recursive = TRUE)
 
   if(!silent){
-    cat(paste0("Le document excel a été exporté sous le nom de '",file.path(output_dir,out_file),"' dans le répertoire choisi.\n"))
+    cat_bullet(paste0("Le document excel a été exporté à l'adresse '",file.path(output_dir,file)), bullet = "info", bullet_col = "green")
   }
 
 }

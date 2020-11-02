@@ -32,4 +32,5 @@ Imports:
     openxlsx,
     ggrepel,
     ggimage,
-    pdftools
+    pdftools,
+    cli

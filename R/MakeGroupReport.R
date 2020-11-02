@@ -14,6 +14,7 @@
 #' @import tibble
 #' @import knitr
 #' @import ggplot2
+#' @import cli
 #' @export
 #'
 #' @examples
@@ -51,7 +52,7 @@ MakeGroupReport <- function(input, output_dir = getwd(), file = "Rapport_groupe"
 
 
   if(!silent){
-    cat(paste0("Le rapport a été exporté sous le nom de '",file.path(output_dir,output_file),"' dans votre répertoire de travail.\n"))
+    cat_bullet(paste0("Le rapport a été exporté à l'adresse '",file.path(output_dir,file)), bullet = "info", bullet_col = "green")
   }
 
 }
