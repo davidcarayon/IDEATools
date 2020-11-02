@@ -52,7 +52,7 @@ MakeGroupReport <- function(input, output_dir = getwd(), file = "Rapport_groupe"
 
 
   if(!silent){
-    cat_bullet(paste0("Le rapport a été exporté à l'adresse '",file.path(output_dir,file)), bullet = "info", bullet_col = "green")
+    cat_bullet(paste0("Le rapport a été exporté à l'adresse '",file.path(output_dir,file),".pdf'"), bullet = "info", bullet_col = "green")
   }
 
 }

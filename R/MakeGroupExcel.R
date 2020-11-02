@@ -48,17 +48,17 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
 
   bold.style <- createStyle(textDecoration = "Bold")
   header_ae <- createStyle(fgFill = "#2e9c15", halign = "CENTER", textDecoration = "Bold",
-                           border = "TopBottomLeftRight", fontColour = "#000000")
+                           border = "TopBottomLeftRight", fontColour = "#000000", wrapText = TRUE)
 
   header_st <- createStyle(fgFill = "#5077FE", halign = "CENTER", textDecoration = "Bold",
-                           border = "TopBottomLeftRight", fontColour = "#000000")
+                           border = "TopBottomLeftRight", fontColour = "#000000", wrapText = TRUE)
 
   header_ec <- createStyle(fgFill = "#FE962B", halign = "CENTER", textDecoration = "Bold",
-                           border = "TopBottomLeftRight", fontColour = "#000000")
+                           border = "TopBottomLeftRight", fontColour = "#000000", wrapText = TRUE)
 
-  AEStyle <- createStyle(fontColour = "#000000", bgFill = "#2e9c15")
-  STStyle <- createStyle(fontColour = "#000000", bgFill = "#5077FE")
-  ECStyle <- createStyle(fontColour = "#000000", bgFill = "#FE962B")
+  AEStyle <- createStyle(fontColour = "#000000", bgFill = "#2e9c15",wrapText = TRUE)
+  STStyle <- createStyle(fontColour = "#000000", bgFill = "#5077FE",wrapText = TRUE)
+  ECStyle <- createStyle(fontColour = "#000000", bgFill = "#FE962B",wrapText = TRUE)
   standard <- createStyle(fontColour = "#000000", halign = "CENTER", borderStyle = "medium", border = "TopBottomLeftRight")
 
   FStyle <- createStyle(fontColour = "#000000", bgFill = "#1CDA53")
@@ -206,7 +206,6 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
     arrange(id_exploit) %>%
     rename("Statistique"="id_exploit"))
 
-
   title <- data.frame(NA)
   names(title) <- paste0("Résultats individuels du groupe (N = ",nrow(stat_indiv),")")
 
@@ -266,7 +265,11 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
 
   insertImage(wb,"Composantes", file = file.path("tmp","Distribution_composantes.png"), startRow = nrow(stat_indiv) + 8 + nrow(stat_groupe), startCol = "B",width = 20.44, height = 16.17, units = "cm")
 
-  setColWidths(wb, "Composantes", cols = c(1:15), widths = "auto")
+
+
+  setColWidths(wb, "Composantes", cols = c(1:15), widths = 40)
+
+
 
   # Indicateurs -------------------------------------------------------------
 
@@ -480,7 +483,7 @@ MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe
   unlink("tmp",recursive = TRUE)
 
   if(!silent){
-    cat_bullet(paste0("Le document excel a été exporté à l'adresse '",file.path(output_dir,file)), bullet = "info", bullet_col = "green")
+    cat_bullet(paste0("Le document excel a été exporté à l'adresse '",file.path(output_dir,file),".xlsx'"), bullet = "info", bullet_col = "green")
   }
 
 }
