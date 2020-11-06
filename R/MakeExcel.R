@@ -294,9 +294,6 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
   img <- file.path("tmp",v,"Propriétés","Arbres_éclairés",end)
   insertImage(wb,"Robustesse", file = img, startRow = 2, startCol = "G", width = 18.86, height = 13.49, units = "cm")
 
-  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "Robustesse.png")
-  img <- file.path("tmp",v,"Propriétés",end)
-  insertImage(wb,"Robustesse", file = img, startRow = 30, startCol = "B", width = 23.42, height = 11.07, units = "cm")
 
   ## Ancrage
 
@@ -333,11 +330,6 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
   insertImage(wb,"Ancrage Territorial", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
 
 
-  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "Territorial.png")
-  img <- file.path("tmp",v,"Propriétés",end)
-  insertImage(wb,"Ancrage Territorial", file = img, startRow = 18, startCol = "B", width = 23.42, height = 11.07, units = "cm")
-
-
   ## Capacité productive
 
   df <- IDEAdata$nodes$Capacité %>% gather(key = indicateur, value = Résultat,-id_exploit) %>% select(-id_exploit) %>%
@@ -371,11 +363,6 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
   img <- file.path("tmp",v,"Propriétés","Arbres_éclairés",end)
 
   insertImage(wb,"Capacité", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
-
-
-  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "services.png")
-  img <- file.path("tmp",v,"Propriétés",end)
-  insertImage(wb,"Capacité", file = img, startRow = 28, startCol = "B", width = 23.42, height = 11.07, units = "cm")
 
   ## Autonomie
 
@@ -412,10 +399,6 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
   insertImage(wb,"Autonomie", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
 
 
-  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "Autonomie.png")
-  img <- file.path("tmp",v,"Propriétés",end)
-  insertImage(wb,"Autonomie", file = img, startRow = 20, startCol = "B", width = 23.42, height = 11.07, units = "cm")
-
   ## Responsabilité globale
 
   df <- IDEAdata$nodes$Responsabilité %>% gather(key = indicateur, value = Résultat,-id_exploit) %>% select(-id_exploit) %>%
@@ -450,10 +433,27 @@ MakeExcel <- function(input, output_dir = getwd(), silent = FALSE, append = TRUE
 
   insertImage(wb,"Responsabilité globale", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
 
+  addWorksheet(wb, "Annexe", gridLines = FALSE)
+
+  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "Robustesse.png")
+  img <- file.path("tmp",v,"Propriétés",end)
+  insertImage(wb,"Annexe", file = img, startRow = 2, startCol = "B", width = 23.42, height = 11.07, units = "cm")
+
+  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "Territorial.png")
+  img <- file.path("tmp",v,"Propriétés",end)
+  insertImage(wb,"Annexe", file = img, startRow = 2, startCol = "M", width = 23.42, height = 11.07, units = "cm")
+
+  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "services.png")
+  img <- file.path("tmp",v,"Propriétés",end)
+  insertImage(wb,"Annexe", file = img, startRow = 26, startCol = "B", width = 23.42, height = 11.07, units = "cm")
+
+  end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "Autonomie.png")
+  img <- file.path("tmp",v,"Propriétés",end)
+  insertImage(wb,"Annexe", file = img, startRow = 26, startCol = "M", width = 23.42, height = 11.07, units = "cm")
 
   end <- list.files(file.path("tmp",v,"Propriétés"), pattern = "globale.png")
   img <- file.path("tmp",v,"Propriétés",end)
-  insertImage(wb,"Responsabilité globale", file = img, startRow = 41, startCol = "B", width = 23.42, height = 11.07, units = "cm")
+  insertImage(wb,"Annexe", file = img, startRow = 49, startCol = "B", width = 23.42, height = 11.07, units = "cm")
 
   if(!silent){
     cat_bullet("(3.5/4) Données correctement transférées", bullet = "tick", bullet_col = "green")
