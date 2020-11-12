@@ -262,13 +262,10 @@ theme_tq_cust <- function(base_size = 15) {
 }
 
 
-
-
 ae_levels <- c("Diversité fonctionnelle", "Bouclage de flux de matières et d'énergie \npar une recherche d'autonomie", "Sobriété dans l'utilisation des ressources", "Assurer des conditions favorables à la production\n à moyen et long terme", "Réduire les impacts sur la santé humaine et les écosystèmes")
 
 st_levels <- c("Alimentation", "Développement local \net économie circulaire", "Emploi et qualité au travail", "Ethique et développement humain")
 
 ec_levels <- c("Viabilité économique et financière", "Indépendance", "Transmissibilité", "Efficience globale")
-
 
 glob_levels <- c(ae_levels, st_levels, ec_levels)

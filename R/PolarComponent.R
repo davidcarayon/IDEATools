@@ -127,7 +127,8 @@ PolarComponent <- function(IDEAdata) {
       scale_fill_manual(values = c("Agroécologique"="#2e9c15","Socio-Territoriale"="#5077FE", "Economique"="#FE962B")) +
       ggplot2::xlim(c(2, 4.9)) +
       ggplot2::theme_void() +
-      guides(fill = FALSE)
+      guides(fill = FALSE) +
+      ggplot2::theme(plot.margin=unit(c(-5,-5,-5,-5),"cm"))
 
     return(p)
 
