@@ -25,14 +25,16 @@ header-includes:
 - \pagestyle{fancy}
 - \fancyfoot[C]{Diagnostic IDEA4 - `r format(Sys.Date(), "%d %B %Y")`}
 - \fancyfoot[R]{Page \thepage / \pageref{LastPage}}
+- \fancyhead[L]{}
+- \fancyhead[R]{}
+- \fancyhead[C]{}
+- \renewcommand{\headrulewidth}{0pt}
 mainfont: Rubik
 subtitle: Eléments de sortie d'analyse de groupe - Version 1.0
 params:
   outdir : "tmp"
   data: "data"
   anon : FALSE
-editor_options:
-  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}

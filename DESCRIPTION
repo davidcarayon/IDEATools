@@ -33,4 +33,6 @@ Imports:
     ggrepel,
     ggimage,
     pdftools,
-    cli
+    cli,
+    officer,
+    officedown

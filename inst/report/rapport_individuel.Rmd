@@ -25,6 +25,10 @@ header-includes:
 - \pagestyle{fancy}
 - \fancyfoot[C]{Diagnostic IDEA4 - `r format(Sys.Date(), "%d %B %Y")`}
 - \fancyfoot[R]{Page \thepage / \pageref{LastPage}}
+- \fancyhead[L]{}
+- \fancyhead[R]{}
+- \fancyhead[C]{}
+- \renewcommand{\headrulewidth}{0pt}
 mainfont: Rubik
 subtitle: Eléments de sortie d'analyse individuelle - Version 1.0
 params:
@@ -191,7 +195,7 @@ print(IDEAresdim[[1]]$indic_Economique + ggplot2::theme(panel.spacing = ggplot2:
 
 \hbox{}
 
-# La seconde lecture de la durabilité : approche par les cinq propriétés de la durabilité
+# La seconde lecture par les propriétés de la durabilité
 
 ## Les cinq arbres éclairés des propriétés
 
@@ -240,8 +244,6 @@ knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",pa
 knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Robustesse.pdf")), auto_pdf = TRUE)
 ```
 \end{minipage}}
-
-## Synthèse : lecture globale par les propriétés
 
 \rotatebox{270}{
 \begin{minipage}{\textheight}

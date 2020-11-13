@@ -1,0 +1,136 @@
+---
+title: "Diagnostic IDEAv4"
+date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
+output: 
+  officedown::rdocx_document:
+    reference_docx: template.docx
+subtitle: Eléments de sortie d'analyse de groupe - Version 1.0
+params:
+  outdir : "tmp"
+  data: "data"
+  anon : FALSE
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, out.width = "100%", fig.align = "center",crop = TRUE)
+```
+
+```{r ressources}
+## Légende associée aux métadonnées du fichier .json
+MTD_legende <- tibble::tribble(
+  ~code,                                   ~nom,                                                      ~etendue,
+  "MTD_00",      "Version du calculateur utilisée",                                                    "Alpha 10",
+  "MTD_01",             "Identifiant exploitation",                                                       "Num 6",
+  "MTD_02",                                  "SAU",                                           "0 à 10 000 (2 dc)",
+  "MTD_03",                                  "UTH",                                           "0 à 10 000 (2 dc)",
+  "MTD_04",                                "UTH F",                                              "0 à 100 (2 dc)",
+  "MTD_05", "Tranche d’âge du chef d’exploitation", "«-25»,«25-35»,«35-45», «45-55»,«55-65» et «65+»",
+  "MTD_06",      "Typologie d'exploitation (OTEX)",                                       "Codes OTEX simplifiés",
+  "MTD_07",      "Surface en herbe en % de la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_08",               "Capital d’exploitation",                                             "0 à 100000 000",
+  "MTD_09",                                  "EBE",                                    "– 1000 000 à 10000 000",
+  "MTD_10",                     "Résultat courant",                                    "– 1000 000 à 10000 000",
+  "MTD_11",      "Zone géographique (département)",                                      "liste des départements",
+  "MTD_12",         "Atelier hors sol: oui / non",                                                      "0 ou 1",
+  "MTD_13",                      "Année d'enquête",                                                       "Num 4",
+  "MTD_14",                       "Type d’élevage",       "0 - pas d’élevage / 1 – monogastrique / 2 - herbivore",
+  "MTD_15",              "Part des PP dans la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_16", "Usage des produits phytos: oui /non",                                                      "0 ou 1"
+)
+
+```
+
+```{r input, include = FALSE}
+outdir <- params$outdir
+IDEAdata = params$data
+exportIDEA(metaIDEA(IDEAdata), outdir = outdir)
+metadata <- IDEAdata$metadata
+```
+
+```{r}
+fpar(ftext(paste0("Nombre d'exploitations : ",nrow(metadata)),prop = fp_text(bold = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+```
+
+```{r}
+fpar(ftext("[Insérer ici un sommaire Word]",prop = fp_text(bold = TRUE, italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+```
+
+```{r}
+fpar(run_linebreak())
+fpar(external_img(src = "bandeau.png", width = 6.5, height = 0.9))
+fpar(run_pagebreak())
+```
+
+# Lecture de la durabilité : approche par les trois dimensions de la durabilité
+
+## Résultats collectifs globaux pour les trois dimensions
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,"Distribution_dimensions.png")
+fpar(external_img(src = img_path, width = 6.5, height = 5.68))
+fpar(ftext('Figure 1 : Distribution des notes obtenues pour chaque dimension de la durabilité',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_pagebreak())
+```
+
+
+## Résultats individuels globaux pour les trois dimensions
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,"Hist_Dimensions.png")
+fpar(external_img(src = img_path, width = 6.5, height = 5.68))
+fpar(ftext('Figure 2 : Visualisation des notes obtenues par chaque exploitation pour chaque dimension de la durabilité',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_pagebreak())
+```
+
+## Résultats lus selon les 13 composantes
+
+```{r}
+fpar(run_linebreak())
+
+img_path <- file.path(outdir,"Distribution_composantes.png")
+fpar(external_img(src = img_path, width = 6.5, height = 5.1))
+fpar(ftext('Figure 3 :  Distribution des notes de duabilité obtenues pour chaque composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_pagebreak())
+```
+
+## Résultats détaillés par indicateur
+
+### Indicateurs agroécologiques
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,"Distribution_indicateurs_agroecologiques.png")
+fpar(external_img(src = img_path, width = 6.5, height = 6.70))
+fpar(ftext('Figure 4 :  Distribution des notes obtenues pour les indicateurs agroécologiques, regroupés par composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_pagebreak())
+```
+
+### Indicateurs socio-territoriaux
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,"Distribution_indicateurs_socio_territoriaux.png")
+fpar(external_img(src = img_path, width = 6.5, height = 7.49))
+fpar(ftext('Figure 5 :  Distribution des notes obtenues pour les indicateurs socio-territoriaux, regroupés par composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+```
+
+### Indicateurs économiques
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,"Distribution_indicateurs_economiques.png")
+fpar(external_img(src = img_path, width = 6.5, height = 5.9))
+fpar(ftext('Figure 6 :  Distribution des notes obtenues pour les indicateurs économiques, regroupés par composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_pagebreak())
+```
+
+# La seconde lecture de la durabilité : approche par les cinq propriétés de la durabilité
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,"Matrice_Propriétés.png")
+fpar(external_img(src = img_path, width = 6.5, height = 3.9))
+fpar(ftext('Figure 7 :  Matrice collective des résultats par les propriétés',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+```
