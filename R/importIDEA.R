@@ -29,6 +29,8 @@
 #' IDEAdata <- importIDEA(path, anonymous = FALSE)
 importIDEA <- function(input, anonymous = FALSE) {
 
+  Encoding(input) <- "UTF-8"
+
   input <- normalizePath(input)
 
   # Analysis type -----------------------------------------------------------

@@ -22,6 +22,7 @@
 MakeGroupExcel <- function(input,output_dir = getwd(), file = "analyse_de_groupe" , silent = FALSE) {
 
   Encoding(list_max_compo$composante) <- "UTF-8"
+  Encoding(input) <- "UTF-8"
 
   cli_h1("Reporting de groupe de données IDEA vers un fichier excel (Version 1.1)")
 

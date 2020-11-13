@@ -22,7 +22,7 @@
 #' path <- system.file("", package = "IDEATools")
 #' MakeGroupReport(path)
 MakeGroupReport <- function(input, output_dir = getwd(), file = "Rapport_groupe", silent = FALSE) {
-
+  Encoding(input) <- "UTF-8"
   Encoding(list_max_compo$composante) <- "UTF-8"
 
   if (!dir.exists(output_dir)) {

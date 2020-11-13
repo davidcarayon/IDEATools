@@ -132,9 +132,9 @@ knitr::include_graphics("bandeau.png", auto_pdf = TRUE)
 
 \newpage
 
-# Lecture par les dimensions
+# Lecture de la durabilité : approche par les trois dimensions de la durabilité
 
-## Résultats pour les dimensions
+## Résultats globaux pour les trois dimensions
 
 \large
 
@@ -142,58 +142,58 @@ knitr::include_graphics("bandeau.png", auto_pdf = TRUE)
 min_val <- min(res_dim$dimension_value)
 ```
 
-La note d'IDEA4 obtenue pour cette exploitation est de **`r min_val` / 100**.
+La note finale d'IDEA4 obtenue pour cette exploitation est de **`r min_val` / 100** (note la plus faible des trois dimensions).
 
 <br>
 
 \large
 
-```{r fig.width = 9.11, fig.height=5.6}
+```{r fig.width = 9.11, fig.height=5.6, fig.cap = "Notes obtenues pour chaque dimension de la durabilité"}
 print(IDEAresdim[[1]]$dimensions)
 ```
 
-## Résultats pour les composantes
+## Résultats lus selon les 13 composantes (histogramme)
 
-```{r fig.cap= "Scores obtenus pour chaque composante de la durabilité", fig.width = 13.69, fig.height=10.5}
+```{r fig.cap= "Notes de durabilité obtenues pour les 13 composantes", fig.width = 13.69, fig.height=10.5}
 print(IDEAresdim[[1]]$composantes)
 ```
 
 
-## Résultats pour les composantes (polarisée)
+## Résultats lus selon les 13 composantes (diagramme polarisé)
 
 \vspace{+3em}
 
-```{r fig.cap= "Version polarisée des résultats par composantes", fig.width = 13, fig.height=13, fig.align="center"}
+```{r fig.cap= "Version polarisée des résultats lus selon les 13 composantes", fig.width = 13, fig.height=13, fig.align="center"}
 print(IDEApol[[1]])
 ```
 
-## Résultats pour les indicateurs
+## Résultats détaillés par indicateur
 
-### Indicateurs Agroécologiques
+### Indicateurs agroécologiques
 
-```{r fig.cap= "Scores obtenus pour les indicateurs Agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=12}
+```{r fig.cap= "Notes obtenues pour les indicateurs agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=12}
 print(IDEAresdim[[1]]$indic_Agroécologique+ ggplot2::theme(panel.spacing = ggplot2::unit(1, "lines")))
 ```
 
 \let\cleardoublepage\clearpage
 
-### Indicateurs Socio-Territoriaux
+### Indicateurs socio-territoriaux
 
-```{r fig.cap= "Scores obtenus pour les indicateurs Socio-territoriaux, regroupés par composante", fig.width = 10.69, fig.height=12.5}
+```{r fig.cap= "Notes obtenues pour les indicateurs socio-territoriaux, regroupés par composante", fig.width = 10.69, fig.height=12.5}
 print(IDEAresdim[[1]]$`indic_Socio-Territoriale`+ ggplot2::theme(panel.spacing = ggplot2::unit(1, "lines")))
 ```
 
-### Indicateurs Economiques
+### Indicateurs économiques
 
-```{r fig.cap= "Scores obtenus pour les indicateurs Economiques, regroupés par composante", fig.width = 10.69, fig.height=9}
+```{r fig.cap= "Notes obtenues pour les indicateurs économiques, regroupés par composante", fig.width = 10.69, fig.height=9}
 print(IDEAresdim[[1]]$indic_Economique + ggplot2::theme(panel.spacing = ggplot2::unit(1, "lines"))) 
 ```
 
 \hbox{}
 
-# Lecture par les propriétés
+# La seconde lecture de la durabilité : approche par les cinq propriétés de la durabilité
 
-## Arbres éclairés des propriétés
+## Les cinq arbres éclairés des propriétés
 
 ```{r}
 v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
@@ -241,6 +241,8 @@ knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",pa
 ```
 \end{minipage}}
 
+## Synthèse : lecture globale par les propriétés
+
 \rotatebox{270}{
 \begin{minipage}{\textheight}
 ```{r fig.cap= 'Arbre éclairé global de la lecture par les propriétés'}
@@ -255,7 +257,7 @@ knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",pa
 ```
 \end{minipage}}
 
-## Diagamme radar des scores obtenus au sein de chaque propriété
+## Diagrammes radar des notes obtenues au sein de chaque propriété
 
 ```{r} 
 plist <- IDEAresrad[[1]]

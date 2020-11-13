@@ -36,10 +36,7 @@ replace_col <- function(resultat) {
   return(res)
 }
 
-
-
 # Defining custom functions -----------------------------------------------
-
 
 ## Re-scales indicators according to the max authorized value
 ScaleIndicator <- function(indic,value) {

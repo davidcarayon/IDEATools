@@ -101,47 +101,47 @@ knitr::include_graphics("bandeau.png", auto_pdf = TRUE)
 
 \newpage
 
-# Lecture par les dimensions
+# Lecture de la durabilité : approche par les trois dimensions de la durabilité
 
-## Résultats pour les dimensions
+## Résultats collectifs globaux pour les trois dimensions
 
 ### Distribution des résultats du groupe
 
-```{r fig.cap = "Distribution des scores obtenus pour chaque dimension de la durabilité", fig.width = 7.95, fig.height=6.91}
+```{r fig.cap = "Distribution des notes obtenues pour chaque dimension de la durabilité", fig.width = 7.95, fig.height=6.91}
 print(IDEAresmeta$boxplot_dim)
 ```
 
-### Visualisation des résultats individuels
+## Résultats individuels globaux pour les trois dimensions
 
-```{r fig.cap = "Visualisation des résultats invdividuels obtenus par chaque exploitation pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=13}
+```{r fig.cap = "Visualisation des notes obtenues par chaque exploitation pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=13}
 print(IDEAresmeta$metaDim)
 ```
 
-## Résultats pour les composantes
+## Résultats lus selon les 13 composantes
 
-```{r fig.cap= "Distribution des scores obtenus pour chaque composante de la durabilité", fig.width = 11.3, fig.height=8.94}
+```{r fig.cap= "Distribution des notes de duabilité obtenues pour chaque composante", fig.width = 11.3, fig.height=8.94}
 print(IDEAresmeta$boxplot_compo)
 ```
 
-## Résultats pour les indicateurs
+## Résultats détaillés par indicateur
 
-### Indicateurs Agroécologiques
+### Indicateurs agroécologiques
 
-```{r fig.cap= "Distribution des scores obtenus pour les indicateurs Agroécologiques, regroupés par composante", fig.width = 11.9, fig.height=12.5}
+```{r fig.cap= "Distribution des notes obtenues pour les indicateurs agroécologiques, regroupés par composante", fig.width = 11.9, fig.height=12.5}
 print(IDEAresmeta$boxplot_AE)
 ```
 
 \let\cleardoublepage\clearpage
 
-### Indicateurs Socio-Territoriaux
+### Indicateurs socio-territoriaux
 
-```{r fig.cap= "Distribution des scores obtenus pour les indicateurs Socio-territoriaux, regroupés par composante", fig.width = 11.9, fig.height=14}
+```{r fig.cap= "Distribution des scores obtenus pour les indicateurs socio-territoriaux, regroupés par composante", fig.width = 11.9, fig.height=14}
 print(IDEAresmeta$boxplot_ST)
 ```
 
-### Indicateurs Economiques
+### Indicateurs économiques
 
-```{r fig.cap= "Distribution des scores obtenus pour les indicateurs Economiques, regroupés par composante", fig.width = 11.9, fig.height=11}
+```{r fig.cap= "Distribution des scores obtenus pour les indicateurs économiques, regroupés par composante", fig.width = 11.9, fig.height=11}
 print(IDEAresmeta$boxplot_EC)
 ```
 
