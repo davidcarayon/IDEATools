@@ -12,8 +12,10 @@ params:
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
-knitr::knit_hooks$set(crop = hook_pdfcrop)
+knitr::knit_hooks$set(crop = knitr::hook_pdfcrop)
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, out.width = "100%", fig.align = "center",crop = TRUE)
+library(officedown)
+library(officer)
 ```
 
 ```{r ressources}
