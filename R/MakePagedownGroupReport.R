@@ -32,8 +32,13 @@ MakePagedownGroupReport <- function(input, output_dir = getwd(), file = "Rapport
   outdir <- tempdir()
 
   template <- system.file("report/rapport_groupe_pagedown.Rmd", package = "IDEATools")
+  file.copy(template,outdir, recursive = TRUE)
+
   style_folder <- system.file("report/bandeau.png", package = "IDEATools")
+  file.copy(style_folder,outdir, recursive = TRUE)
+
   template_folder <- system.file("report/style", package = "IDEATools")
+  file.copy(template_folder,outdir, recursive = TRUE)
 
   output_file <- paste0(file,"_",Sys.Date(),".html")
 

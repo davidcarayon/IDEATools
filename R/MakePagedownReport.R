@@ -40,8 +40,13 @@ MakePagedownReport <- function(input, output_dir = getwd(), silent = FALSE) {
   outdir <- tempdir()
 
   template <- system.file("report/rapport_individuel_pagedown.Rmd", package = "IDEATools")
+  file.copy(template,outdir, recursive = TRUE)
+
   style_folder <- system.file("report/bandeau.png", package = "IDEATools")
+  file.copy(style_folder,outdir, recursive = TRUE)
+
   template_folder <- system.file("report/style", package = "IDEATools")
+  file.copy(template_folder,outdir, recursive = TRUE)
 
   # Définition des paramètres pour le rendu
   params <- list(data = IDEAdata,

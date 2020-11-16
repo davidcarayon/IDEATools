@@ -41,8 +41,10 @@ MakeReport <- function(input, output_dir = getwd(), silent = FALSE) {
   exportIDEA(MakeTrees(IDEAdata), outdir = outdir)
 
   template <- system.file("report/rapport_individuel.Rmd", package = "IDEATools")
+  file.copy(template,outdir,recursive = TRUE)
 
   style_folder <- system.file("report/bandeau.png", package = "IDEATools")
+  file.copy(style_folder,outdir,recursive = TRUE)
 
   # Définition des paramètres pour le rendu
   params <- list(data = IDEAdata,
