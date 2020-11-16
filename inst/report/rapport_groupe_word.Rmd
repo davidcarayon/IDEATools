@@ -4,6 +4,7 @@ date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
 output: 
   officedown::rdocx_document:
     reference_docx: template.docx
+    toc: true
 subtitle: Eléments de sortie d'analyse de groupe - Version 1.0
 params:
   outdir : "tmp"
@@ -51,10 +52,6 @@ metadata <- IDEAdata$metadata
 
 ```{r}
 fpar(ftext(paste0("Nombre d'exploitations : ",nrow(metadata)),prop = fp_text(bold = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-```
-
-```{r}
-fpar(ftext("[Insérer ici un sommaire Word]",prop = fp_text(bold = TRUE, italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 ```
 
 ```{r}
