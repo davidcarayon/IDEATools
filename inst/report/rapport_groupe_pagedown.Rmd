@@ -1,0 +1,115 @@
+---
+title: "Diagnostic IDEAv4"
+subtitle: Eléments de sortie d'analyse de groupe - Version 1.0
+date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
+output: 
+  pagedown::html_paged:
+    highlight: haddock
+    toc: true
+    lot: true
+    lof: true
+    css: 
+    - "style/IDEAreport.css"
+params:
+  outdir : "tmp"
+  data: "data"
+  anon : FALSE
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	dpi = 300,
+	out.width = "100%"
+)
+```
+
+```{r ressources}
+## Légende associée aux métadonnées du fichier .json
+MTD_legende <- tibble::tribble(
+  ~code,                                   ~nom,                                                      ~etendue,
+  "MTD_00",      "Version du calculateur utilisée",                                                    "Alpha 10",
+  "MTD_01",             "Identifiant exploitation",                                                       "Num 6",
+  "MTD_02",                                  "SAU",                                           "0 à 10 000 (2 dc)",
+  "MTD_03",                                  "UTH",                                           "0 à 10 000 (2 dc)",
+  "MTD_04",                                "UTH F",                                              "0 à 100 (2 dc)",
+  "MTD_05", "Tranche d’âge du chef d’exploitation", "«-25»,«25-35»,«35-45», «45-55»,«55-65» et «65+»",
+  "MTD_06",      "Typologie d'exploitation (OTEX)",                                       "Codes OTEX simplifiés",
+  "MTD_07",      "Surface en herbe en % de la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_08",               "Capital d’exploitation",                                             "0 à 100000 000",
+  "MTD_09",                                  "EBE",                                    "– 1000 000 à 10000 000",
+  "MTD_10",                     "Résultat courant",                                    "– 1000 000 à 10000 000",
+  "MTD_11",      "Zone géographique (département)",                                      "liste des départements",
+  "MTD_12",         "Atelier hors sol: oui / non",                                                      "0 ou 1",
+  "MTD_13",                      "Année d'enquête",                                                       "Num 4",
+  "MTD_14",                       "Type d’élevage",       "0 - pas d’élevage / 1 – monogastrique / 2 - herbivore",
+  "MTD_15",              "Part des PP dans la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_16", "Usage des produits phytos: oui /non",                                                      "0 ou 1"
+)
+
+```
+
+```{r input, include = FALSE}
+outdir <- params$outdir
+IDEAdata = params$data
+exportIDEA(metaIDEA(IDEAdata), outdir = outdir)
+metadata <- IDEAdata$metadata
+```
+
+# Lecture de la durabilité : approche par les trois dimensions de la durabilité
+
+## Résultats collectifs globaux pour les trois dimensions
+
+### Distribution des résultats du groupe
+
+```{r fig.cap = "Figure 1 : Distribution des notes obtenues pour chaque dimension de la durabilité", fig.width = 7.95, fig.height=6.91}
+knitr::include_graphics(file.path(outdir,"Distribution_dimensions.png"))
+```
+
+\newpage
+
+## Résultats individuels globaux pour les trois dimensions
+
+```{r fig.cap = "Figure 2 : Visualisation des notes obtenues par chaque exploitation pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=13}
+knitr::include_graphics(file.path(outdir,"Hist_Dimensions.png"))
+```
+
+\newpage
+
+## Résultats lus selon les 13 composantes
+
+```{r fig.cap= "Figure 3 : Distribution des notes de durabilité obtenues pour chaque composante", fig.width = 11.3, fig.height=8.94}
+knitr::include_graphics(file.path(outdir,"Distribution_composantes.png"))
+```
+
+\newpage
+
+## Résultats détaillés par indicateur
+
+### Indicateurs agroécologiques
+
+```{r fig.cap= "Figure 4 : Distribution des notes obtenues pour les indicateurs agroécologiques, regroupés par composante", fig.width = 11.9, fig.height=12.5}
+knitr::include_graphics(file.path(outdir,"Distribution_indicateurs_agroecologiques.png"))
+```
+
+### Indicateurs socio-territoriaux
+
+```{r fig.cap= "Figure 5 : Distribution des scores obtenus pour les indicateurs socio-territoriaux, regroupés par composante", fig.width = 11.9, fig.height=14}
+knitr::include_graphics(file.path(outdir,"Distribution_indicateurs_socio_territoriaux.png"))
+```
+
+### Indicateurs économiques
+
+```{r fig.cap= "Figure 6 : Distribution des scores obtenus pour les indicateurs économiques, regroupés par composante", fig.width = 11.9, fig.height=11}
+knitr::include_graphics(file.path(outdir,"Distribution_indicateurs_economiques.png"))
+```
+
+\newpage
+
+# Lecture par les propriétés
+
+```{r fig.cap= "Figure 7 : Matrice des résultats par les propriétés du groupe", fig.width = 10.4, fig.height=6.82}
+knitr::include_graphics(file.path(outdir,"Matrice_Propriétés.png"))
+```

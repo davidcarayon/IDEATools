@@ -1,0 +1,203 @@
+---
+title: "Diagnostic IDEAv4"
+subtitle: Eléments de sortie d'analyse individuelle - Version 1.0
+date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
+output: 
+  pagedown::html_paged:
+    highlight: haddock
+    toc: true
+    lot: true
+    lof: true
+    css: 
+    - "style/IDEAreport.css"
+params:
+  outdir : "tmp"
+  data: "data"
+  anon : FALSE
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	dpi = 300,
+	out.width = "100%"
+)
+```
+
+```{r ressources}
+## Légende associée aux métadonnées du fichier .json
+MTD_legende <- tibble::tribble(
+  ~code,                                   ~nom,                                                      ~etendue,
+  "MTD_00",      "Version du calculateur utilisée",                                                    "Alpha 10",
+  "MTD_01",             "Identifiant exploitation",                                                       "Num 6",
+  "MTD_02",                                  "SAU",                                           "0 à 10 000 (2 dc)",
+  "MTD_03",                                  "UTH",                                           "0 à 10 000 (2 dc)",
+  "MTD_04",                                "UTH F",                                              "0 à 100 (2 dc)",
+  "MTD_05", "Tranche d’âge du chef d’exploitation", "«-25»,«25-35»,«35-45», «45-55»,«55-65» et «65+»",
+  "MTD_06",      "Typologie d'exploitation (OTEX)",                                       "Codes OTEX simplifiés",
+  "MTD_07",      "Surface en herbe en % de la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_08",               "Capital d’exploitation",                                             "0 à 100000 000",
+  "MTD_09",                                  "EBE",                                    "– 1000 000 à 10000 000",
+  "MTD_10",                     "Résultat courant",                                    "– 1000 000 à 10000 000",
+  "MTD_11",      "Zone géographique (département)",                                      "liste des départements",
+  "MTD_12",         "Atelier hors sol: oui / non",                                                      "0 ou 1",
+  "MTD_13",                      "Année d'enquête",                                                       "Num 4",
+  "MTD_14",                       "Type d’élevage",       "0 - pas d’élevage / 1 – monogastrique / 2 - herbivore",
+  "MTD_15",              "Part des PP dans la SAU",                                              "0 à 100 (2 dc)",
+  "MTD_16", "Usage des produits phytos: oui /non",                                                      "0 ou 1"
+)
+
+```
+
+
+```{r input, include = FALSE}
+outdir <- params$outdir
+IDEAdata = params$data
+metadata <- IDEAdata$metadata
+
+dimensionsPlots(IDEAdata) %>% exportIDEA(outdir)
+MakeTrees(IDEAdata) %>% exportIDEA(outdir)
+radarPlots(IDEAdata) %>% exportIDEA(outdir)
+PolarComponent(IDEAdata) %>% exportIDEA(outdir)
+anon = FALSE
+v <- metadata$MTD_01 %>% stringr::str_replace_all(" ","_")
+```
+
+<p style="font-weight:600; font-size:36px">Données de l'exploitation</p>
+
+<center>
+
+```{r fig.align = "center"}
+ 
+tab <- metadata %>%
+  tidyr::gather(key = code, value = valeur) %>%
+  dplyr::inner_join(MTD_legende, by ="code") %>%
+  dplyr::select(`Métadonnée` = nom, Valeur = valeur) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Valeur = tidyr::replace_na(Valeur, "Iconnu(e)")) %>% 
+  dplyr::ungroup()
+
+ knitr::kable(tab)
+```
+
+</center>
+
+# Lecture de la durabilité : approche par les trois dimensions de la durabilité
+
+## Résultats globaux pour les trois dimensions
+
+```{r}
+min_val <- min(IDEAdata$dataset$dimension_value)
+```
+
+La note finale d'IDEA4 obtenue pour cette exploitation est de **`r min_val` / 100** (note la plus faible des trois dimensions).
+
+```{r  fig.width = 9.11, fig.height=5.6, fig.cap = "Notes obtenues pour chaque dimension de la durabilité"}
+knitr::include_graphics(file.path(outdir,v,"Dimensions",paste0(v,"_","Dimensions.png")))
+```
+
+
+\newpage
+
+## Résultats lus selon les 13 composantes (histogramme)
+
+<br>
+
+```{r fig.cap= "Notes de durabilité obtenues pour les 13 composantes", fig.width = 13.69, fig.height=10.5}
+knitr::include_graphics(file.path(outdir,v,"Dimensions",paste0(v,"_","Composantes.png")))
+```
+
+\newpage
+
+## Résultats lus selon les 13 composantes (diagramme polarisé)
+
+```{r fig.cap= "Version polarisée des résultats lus selon les 13 composantes", fig.width = 13, fig.height=13}
+knitr::include_graphics(file.path(outdir,v,"Dimensions",paste0(v,"_","Composantes_polaires.png")))
+```
+
+\newpage
+
+## Résultats détaillés par indicateur
+
+### Indicateurs agroécologiques
+
+```{r fig.cap= "Notes obtenues pour les indicateurs agroécologiques, regroupés par composante", fig.width = 10.69, fig.height=12}
+knitr::include_graphics(file.path(outdir,v,"Dimensions",paste0(v,"_","Indicateurs Agroécologiques.png")))
+```
+
+\newpage
+
+### Indicateurs socio-territoriaux
+
+```{r fig.cap= "Notes obtenues pour les indicateurs socio-territoriaux, regroupés par composante", fig.width = 10.69, fig.height=12.5}
+knitr::include_graphics(file.path(outdir,v,"Dimensions",paste0(v,"_","Indicateurs Socio-Territoriaux.png")))
+```
+
+\newpage
+
+### Indicateurs économiques
+
+```{r fig.cap= "Notes obtenues pour les indicateurs économiques, regroupés par composante", fig.width = 10.69, fig.height=9}
+knitr::include_graphics(file.path(outdir,v,"Dimensions",paste0(v,"_","Indicateurs Economiques.png")))
+```
+
+\newpage
+
+# La seconde lecture par les propriétés de la durabilité
+
+## Les cinq arbres éclairés des propriétés
+
+```{r fig.cap= 'Arbre éclairé de la propriété "Ancrage territorial"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Ancrage Territorial.png")), auto_pdf = TRUE)
+```
+
+```{r fig.cap= 'Arbre éclairé de la propriété "Autonomie"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Autonomie.png")))
+```
+
+```{r fig.cap= 'Arbre éclairé de la propriété "Capacité productive et reproductive de biens et services"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Capacité productive et reproductive de biens et de services.png")), auto_pdf = TRUE)
+```
+
+```{r fig.cap= 'Arbre éclairé de la propriété "Responsabilité globale"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Responsabilité globale.png")))
+```
+
+```{r fig.cap= 'Arbre éclairé de la propriété "Robustesse"'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Robustesse.png")), auto_pdf = TRUE)
+```
+
+```{r fig.cap= 'Arbre éclairé global de la lecture par les propriétés'}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global.png")))
+```
+
+```{r fig.cap= "Synthèse de la lecture par les propriétés avec un focus sur les premières branches d'agrégation"}
+knitr::include_graphics(file.path(outdir,v,"Propriétés","Arbres_éclairés",paste0(v,"_","Global_zoom.png")))
+```
+
+\newpage
+
+## Diagrammes radar des notes obtenues au sein de chaque propriété
+
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Angrage territorial"', fig.width = 16.1, fig.height=7.61}
+knitr::include_graphics(file.path(outdir,v,"Propriétés",paste0(v,"_","Radar_Ancrage Territorial.png")))
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Autonomie"', fig.width = 16.1, fig.height=7.61}
+knitr::include_graphics(file.path(outdir,v,"Propriétés",paste0(v,"_","Radar_Autonomie.png")))
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Capacité productive et reproductive de biens et de services"', fig.width = 16.1, fig.height=7.61}
+knitr::include_graphics(file.path(outdir,v,"Propriétés",paste0(v,"_","Radar_Capacité productive et reproductive de biens et de services.png")))
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Responsabilité globale"', fig.width = 16.1, fig.height=7.61}
+knitr::include_graphics(file.path(outdir,v,"Propriétés",paste0(v,"_","Radar_Responsabilité globale.png")))
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Robustesse"', fig.width = 16.1, fig.height=7.61}
+knitr::include_graphics(file.path(outdir,v,"Propriétés",paste0(v,"_","Radar_Robustesse.png")))
+```
