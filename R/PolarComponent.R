@@ -24,14 +24,13 @@
 #' IDEAres <- PolarComponent(IDEAdata)
 PolarComponent <- function(IDEAdata) {
 
-
-  # PDF temporaire
-  temp_pdf <- file.path(tempdir(),"plot.pdf")
-
-
   Encoding(list_max_compo$composante) <- "UTF-8"
 
   singleplots <- function(dataset) {
+
+
+    # PDF temporaire
+    temp_pdf <- file.path(tempdir(),"plot.pdf")
 
     component_data <- dataset %>% distinct(composante,dimension,composante_value) %>%
       inner_join(list_max_compo, by = "composante") %>%

@@ -1092,7 +1092,6 @@ importIDEA <- function(input, anonymous = FALSE) {
 
 
 
-
     end_nodes <- list("Robustesse" = node_10, "Capacité" = node_20, "Autonomie" = node_26, "Responsabilité" = node_41, "Ancrage" = node_46, Global = node_final)
 
     ## On supprime les noeuds intermédiaires
