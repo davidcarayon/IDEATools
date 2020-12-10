@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# IDEATools <img src='man/Figures/logo_hex.png' align="right" height="139" />
+# IDEATools <img src='man/figures/logo.png' align="right" height="139" />
 
 <!-- badges: start -->
 
