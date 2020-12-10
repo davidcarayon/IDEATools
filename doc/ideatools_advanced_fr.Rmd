@@ -1,0 +1,523 @@
+---
+title: "Présentation d'IDEATools 2.0"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Présentation d'IDEATools 2.0}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l'automatisation et le reporting de diagnostics IDEA4.
+
+IDEATools 1.0 puis 1.1 ont été développés au cours de l'année 2020 pour répondre à des besoins (urgents) de sorties graphiques pour la méthode IDEA4, notamment en ce qui concerne l'approche par les propriétés. Cette première version du package était donc fonctionnelle mais largement perfectible et n'était pas assez documentée. Dans une optique de recherche reproductible et afin d'être mieux préparé aux adaptations / évolutions de la méthode, IDEATools a subi d'assez lourdes modifications pour aujourd'hui être proposé dans sa version 2.0.
+
+IDEATools 2.0 propose un processus automatisé de diagnostic composé de différents modules (`read_idea()`, `compute_idea()`, `old_idea()`, `plot_idea()`, `write_idea()`) tous regroupés dans une fonction globale, `diag_idea()`. La présente vignette présente le fonctionnement général de chacun de ces modules et la logique générale développée dans IDEATools.
+
+# Pré-requis
+
+Le package R {IDEATools} nécessite en premier lieu l'installation de [R](https://cran.r-project.org/) puis de [Rstudio](https://rstudio.com/products/rstudio/download/).
+
+En attendant son acceptation sur les dépôts officiels du CRAN, IDEATools nécessite l'installation d'un premier package, {remotes}, qui lui permettra d'installer IDEATools depuis un dépôt "non officiel" Github.
+
+```{r eval = FALSE}
+install.packages("remotes")
+remotes::install_github("davidcarayon/IDEATools")
+```
+
+## Dépendances R
+
+Le code source d'IDEATools s'appuie sur une liste de 20 packages R (aussi appelées dépendances). Ces packages (ainsi que leurs propres dépendances) sont automatiquement installés en même temps qu'IDEATools :
+
+-   {tidyr} permet le nettoyage de données
+
+-   {janitor} permet d'autres nettoyages, notamment les noms de colonne
+
+-   {dplyr} permet la manipulation des données
+
+-   {tibble} propose des tableaux de données améliorés
+
+-   {stringr} permet la manipulation de chaînes de caractères
+
+-   {glue} permet de combiner des chaînes de caractères et des variables
+
+-   {magrittr} met à disposition des outils améliorant la lisibilité du code
+
+-   {jsonlite} permet la manipulation (lecture/écriture) de fichiers json
+
+-   {readxl} permet la manipulation (lecture/écriture) de fichiers xls ou xlsx
+
+-   {purrr} permet d'appliquer des fonctions de manière itérative
+
+-   {ggplot2} permet la production de graphiques
+
+-   {ggpubr} permet la production de tableaux pouvant être insérés dans des graphiques
+
+-   {ggrepel} permet notamment l'affichage d'étiquettes avec décalage automatique sur des graphiques
+
+-   {ggimage} permet d'insérer des images dans des graphiques
+
+-   {pdftools} permet d'insérer des fichiers pdf dans des graphiques
+
+-   {rsvg} permet la conversion entre code source SVG vers des formats png/pdf
+
+-   {cli} permet un affichage console esthétique
+
+-   {rmarkdown} est un moteur permettant la production de rapports automatiques
+
+-   {knitr} permet de transformer tableaux et graphiques en éléments pouvant être insérés dans des rapports automatiques
+
+Enfin, 3 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :
+
+-   {pagedown} pour les rapports html
+
+-   {officedown} pour les rapports docx
+
+-   {openxlsx} pour les rapports xlsx
+
+Il suffit de les installer à l'aide de :
+
+```{r eval = FALSE}
+install.packages(c("pagedown","officedown","openxlsx"))
+```
+
+## Autres dépendances
+
+Il est aussi nécessaire d'installer [LaTeX](latex-project.org) pour la production d'un rapport PDF. Il est possible d'installer une version très allégée (mais suffisante) de LaTeX : [tinytex](https://yihui.org/tinytex/).
+
+Il est tout de même possible de produire un PDF sans installer LaTeX. Il suffit de produire un rapport au format HTML, puis de l'enregistrer au format PDF via l'interface d'impression d'un navigateur web tel que Google Chrome.
+
+Deux polices sont également requises pour l'utilisation de ce package : [Roboto](https://fonts.google.com/specimen/Roboto) et [Rubik](https://fonts.google.com/specimen/Rubik).
+
+# read\_idea()
+
+Il s'agit de la toute première fonction du processus, permettant d'identifier la validité du fichier d'entrée et d'en extraire métadonnées et items.
+
+``` {.r}
+read_idea("chemin_calculateur")
+```
+
+Après plusieurs itérations du développement de cette fonction, Il s'avère trop difficile de retrouver les items de manière automatique pour des versions \< 4.2.0. Si la version est trop ancienne, l'algorithme renverra une erreur et suggèrera une autre fonction, `old_idea`, qui récupère directement les indicateurs plutôt que les items et remplace donc `read_idea()` + `compute_idea()`.
+
+La fonction `read_idea()` n'est développée que pour un input d'un fichier INDIVIDUEL. Pour du traitement multi-individuel et/ou de groupe, la fonction globale `diag_idea()` appliquera cette fonction de manière itérative.
+
+## Fonctionnement
+
+### Lecture du fichier d'entrée et contrôle de version
+
+-   Quelle extension ? Si il n'y en a pas (= dossier) alors l'algorithme renvoie un message d'erreur
+
+-   Est-ce que l'extension est XLS, XLSX ou JSON ? Sinon, renvoi d'un message d'erreur.
+
+-   Est-ce que ce sont des données IDEA ?
+
+    -   Recherche de la présence d'un onglet 'Notice' pour les fichiers excel
+    -   Recherche d'un champ "métadonnées" pour un json
+    -   Sinon, renvoi d'un message d'erreur
+
+-   Recherche du numéro de version, converti en chiffre (ex : 420 pour 4.2.0)
+
+    -   Champs MTD\_00 si json
+    -   Cellule Notice\$K4 si excel
+    -   Si le numéro est introuvable alors une erreur dit que le fichier d'entrée est trop ancien et suggère une fonction alternative (`old_idea()`). Attention cependant, les calculateurs antérieurs au 01/01/2019 ne fonctionneront probablement pas.
+
+### Trouver les métadonnées
+
+Dans le cas d'un fichier json, les métadonnées sont facile à trouver car stockées dans le champs "\$metadonnees".
+
+Si la version est supérieure ou égale à la 4.2.5, alors on va diviser la valeur de MTD\_15 par 100. En effet, à partir de cette version, MTD\_15 n'est plus une proportion (0-1) mais un pourcentage. Afin de ne pas rencontrer de soucis dans les algorithmes suivants, cette valeur est à nouveau convertie en proportion pour être compatible avec les anciennes versions.
+
+Si on ne trouve pas de MTD\_01 (NA ou 0), alors on utilise **le nom du fichier (limité à 10 signes), sans extension.**
+
+On décide également de standardiser MTD\_14 pour qu'il devienne un numérique 0, 1 ou 2, quelle que soit l'écriture dans le json (que ce soit "2 - herbivore" ou "herbivore", cela renverra "2"). En effet, des tests seront effectués sur cette valeur pour le calcul d'indicateurs.
+
+Enfin, les métadonnées sont converties au bon format, soit numérique soit texte (Note : Les métadonnées numériques discrètes (ex : 0, 1, 2, 3) sont converties en texte pour éviter toute possible erreur) selon le tableau suivant :
+
+<center>
+
+| Métadonnée | Description                          | Type      |
+|------------|--------------------------------------|-----------|
+| MTD\_00    | Version du calculateur utilisée      | Texte     |
+| MTD\_01    | Identifiant exploitation             | Texte     |
+| MTD\_02    | SAU                                  | Numérique |
+| MTD\_03    | UTH                                  | Numérique |
+| MTD\_04    | UTH F                                | Numérique |
+| MTD\_05    | Tranche d'âge du chef d'exploitation | Texte     |
+| MTD\_06    | Typologie d'exploitation (OTEX)      | Texte     |
+| MTD\_07    | Surface en herbe en % de la SAU      | Numérique |
+| MTD\_08    | Capital d'exploitation               | Numérique |
+| MTD\_09    | EBE                                  | Numérique |
+| MTD\_10    | Résultat courant                     | Numérique |
+| MTD\_11    | Zone géographique (département)      | Texte     |
+| MTD\_12    | Atelier hors sol: oui / non          | Texte     |
+| MTD\_13    | Année d'enquête                      | Texte     |
+| MTD\_14    | Type d'élevage                       | Texte     |
+| MTD\_15    | Part des PP dans la SAU              | Numérique |
+| MTD\_16    | Usage des produits phytos: oui /non  | Texte     |
+
+</center>
+
+Enfin, si l'algorithme ne trouve pas très exactement 17 valeurs de métadonnées, il renverra un message d'erreur.
+
+Dans le cas d'un fichier excel, on va chercher les métadonnées dans la plage **A4:E21** de l'onglet "Renvoi BDD". Si par un souci technique MTD\_00 n'a pas pu être récupéré dans ce tableau (0 par exemple), on tente d'y insèrer 'Notice\$K4'. Ensuite, les mêmes contrôles sont appliqués que pour le JSON (MTD\_01, MTD\_14, présence de 17 valeurs)
+
+Dans les deux cas, à la fin, on regarde si il existe bien une valeur pour MTD\_14, MTD\_15 et MTD\_16 car ce sont des métadonnées cruciales pour le calcul d'indicateurs. Si il manque une de ces valeurs, un message d'erreur sera produit.
+
+### Extraction des items
+
+Dans le cas d'un input en json, les items sont facile à extraire dans le champs "\$item" du fichier. On rajoute ici juste une modification de chaîne de caractère pour que, par exemple, "IDEA\_A01\_1" devienne "A1\_1". Si l'algorithme ne retrouve pas très exactement 118 valeurs d'items, alors il renverra un message d'erreur.
+
+Dans le cas d'un fichier excel, on va rechercher les items dans la plage **A25:E143** de l'onglet "Renvoi BDD". Ici encore, on convertit les chaînes de caractères pour que "IDEA\_A01\_1" devienne "A1\_1".
+
+Si l'algorithme ne retrouve pas très exactement 118 valeurs d'items, alors il renverra à nouveau un message d'erreur.
+
+### Sortie
+
+Renvoi d'un objet contenant metadonnées et items, avec l'étiquette (aussi appelée "classe" en R) 'IDEA\_items' pour que la fonction suivante, `compute_idea()`, puisse l'identifier.
+
+# compute\_idea()
+
+C'est la seconde fonction du processus. On va partir des données précédemment récoltées pour calculer les indicateurs/composantes/dimensions/propriétés.
+
+``` {.r}
+compute_idea(IDEA_items)
+```
+
+La fonction s'appuie principalement sur des **règles de décisions** qui sont stockées dans une liste interne au package, `decision_rules_total`, qui contient :
+
+-   Un onglet contenant les seuils pour chaque indicateur pour passer des scores numériques déplafonnés vers des modalités qualitatives
+-   Un onglet contenant les règles de décisions pour l'agrégation des items en indicateurs (cet onglet est informel, car ces règles de décisions sont en fait codées dans le corps de la fonction).
+-   Les 46 noeuds de la carte heuristique, 1 noeud par onglet.
+
+Le fichier contenant les règles de décisions peut être consulté via :
+
+``` {.r}
+show_decision_rules()
+```
+
+Qui va exporter un fichier excel contenant les règles de décision dans le répertoire de travail (ou dans un répertoire spécifique indiqué).
+
+## Fonctionnement
+
+### Contrôle à l'entrée
+
+Seules les données d'entrées portant la classe "IDEA\_items" sont acceptés par cette fonction.
+
+### Agrégation par les dimensions
+
+Le calcul des indicateurs correspond dans la majorité des cas à la somme des items les constituants. Cependant, certains indicateurs présentent des exceptions :
+
+<center>
+
+| Indicateur | Si... (Condition)             | Alors... (Resultat)        |
+|------------|-------------------------------|----------------------------|
+| A1         | Item2 = 4                     | A1 = 4                     |
+|            | Item2 != 4                    | A1 = sum(items)            |
+| A5         | MTD\_15 \>= 0.75              | A5 = 5                     |
+|            | MTD\_15 \< 0.75               | A5 = sum(items)            |
+| A7         | MTD\_14 = 0                   | A7 = 0;                    |
+|            | MTD\_14 = 1,                  | A7 = Item2                 |
+|            | MTD\_14 = 2                   | A7 = 0.7xItem1 + 0.3xItem2 |
+| A8         | MTD\_15 \>= 0.95              | A8 = 8                     |
+|            | MTD\_15 \< 0.95               | A8 = sum(items)            |
+| A14        | MTD\_16 = 0                   | A14 = 4                    |
+|            | MTD\_14 = 0                   | A14 = Item1                |
+|            | MTD\_16 != 0 AND MTD\_14 != 0 | A7 = min(items)            |
+| A19        | MTD\_14 = 0                   | A19 = Item1                |
+|            | MTD\_14 != 0                  | A19 = min(items)           |
+| B2         | MTD\_14 = 0                   | B2 = Item2                 |
+|            | MTD\_14 != 0                  | B2 = Item1                 |
+| B23        | MTD\_14 = 0                   | B23 = Item2                |
+|            | MTD\_14 != 0                  | B23 = round(mean(items))   |
+
+</center>
+
+Ces règles sont compilées dans une des vignettes du package :
+
+``` {.r}
+vignette("decision_rules", package = "IDEATools")
+```
+
+Trois fonctions internes sont ensuite utilisées pour :
+
+-   Plafonner les indicateurs : Si la valeur déplafonnée est supérieure à la valeur max de l'indicateur, alors l'indicateur prend la valeur max. On en profite également pour arrondir certains résultats (Note : On ajoute une valeur infiniment petite à l'indicateur avant l'arrondi, afin de forcer l'arrondi au chiffre supérieur pour une valeur à 0.5). Si le score déplafonné est inférieur à 0, alors il est ramené à 0.
+
+-   Plafonner les composantes : Même principe que pour les indicateurs.
+
+-   Passer des composantes aux dimensions : Une simple somme des composantes.
+
+### Agrégation par les propriétés
+
+Une fonction interne permet d'utiliser la table de catégorisation issue des règles de décisions afin d'attribuer une modalité qualitative à chaque indicateur à partir de son score déplafonné.
+
+Ensuite, Si MTD\_14 vaut 0 (donc pas d'élevage), la modalité attribuée à A7 est automatiquement convertie à "NC".
+
+Enfin, un très long code va calculer le résultat pour chacun des 46 noeuds d'agrégation selon la numérotation suivante :
+
+```{r out.width = "100%", echo = FALSE}
+knitr::include_graphics("img/heuristic_numbers.png")
+```
+
+Ces calculs sont réalisés par des jointures filtrantes (`inner_join()`) entre les résultats des indicateurs et les tables de contingence. A chaque jointure, il ne reste donc plus qu'une ligne qui correspond à l'évaluation de l'exploitation.
+
+Enfin, on conserve les noeuds terminaux de chaque propriété ainsi qu'une table globale contenant l'ensemble des 99 éléments de la carte heuristique.
+
+### Sortie
+
+L'objet de sortie se voit attribué l'étiquette "IDEA\_data" pour la suite et contient :
+
+-   metadata : Les métadonnées de l'exploitation, inchangées par rapport à la fonction précédente.
+-   dataset : Un tableau contenant les scores plafonnés, déplafonnés, qualitatifs (propriété) pour les indicateurs, composantes, dimensions.
+-   nodes : Une liste contenant les tables avec l'évaluation de chaque indicateur/noeud de chacune des 5 propriétés ainsi que la table globale des 99 éléments de la carte heuristique.
+
+# old\_idea()
+
+Cette fonction est une alternative aux deux fonctions précédentes (`read_idea()`+`compute_idea()`) pour les calculateurs les plus anciens (\< 4.2.0). En effet, il s'avère trop difficile de retrouver les items de manière automatique pour ces anciennes versions. La fonction accepte donc le même format d'entrée que `read_idea()` et renvoie directement une sortie similaire à `compute_idea()`. Le principal inconvénient étant de ne pas récupérer de données liées aux items et de manquer certaines métadonnées.
+
+En revanche, même cette fonction a ses limites et aucune garantie des résultats n'est proposée pour des calculateurs antérieurs au 01/01/2019.
+
+``` {.r}
+old_idea("chemin_ancien_calculateur")
+```
+
+Les différentes étapes de cette fonction sont en tout point identiques aux fonctions précédentes, à l'exception d'une étape intermédiaire qui est supprimée (agrégation des items vers les indicateurs) et une recherche des valeurs d'indicateurs qui se fait dans chaque onglet relatif à chaque dimension plutôt que dans un onglet unique "Renvoi BDD" qui n'existait pas encore.
+
+Note : Pour l'identifiant de l'exploitation (MTD\_01), l'algorithme récupèrera en priorité le NOM/Prénom de l'exploitant si il le trouve, sinon il se basera ici encore sur le nom de fichier, sans extension, limité à 10 signes.
+
+# plot\_idea()
+
+Troisème fonction du processus, visant à générer :
+
+-   Des graphiques de trois types (dimensions, arbres éclairés, radars) à partir des données générées par les modules `compute_idea()` ou `old_idea()`
+
+-   Des graphiques de groupes pour les dimensions / propriétés dans le cas d'une analyse de groupe.
+
+
+``` {.r}
+plot_idea(IDEA_data, choices = c("dimension","trees","radars"))
+```
+
+
+```{r out.width = "100%", echo = FALSE, fig.cap = "Exemple de figures produites par IDEATools"}
+knitr::include_graphics("img/cap_graphs.png")
+```
+
+
+
+L'objet d'entrée peut être de deux classes différentes : "`IDEA\_data`" ou "`IDEA\_group\_data`". La fonction renverra un message d'erreur si aucune de ces deux classes n'est trouvée dans l'input.
+
+Là ou la classe "`IDEA\_data`" est la classe classique produite par la sortie de `compute_idea()` ou `old_idea()` , la classe "`IDEA\_group\_data`" ne peut être générée que par la fonction `diag_idea()` dans le cadre d'une analyse de groupe, qui va appliquer `read_idea() puis compute_idea()` ou `old_idea()` sur chaque exploitation de manière itérative avant d'agrégrer les résultats dans un objet de classe "`IDEA\_group\_data`".
+
+Dans le cas d'une analyse individuelle, l'utilisateur peut définir le type de graphiques qu'il veut produire via l'argument `choices`. **Attention**, l'ensemble des 3 types de graphiques possibles sont nécessaires pour l'option d'export 'rapport' dans la fonction suivante, `write_idea()`.
+
+Dans le cas d'une analyse de groupe, l'argument `choices` sera ignoré.
+
+## Cas d'une analyse individuelle
+
+### Contrôle
+
+Si la classe d'entrée est "`IDEA_data`", alors il s'agit d'une analyse individuelle et les graphiques seront produits en fonction de ce que l'utilisateur a défini dans `choices`.
+
+### Dimensions
+
+Les graphiques de l'approche par les dimensions sont pour la plupart des histogrammes générés via `{ggplot2}`. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l'encodage de l'intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : `theme_idea()`.
+
+Pour le cas du diagramme polarisé des composantes, un premier fichier PDF contenant un radar des composantes est d'abord exporté dans un fichier temporaire. Puis, un second graphique ggplot 'donut' est généré, importe le radar PDF en son centre puis insère des pictogrammes stockés dans le dossier d'installation du package.
+
+### Arbres éclairés
+
+L'algorithme de production des arbres éclairés est issu d'un travail de longue haleine impliquant le test de très nombreuses méthodes et packages R. Au final, la solution retenue a été de dessiner les modèles en "blanc" sur un logiciel de dessin vectoriel (Inkscape) au format svg. Le SVG est un langage de balisage (similaire au XML ou HTML) sur lequel il est assez facile d'appliquer des algorithmes de rechercher/remplacer. En effet, une balise de rectangle (correspondant à un noeud de l'arbre éclairé) s'écrit :
+
+    <rect
+           style="fill:#ffffff;fill-opacity:1;stroke:#001800;stroke-width:0.1"
+           id="rect2-16"
+           width="17.833706"
+           height="4.9643545"
+           x="370.30774"
+           y="143.9761"
+           inkscape:label="#rect2-16" />
+
+Il suffit donc d'assigner chaque "id" à un indicateur, puis on peut rechercher-remplacer l'argument "`fill:#ffffff`" par la couleur adéquate correspondant à l'évaluation.
+
+Les modèles sont compilés puis stockés sous forme d'un objet interne R nommé "`canvas`". Il s'agit d'une liste contenant le code source SVG de chaque modèle. Ces modèles blancs sont exportables / consultables via :
+
+``` {.r}
+IDEATools::show_canvas()
+```
+
+L'objet renvoyé par la fonction contient une liste similaire à "`canvas`", mais avec le blanc remplacé par les bonnes couleurs. Les fonctions dans `write_idea()` sont ensuite capables de convertir ce code SVG en image PNG et/ou PDF.
+
+**Attention** : Pour les futures modifications des modèles, il est particulièrement important de ne pas modifier les "id" de chaque rectangle, au risque de ne pas assigner le bon indicateur à son rectangle.
+
+### Radars
+
+Ces graphiques sont produits avec `{ggplot2}` et sont une version polarisée (`coord_polar()`) d'histogrammes des indicateurs regroupés par propriétés. On rajoute également une standardisation des scores d'indicateurs en les passant en pourcentage (ceci afin que les indicateurs soient tous sur la même échelle).
+
+En réalité, il ne s'agit pas de diagrammes radar mais d'histogrammes transformés dans des coordonnées polaires. Nous utilisons cependant la dénomination radar par facilité.
+
+Puisque les intitulés d'indicateurs sont bien trop longs pour être affichés sur le diagramme polarisé, un tableau associé au graphique est à chaque fois produit, donnant la correspondance entre code indicateur et intitulé de l'indicateur. Les lignes du tableau (ainsi que les histogrammes) sont aussi colorés en fonction de la dimension d'appartenance de l'indicateur. Enfin, les graphique et tableaux sont regroupés pour produire une figure unique pour chaque propriété.
+
+## Cas d'une analyse de groupe
+
+C'est dans le corps de la fonction `diag_idea()` que cette étiquette de groupe est rajoutée, en fonction du type d'analyse demandé par l'utilisateur.
+
+### Contrôle
+
+Si la classe d'entrée est "`IDEA_group_data`", alors il s'agit d'une analyse de groupe. L'argument `choices` sera donc ignoré.
+
+### Graphiques de groupe
+
+Pour les dimensions, les graphiques sont quasi-identiques aux graphiques de l'analyse individuelle, à la nuance près que les histogrammes sont remplacés par des boxplots. Nous rajoutons également une forme d'histogrammes empilés pour comparer les exploitations entre elles selon leurs trois dimensions.
+
+Concernant les propriétés, la seule visualisation actuellement jugée pertinente est une matrice (ou heatmap) de **propriétés x exploitations**, avec les cases colorées selon l'évaluation qualitative obtenue par l'exploitation pour une propriété donnée.
+
+## Sortie
+
+L'objet de sortie sera une liste de graphiques, avec une des deux étiquettes `IDEA_plots` ou `IDEA_group_plots` selon le type d'entrée, accompagné d'un item "data" contenant les données originales insérées dans `plot_idea()` qui sont nécessaires pour la fonction `write_idea()`.
+
+# write\_idea()
+
+Quatrième et dernière fonction du processus, elle vise a exporter les résultats sous forme de graphiques bruts et/ou sous forme de rapports avec une large variété de formats possibles.
+
+Ici encore, l'objet d'entrée peut être de deux classes, "`IDEA_plots`" ou "`IDEA_group_plots`", selon si nous sommes dans le cadre d'une analyse individuelle ou de groupe. Le comportement de la fonction sera différent selon la classe d'entrée.
+
+``` {.r}
+write_idea(IDEA_plots,
+           output_directory = "IDEATools_output",
+           type = c("local", "report"),
+           prefix = "EA",
+           dpi = 300,
+           report_format = c("pdf", "html", "docx", "odt", "pptx", "xlsx"),
+           quiet = FALSE)
+```
+
+L'utilisateur peut ici paramétrer :
+
+-   Le dossier de sortie des résultats
+-   Le type de sorties (rapport et/ou graphiques bruts)
+-   Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la ferme) dans le cas d'une analyse individuelle. S'il n'est pas précisé, il prendra la valeur "metadata\$MTD\_01".
+-   Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx et html)
+-   La résolution de sortie des graphiques (impacte notamment le poids des sorties)
+-   Si l'algorithme doit afficher sa progression dans la console.
+
+## Cas d'une analyse individuelle
+
+### Contrôle
+
+Si l'objet d'entrée est de classe "`IDEA_plots`", alors le premier processus de traitement est enclenché, correspondant aux analyses individuelles.
+
+## Sortie "locale"
+
+Si l'utilisateur choisit une sortie "locale", alors différents algorithmes vont être produits en fonction de ce que l'utilisateur avait indiqué dans `plot_idea()` concernant le choix des graphiques à produire.
+
+Dans le répertoire défini par l'utilisateur, un sous-dossier nommé selon la date du système sera d'abord créé. Ainsi, l'utilisateur pourra conserver ce dossier de sortie pour toutes ses sorties IDEATools s'il le souhaite.
+
+Les graphiques seront ensuite exportés dans un sous-dossier nommé selon l'argument "`prefix`" de la fonction, ceci afin de ne pas mélanger les résultats de différents diagnostics.
+
+L'architecture de ce dernier sous-dossier sera du type :
+
+-   Dimensions
+
+-   Propriétés
+
+    -   Arbres éclairés
+
+    -   Radars
+
+Chaque fichier sera également préfixé avec `prefix`.
+
+## Sortie "rapport"
+
+L'utilisateur peut ici choisir un **ou plusieurs** formats de sortie parmis pdf, docx, odt, pptx, xlsx, html.
+
+-   Si le format est pdf, docx, odt, pptx, les packages utilisés sont {rmarkdown}, {officer} et {officedown} et s'appuient sur des modèles stockés dans les fichiers internes du package.
+
+-   Si le format est html, alors c'est {pagedown} qui est utilisé pour produire des rapports HTML paginés. Les feuilles de style (css) sont stockées dans les fichiers internes du package
+
+-   Si le format est xlsx, alors c'est {openxlsx} qui est utilisé pour produire les documents excel. La structure du document est construite par une fonction interne d'IDEATools non exportée, `excel_report()`.
+
+## Cas d'une analyse de groupe
+
+C'est dans le corps de la fonction `diag_idea()` que cette étiquette de groupe est rajoutée, en fonction du type d'analyse demandé par l'utilisateur.
+
+### Contrôle
+
+Si l'objet d'entrée est de classe "`IDEA_group_plots`", alors le second processus de traitement est enclenché, correspondant aux analyses de groupe. L'argument `prefix` est ignoré : les préfixes seront ici générés à partir du MTD\_01.
+
+## Sorties
+
+Les mécanismes de sorties seront ici les même que dans le cas d'une analyse individuelle, mais avec production de graphiques différents (Boxplots, Heatmap, etc.) et de rapports à la trame différente. Le dossier de sortie contiendra un sous-dossier nommé d'après la date du système, puis un sous dossier au format "Groupe\_{nombre d'exploitations}".
+
+# diag\_idea()
+
+Chacun des modules développé dans IDEATools est indépendant et fonctionnel, pouvant être utilisé dans des cadres spécifiques. L'objectif de `diag_idea()` est d'assembler ces modules dans une fonction unique et facile d'utilisation.
+
+L'utilisateur peut y insérer un fichier, une liste de fichiers ou un répertoire de calculateurs excel ou fichiers json, puis spécifier son répertoire de sortie, le type d'analyse (individuel, multi-individuel, groupe), le type d'export (fichiers locaux en PNG, rapport) et paramétrer ces exports en termes de formats attendus.
+
+Les options sont cummulables. Si plusieurs formats de rapport sont par exemple précisés, tous les formats demandés seront produits. Il en va de même si l'analyse multi-individuelle et de groupe sont souhaitées en même temps. En revanche, il est impossible de demander une analyse de groupe sur un échantillon inférieur à 3 exploitations.
+
+``` {.r}
+diag_idea(input,
+          output_directory,
+          type = c("single","group"),
+          export_type = c("report","local",NULL),
+          plot_choices = c("dimensions","trees","radars"),
+          report_format = c("pdf","html","docx","odt","pptx","xlsx"),
+          prefix = "EA",
+          dpi = 300,
+          quiet = FALSE)
+```
+
+Selon le type d'analyse inséré, différentes procédures interne sont suivies.
+
+## Analyses individuelles
+
+Si l'input est un fichier unique, alors un simple processus individuel sera utilisé :
+
+```{r out.width = "100%", echo = FALSE}
+knitr::include_graphics("img/pipeline_individuel.png")
+```
+
+Si l'`export_type` est `"report"` et/ou `local` , les résultats sont exportés dans `output_directory` , au sein d'un sous-répertoire nommé selon la date système (ainsi, l'utilisateur pourra conserver ce dossier de sortie pour toutes ses sorties IDEATools s'il le souhaite) puis dans un sous-repertoire nommé selon `prefix` .
+
+Si export\_type est `NULL`, alors la dernière étape (`write_idea()`) sera omise et le résultat de `plot_idea()` sera renvoyé.
+
+## Analyses multi-individuelles
+
+Si l'input est une liste de fichiers et/ou un répertoire et que le type est "`single`", alors le processus d'analyse individuelle sera répété itérativement sur chaque fichier d'entrée :
+
+```{r out.width = "100%", echo = FALSE}
+knitr::include_graphics("img/pipeline_multi_individuel.png")
+```
+
+Dans ce contexte d'analyse multi-individuelle, l'argument `prefix` sera ignoré et les préfixes seront définis à partir du champs `metadata$MTD_01` des données.
+
+Si l'`export_type` est `"report"` et/ou `local` , les résultats sont exportés dans `output_directory` , au sein d'un sous-répertoire nommé selon la date système, dans un sous répertoire au nom de chaque exploitation (selon `metadata$MTD_01`).
+
+Si export\_type est `NULL`, alors la dernière étape (`write_idea()`) sera à chaque fois omise et les multiples sorties de `plot_idea()` sont compilées dans une liste puis renvoyés à l'utilisateur.
+
+## Analyses de groupe
+
+Si l'input est une liste de fichiers et/ou un répertoire, et que le type est "`group`", alors le processus d'import (`read_idea() puis compute_idea()` ou `old_idea()`) est répété itérativement sur chaque fichier d'entrée puis les résultats sont compilés dans un objet de classe "`IDEA_group_data`".
+
+Cet objet est ensuite inséré dans le processus `plot_idea() puis write_idea()` qui adopteront un comportement différent, adapté à l'analyse de groupe.
+
+```{r out.width = "100%", echo = FALSE}
+knitr::include_graphics("img/pipeline_groupe.png")
+```
+
+Ici encore, l'argument `prefix` sera ignoré et les préfixes seront définis à partir du champs `metadata$MTD_01` des données.
+
+Si l'`export_type` est `"report"` et/ou `local` , les résultats sont exportés dans `output_directory` , au sein d'un sous-répertoire nommé selon la date système, dans un sous répertoire supplémentaire au format "Groupe\_{nombre d'exploitations}"
+
+Si export\_type est `NULL`, alors la dernière étape (`write_idea()`) sera omise et le résultat de `plot_idea()` sera renvoyé à l'utilisateur.
+
+Note : Une erreur sera systématiquement renvoyée si le nombre d'exploitations inséré (via un répertoire ou via un vecteur de chemins d'accès) est strictement inférieur à 3.

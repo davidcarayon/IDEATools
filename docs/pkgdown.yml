@@ -1,0 +1,9 @@
+pandoc: 2.9.2.1
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  colored_trees: colored_trees.html
+  decision_rules: decision_rules.html
+  ideatools_advanced_fr: ideatools_advanced_fr.html
+last_built: 2020-12-09T18:11Z
+
