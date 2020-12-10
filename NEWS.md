@@ -1,3 +1,11 @@
+# IDEATools 2.0
+
+* New version more in line with CRAN requirements
+* Major code refactoring, all functions have changed
+* 5 modules (read > compute > old > plot > write) 
+* 1 wrapper function (diag_idea)
+
+
 # IDEATools 1.1
 
 * Added a `NEWS.md` file to track changes to the package.

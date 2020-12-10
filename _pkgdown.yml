@@ -1,0 +1,48 @@
+template:
+  params:
+    bootswatch: flatly
+navbar:
+  left:
+    - icon: fa-home
+      href: index.html
+    - icon: fa-file-code-o
+      text: "Fonctions"
+      href: reference/index.html
+    - icon: fa-book
+      text: "Articles"
+      menu:
+      -  text: Présentation d'IDEATools
+         href: articles/ideatools_advanced_fr.html
+      -  text: About decision rules
+         href: articles/decision_rules.html
+      -  text: About colored trees
+         href: articles/colored_trees.html
+    - icon: fa-newspaper
+      text: News
+      href: news/index.html
+  right:
+    - icon: fa-github
+      href: https://github.com/davidcarayon/IDEATools
+    - icon: fa-info
+      href: https://idea.chlorofil.fr/idea-version-4.html
+reference:
+- title: "Main module"
+  desc: >
+    This is the main function to run a full
+    IDEA4 diagnosis
+- contents:
+  - diag_idea
+- title: "Core modules"
+  desc: "Functions used under the hood by diag_idea"
+- contents:
+  - read_idea
+  - compute_idea
+  - old_idea
+  - plot_idea
+  - write_idea
+- title: "Utility functions"
+  desc: "Other miscellaneous functions"
+- contents:
+  - theme_idea
+  - show_canvas
+  - show_decision_rules

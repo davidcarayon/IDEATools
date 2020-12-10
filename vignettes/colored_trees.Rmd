@@ -1,0 +1,41 @@
+---
+title: "About the colored property trees"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{About the colored property trees}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The algorithm for producing colored trees is the result of a long work involving the testing of many methods and R packages. In the end, the solution chosen was to draw the models in "white" on a vectorial drawing software (Inkscape) in svg format. SVG is a markup language (similar to XML or HTML) with which it is fairly easy to apply search and replace algorithms. A rectangle tag (corresponding to a node of the illuminated tree) can be written :
+
+
+    <rect
+           style="fill:#ffffff;fill-opacity:1;stroke:#001800;stroke-width:0.1"
+           id="rect2-16"
+           width="17.833706"
+           height="4.9643545"
+           x="370.30774"
+           y="143.9761"
+           inkscape:label="#rect2-16" />
+
+So all we have to do is find the tag for each rectangle, assign each rectangle identifier to its corresponding indicator, then we can search-replace the argument "fill:#ffffff" by the appropriate color corresponding to the evaluation :
+
+```{r out.width = "100%", echo = FALSE}
+knitr::include_graphics("img/cap_canvas.png")
+```
+
+IDEATools then converts this modified SVG source code to a proper PNG/PDF image using the `{rsvg}` library.
+
+The templates are stored as internal object R named "canvas". It is a list containing in each element the complete SVG source code of each template. These white templates are exportable / viewable in the directory of your choice by using :
+
+```{r eval=FALSE}
+IDEATools::show_canvas("my_directory")
+```

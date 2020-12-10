@@ -1,68 +1,196 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# IDEATools <img src='www/logo_hex.png' align="right" height="139" />
+# IDEATools <img src='man/Figures/logo_hex.png' align="right" height="139" />
 
 <!-- badges: start -->
 
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-1.1-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-2.0-orange.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![R build
+status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/davidcarayon/IDEATools/branch/master/graph/badge.svg)](https://codecov.io/gh/davidcarayon/IDEATools?branch=master)
 <!-- badges: end -->
 
-IDEATools est un package R mettant à disposition des outils mobilisables
-sous R afin de manipuler, analyser et visualiser des données issues
-d’enquêtes réalisées dans le cadre de la méthode IDEA4.
+IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
+aux utilisateurs des outils pour le traitement, l’automatisation et le
+reporting de diagnostics IDEA.
 
-# Installation
+# Installation & Prérequis
 
 En attendant sa publication officielle sur le CRAN, vous pouvez
 télécharger et utiliser la version en cours de développement depuis
 GitHub avec :
 
 ``` r
-# install.packages("devtools")
-
-devtools::install_github("davidcarayon/IDEATools")
+install.packages("remotes")
+remotes::install_github("davidcarayon/IDEATools")
 ```
 
-# Utilisation
-
-Au total 10 fonctions ou “modules” ont été développés dans ce package,
-allant de l’import des données d’un calculateur à la production de
-graphiques puis à la productions de produits de reporting (PDF, excel,
-etc.).
-
-Afin de simplifier l’utilisation du package, des fonctions “globales”,
-qui encapsulent les plus petits modules, ont été programmées et sont
-conseillées.
-
-Dans le cas d’une analyse individuelle :
+Puis charger le package avec :
 
 ``` r
 library(IDEATools)
-
-# Diagnostic complet, il suffit de modifier les booléens (TRUE/FALSE) pour indiquer quels graphes produire.
-DiagIDEA(input = "calculateur.xls", output = "sorties", dimensions = TRUE,
-         polar=TRUE, trees=TRUE, radar=TRUE, meta = FALSE, export = TRUE)
-
-# Production d'un rapport complet imprimable et d'un fichier excel compilant les résultats
-MakeReport(input = "calculateur.xls", output_dir = "sorties")
-
-MakeExcel(input = "calculateur.xls", output_dir = "sorties")
 ```
 
-Dans le cas d’une analyse de groupe, les fonctions sont identiques, mais
-on insère cette fois un dossier contenant plusieurs (\> 2) calculateurs.
+Note: 3 packages ne sont pas automatiquement installés (afin de réduire
+la liste des dépendances) mais restent nécessaires pour la production de
+certains rapports automatiques :
+
+  - {pagedown} pour les rapports html
+
+  - {officedown} pour les rapports docx
+
+  - {openxlsx} pour les rapports xlsx
+
+Il suffit de les installer à l’aide de :
 
 ``` r
-DiagIDEA(input = "dossier_calculateurs", output = "sorties", dimensions = FALSE,
-         polar=FALSE, trees=FALSE, radar=FALSE, meta = TRUE, export = TRUE)
-
-MakeGroupReport(input = "dossier_calculateurs", output_dir = "sorties")
-
-MakeGroupExcel(input = "dossier_calculateurs", output_dir = "sorties")
+install.packages(c("pagedown","officedown","openxlsx"))
 ```
+
+Il est aussi nécessaire d’installer [LaTeX](latex-project.org) pour la
+production d’un rapport PDF. Vous pouvez installer une version très
+allégée (mais suffisante) de LaTeX avec
+[tinytex](https://yihui.org/tinytex/).
+
+Il est tout de même possible de produire un PDF sans installer LaTeX. Il
+suffit de produire un rapport au format HTML, puis de l’enregistrer au
+format PDF via l’interface d’impression d’un navigateur web tel que
+Google Chrome.
+
+Deux polices sont également requises pour l’utilisation de ce package :
+[Roboto](https://fonts.google.com/specimen/Roboto) et
+[Rubik](https://fonts.google.com/specimen/Rubik).
+
+# Utilisation
+
+Au total, 5 fonctions ou “modules” ont été développés dans ce package,
+allant de l’import des données d’un calculateur à la production de
+graphiques puis à la productions de produits de reporting (PDF, Excel,
+etc.) :
+
+  - `read_idea()` : Permet d’identifier la validité du fichier d’entrée
+    et d’en extraire métadonnées et items.
+  - `compute_idea()` : Calcule les
+    indicateurs/composantes/dimensions/propriétés à partir des items
+  - `old_idea()` : Alternative aux deux fonctions précédentes si le
+    calculateur est trop ancien (vise les indicateurs plutôt que les
+    items)
+  - `plot_idea()` : Produit les graphiques dimensions / propriétés
+  - `write_idea()` : Export des graphiques sous forme brute ou sous
+    forme de rapports aux formats variés.
+
+Afin de simplifier l’utilisation du package, une fonction globale
+`diag_idea()` a été développée. Grâce à cette fonction, selon la saisie
+de l’utilisateur, les modules d’IDEATools vont être appelés
+séquentiellement afin de produire les résultats demandés. L’utilisateur
+peut notamment paramétrer :
+
+  - Le dossier de sortie des résultats `output_directory`
+  - Le type d’analyse (individuelle ou de groupe) `type`
+  - Le type de sorties (rapport et/ou graphiques bruts) `export_type`
+  - Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
+    `plot_choices`
+  - Le format de sortie du rapport si désiré (au choix : pdf, docx, odt,
+    pptx, xlsx, html) `report_format`
+  - Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
+    ferme) dans le cas d’une analyse individuelle `prefix`
+  - La résolution de sortie des graphiques (impacte notamment le poids
+    des sorties) `dpi`
+  - Si l’algorithme doit afficher sa progression dans la console.
+    `quiet`
+
+Voici un appel complet à cette fonction avec toutes les possibilités de
+paramétrage :
+
+``` r
+diag_idea(input,
+          output_directory,
+          type = c("single","group"),
+          export_type = c("report","local",NULL),
+          plot_choices = c("dimensions","trees","radars"),
+          report_format = c("pdf","html","docx","odt","pptx","xlsx"),
+          prefix = "EA",
+          dpi = 300,
+          quiet = FALSE)
+```
+
+On distingue 3 grands types de diagnostics :
+
+## Les analyses individuelles
+
+En premier lieu, l’utilisateur peut avoir besoin d’un diagnostic pour
+une seule ferme. Prennons ici l’exemple d’utilisateur qui souhaite
+récupérer ses résultats pour sa ferme, mais uniquement ses arbres
+éclairés. Le code sera alors :
+
+``` r
+diag_idea(input = "chemin_calculateur",
+          output_directory = "mes_résultats",
+          type = "single",
+          export_type = "local"
+          prefix = "MaFerme",
+          plot_choices = "trees"
+          quiet = FALSE)
+```
+
+## Les analyses multi-individuelles
+
+Ensuite, certains utilisateurs ont besoin de traiter plusieurs
+calculateurs en même temps.
+
+Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais
+a juste besoin pour chaque exploitation d’un rapport au format word
+qu’il pourra commenter ainsi qu’une présentation powerpoint qu’il
+pourra facilement partager. Le code sera alors :
+
+``` r
+diag_idea(input = "chemin_vers_dossier",
+          output_directory = "mes_résultats",
+          type = "single",
+          export_type = "report"
+          report_format = c("docx","pptx")
+          quiet = FALSE)
+```
+
+## Les analyses de groupe
+
+Enfin, certains utilisateurs souhaitent traiter un ensemble de
+calculateurs en même temps et ont besoin d’avoir une vision globale sur
+le groupe.
+
+Dans cet exemple, l’utilisateur va donc demander à la fois des
+graphiques bruts, mais aussi des rapports prêts à être imprimés (PDF)
+ainsi qu’un support excel qu’il pourra re-traiter à sa guise pour son
+analyse de group. Le code sera alors :
+
+``` r
+diag_idea(input = "chemin_vers_dossier",
+          output_directory = "mes_résultats",
+          type = "group",
+          export_type = c("report","local")
+          report_format = c("pdf","xlsx")
+          quiet = FALSE)
+```
+
+Notons qu’il peut demander, en plus de son analyse de groupe, des
+rapports individuels qu’il pourra donner à chaque exploitation (par
+exemple au format Libreoffice ODT) :
+
+``` r
+diag_idea(input = "chemin_vers_dossier",
+          output_directory = "mes_résultats",
+          type = c("group","single")
+          export_type = c("report")
+          report_format = c("odt")
+          quiet = FALSE)
+```
+
+**Note : Une analyse de groupe nécessite un nombre d’exploitations au
+moins égal à 3.**
 
 # Contact
 
@@ -83,7 +211,7 @@ Quick Link
 
 Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif pour
 le calcul, l’automatisation et l’exploitation de données IDEA4. R
-package version 1.0.
+package version 2.0.
 
 Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M.,
 Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V.,

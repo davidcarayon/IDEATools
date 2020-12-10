@@ -1,39 +1,44 @@
 Package: IDEATools
-Type: Package
-Title: Ressources et outils pour le traitement de données IDEA4 sous R
-Version: 1.1
-Authors@R: c(
-    person("David", "Carayon", email = "david.carayon@inrae.fr", role = c("aut", "cre")))
-Maintainer: David Carayon <david.carayon@inrae.fr>
-Description: L'objectif du package IDEATools est de proposer des outils et ressources mobilisables sous R afin de manipuler des données issues d'enquêtes réalisées dans le cadre de la méthode IDEA4, notamment les restitutions graphiques en lien avec l'approche par les propriétés de la durabilité. Ce package est également le support d'un applicatif interactif web basé sur la librairie "Shiny", destiné à proposer une interface simple et intuitive à tout utilisateur non inité à R. 
-License: GPL-3
-Depends: R (>= 2.10)
+Title: A Collection of Tools Dedicated to the IDEA4 Method
+Version: 2.0
+Authors@R: 
+    person(given = "David",
+           family = "Carayon",
+           role = c("aut", "cre"),
+           email = "david.carayon@inrae.fr",
+           comment = c(ORCID = "0000-0003-0217-2175"))
+Description: IDEATools is an R package that provides tools to automate the processing of data collected as part of IDEA 4 diagnostics. Starting from the original data collecting files (xls, xlsx, json) this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. 
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
     dplyr,
-    ggplot2,
+    magrittr,
     janitor,
-    purrr,
-    readr,
-    readxl,
     jsonlite,
+    readxl,
     stringr,
     stringi,
     tibble,
     tidyr,
-    magrittr,
-    rsvg,
-    glue,
-    ggpubr,
-    rmarkdown,
-    knitr,
-    openxlsx,
-    ggrepel,
+    purrr,
     ggimage,
     pdftools,
+    ggpubr,
+    ggplot2,
+    glue,
     cli,
-    officer,
+    rsvg,
+    rmarkdown,
+    knitr,
+    ggrepel
+License: GPL-3
+Depends: 
+    R (>= 2.10)
+VignetteBuilder: knitr
+Suggests: 
+    covr,
+    pagedown,
     officedown,
-    pagedown
+    openxlsx

@@ -1,7 +1,11 @@
-^.*\.Rproj$
+^IDEATools\.Rproj$
 ^\.Rproj\.user$
-^README\.Rmd$
 ^LICENSE\.md$
-^_pkgdown\.yml$
+^doc$
+^Meta$
+^README\.Rmd$
 ^docs$
+^_pkgdown\.yml$
+^\.github$
+^codecov\.yml$
 ^pkgdown$
