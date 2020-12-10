@@ -549,7 +549,7 @@ Exemple de figures produites par IDEATools
 <p>Il suffit donc d’assigner chaque “id” à un indicateur, puis on peut rechercher-remplacer l’argument “<code>fill:#ffffff</code>” par la couleur adéquate correspondant à l’évaluation.</p>
 <p>Les modèles sont compilés puis stockés sous forme d’un objet interne R nommé “<code>canvas</code>”. Il s’agit d’une liste contenant le code source SVG de chaque modèle. Ces modèles blancs sont exportables / consultables via :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu">IDEATools</span><span class="fu">::</span><span class="fu">show_canvas</span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu">IDEATools</span><span class="fu">::</span><span class="fu"><a href="../reference/show_canvas.html">show_canvas</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>L’objet renvoyé par la fonction contient une liste similaire à “<code>canvas</code>”, mais avec le blanc remplacé par les bonnes couleurs. Les fonctions dans <code><a href="../reference/write_idea.html">write_idea()</a></code> sont ensuite capables de convertir ce code SVG en image PNG et/ou PDF.</p>
 <p><strong>Attention</strong> : Pour les futures modifications des modèles, il est particulièrement important de ne pas modifier les “id” de chaque rectangle, au risque de ne pas assigner le bon indicateur à son rectangle.</p>
 </div>
