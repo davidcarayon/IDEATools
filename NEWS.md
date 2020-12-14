@@ -1,3 +1,8 @@
+# IDEATools 2.0.1
+
+* Fixed a bug for excel individual reports
+
+
 # IDEATools 2.0
 
 * New version more in line with CRAN requirements

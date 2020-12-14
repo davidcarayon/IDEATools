@@ -207,11 +207,12 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Robustesse %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::full_join(reference_table, by = c("indicateur" = "indic_code")) %>%
-    dplyr::mutate(level = ifelse(is.na(level), yes = "Noeud", no = "Indicateur")) %>%
+    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
+    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
-    dplyr::full_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
+    dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
 
   ## Write the data
@@ -242,12 +243,14 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Ancrage %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::full_join(reference_table, by = c("indicateur" = "indic_code")) %>%
-    dplyr::mutate(level = ifelse(is.na(level), yes = "Noeud", no = "Indicateur")) %>%
+    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
+    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
-    dplyr::full_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
+    dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
+
 
   ## Write the data
   openxlsx::writeData(wb, "Ancrage Territorial", df,
@@ -277,12 +280,14 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Capacite %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::full_join(reference_table, by = c("indicateur" = "indic_code")) %>%
-    dplyr::mutate(level = ifelse(is.na(level), yes = "Noeud", no = "Indicateur")) %>%
+    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
+    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
-    dplyr::full_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
+    dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
+
 
   ## Write the data
   openxlsx::writeData(wb, "Capacit\u00e9", df,
@@ -310,12 +315,14 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Autonomie %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::full_join(reference_table, by = c("indicateur" = "indic_code")) %>%
-    dplyr::mutate(level = ifelse(is.na(level), yes = "Noeud", no = "Indicateur")) %>%
+    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
+    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
-    dplyr::full_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
+    dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
+
 
   ## Write the data
   openxlsx::writeData(wb, "Autonomie", df,
@@ -345,12 +352,14 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Responsabilite %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::full_join(reference_table, by = c("indicateur" = "indic_code")) %>%
-    dplyr::mutate(level = ifelse(is.na(level), yes = "Noeud", no = "Indicateur")) %>%
+    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
+    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
-    dplyr::full_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
+    dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
+
 
   ## Write the data
   openxlsx::writeData(wb, "Responsabilit\u00e9 globale", df,
