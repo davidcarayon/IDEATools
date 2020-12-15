@@ -18,7 +18,7 @@
 #'
 #' In the case of a group analysis, another subdirectory is created with a name like "Groupe_{number_of_farms}" so that analyses are not mixed up. The user can again choose if output should be raw plots or pre-compiled reports.
 #'
-#' If the \code{report_format} argument is set to either "docx", "odt" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "html" output, the {pagedown} package will be used to produce a clean paged HTML report using CSS files stored in this package. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
+#' If the \code{report_format} argument is set to either "docx", "odt" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "html" and "pdf" output, the {pagedown} package will be used to produce a clean paged HTML report using CSS files stored in this package, which can be converted to PDF using chrome print. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
 #'
 #' Please note that an error will be produced if the input object does not contain all three "dimensions","trees" and "radars" entries in the case of an individual analysis and if \code{type = "report"}.
 #'
@@ -407,9 +407,14 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           cli::cli_h3("Production du rapport PDF...")
         }
 
+
+        if(!requireNamespace("pagedown", quietly = TRUE)){stop("Package {pagedown} is required for PDF reports. Please use `install.packages('pagedown')`")}
+
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","single", "pdf_report.Rmd")
+
+        ## Using the html template
+        report_path <- file.path(knitting_dir, "report","single", "html_report.Rmd")
 
         # Defining params
         params <- list(
@@ -419,7 +424,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           dpi = dpi
         )
 
-        output_file <- paste0("Rapport_individuel_", prefix, ".pdf")
+        output_file <- paste0("Rapport_individuel_", prefix, ".html")
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,
@@ -427,6 +432,15 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
                                            params = params,
                                            envir = new.env(parent = globalenv()), quiet = TRUE
         ))
+
+        # Convert to PDF
+        pagedown::chrome_print(file.path(output_directory, output_file))
+
+        # Removing the HTML file
+        file.remove(file.path(output_directory, output_file))
+
+        # Actualise for printing
+        output_file <- paste0("Rapport_individuel_", prefix, ".pdf")
 
         end <- Sys.time()
         duration <- round(difftime(end, start, units = "secs"))
@@ -701,9 +715,13 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           cli::cli_h3("Production du rapport PDF...")
         }
 
+        if(!requireNamespace("pagedown", quietly = TRUE)){stop("Package {pagedown} is required for HTML reports. Please use `install.packages('pagedown')`")}
+
+
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","group", "pdf_group_report.Rmd")
+        # Using the HTML report, converted to PDF
+        report_path <- file.path(knitting_dir, "report","group", "html_group_report.Rmd")
 
         # Defining params
         params <- list(
@@ -712,7 +730,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           dpi = dpi
         )
 
-        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
+        output_file <- paste0("Rapport_groupe_", n_farm, ".html")
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,
@@ -720,6 +738,15 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
                                            params = params,
                                            envir = new.env(parent = globalenv()), quiet = TRUE
         ))
+
+        # Convert to PDF
+        pagedown::chrome_print(file.path(output_directory, output_file))
+
+        # Remove the HTML file
+        file.remove(file.path(output_directory, output_file))
+
+        # Actualise for printing
+        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
 
         end <- Sys.time()
         duration <- round(difftime(end, start, units = "secs"))

@@ -77,7 +77,7 @@ Le code source d'IDEATools s'appuie sur une liste de 20 packages R (aussi appel�
 
 Enfin, 3 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :
 
--   {pagedown} pour les rapports html
+-   {pagedown} pour les rapports html et pdf
 
 -   {officedown} pour les rapports docx
 
@@ -90,10 +90,6 @@ install.packages(c("pagedown","officedown","openxlsx"))
 ```
 
 ## Autres dépendances
-
-Il est aussi nécessaire d'installer [LaTeX](latex-project.org) pour la production d'un rapport PDF. Il est possible d'installer une version très allégée (mais suffisante) de LaTeX : [tinytex](https://yihui.org/tinytex/).
-
-Il est tout de même possible de produire un PDF sans installer LaTeX. Il suffit de produire un rapport au format HTML, puis de l'enregistrer au format PDF via l'interface d'impression d'un navigateur web tel que Google Chrome.
 
 Deux polices sont également requises pour l'utilisation de ce package : [Roboto](https://fonts.google.com/specimen/Roboto) et [Rubik](https://fonts.google.com/specimen/Rubik).
 
@@ -440,7 +436,7 @@ L'utilisateur peut ici choisir un **ou plusieurs** formats de sortie parmis pdf,
 
 -   Si le format est pdf, docx, odt, pptx, les packages utilisés sont {rmarkdown}, {officer} et {officedown} et s'appuient sur des modèles stockés dans les fichiers internes du package.
 
--   Si le format est html, alors c'est {pagedown} qui est utilisé pour produire des rapports HTML paginés. Les feuilles de style (css) sont stockées dans les fichiers internes du package
+-   Si le format est html ou pdf, alors c'est {pagedown} qui est utilisé pour produire des rapports HTML paginés. Les feuilles de style (css) sont stockées dans les fichiers internes du package. Le fichier peut ensuite être converti en PDF via une impression utilisant le moteur de google chrome.
 
 -   Si le format est xlsx, alors c'est {openxlsx} qui est utilisé pour produire les documents excel. La structure du document est construite par une fonction interne d'IDEATools non exportée, `excel_report()`.
 

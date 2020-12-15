@@ -44,7 +44,7 @@ In the case of an individual analysis, another subdirectory is created with \cod
 
 In the case of a group analysis, another subdirectory is created with a name like "Groupe_{number_of_farms}" so that analyses are not mixed up. The user can again choose if output should be raw plots or pre-compiled reports.
 
-If the \code{report_format} argument is set to either "docx", "odt" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "html" output, the {pagedown} package will be used to produce a clean paged HTML report using CSS files stored in this package. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
+If the \code{report_format} argument is set to either "docx", "odt" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "html" and "pdf" output, the {pagedown} package will be used to produce a clean paged HTML report using CSS files stored in this package, which can be converted to PDF using chrome print. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
 
 Please note that an error will be produced if the input object does not contain all three "dimensions","trees" and "radars" entries in the case of an individual analysis and if \code{type = "report"}.
 }

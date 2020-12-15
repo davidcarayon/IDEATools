@@ -911,7 +911,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::facet_wrap(~component, ncol = 1, scales = "free") +
       ggplot2::coord_flip() +
       theme_idea() +
-      ggplot2::scale_y_continuous(breaks = seq(0, 10, 1)) +
+      ggplot2::scale_y_continuous(breaks = seq(0, 25, 1)) +
       ggplot2::theme(axis.title.y = ggplot2::element_blank()) +
       ggplot2::labs(y = "Valeur de l'indicateur", color = "L\u00e9gende", caption = paste0("(N = ", n_farms, ")"))
 

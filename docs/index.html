@@ -131,15 +131,13 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></pre></div>
 <p>Note: 3 packages ne sont pas automatiquement installés (afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :</p>
 <ul>
-<li><p>{pagedown} pour les rapports html</p></li>
+<li><p>{pagedown} pour les rapports html et pdf</p></li>
 <li><p>{officedown} pour les rapports docx</p></li>
 <li><p>{openxlsx} pour les rapports xlsx</p></li>
 </ul>
 <p>Il suffit de les installer à l’aide de :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pagedown"</span>,<span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></pre></div>
-<p>Il est aussi nécessaire d’installer <a href="latex-project.org">LaTeX</a> pour la production d’un rapport PDF. Vous pouvez installer une version très allégée (mais suffisante) de LaTeX avec <a href="https://yihui.org/tinytex/">tinytex</a>.</p>
-<p>Il est tout de même possible de produire un PDF sans installer LaTeX. Il suffit de produire un rapport au format HTML, puis de l’enregistrer au format PDF via l’interface d’impression d’un navigateur web tel que Google Chrome.</p>
 <p>Deux polices sont également requises pour l’utilisation de ce package : <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> et <a href="https://fonts.google.com/specimen/Rubik">Rubik</a>.</p>
 </div>
 <div id="utilisation" class="section level1">

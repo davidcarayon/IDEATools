@@ -47,7 +47,7 @@ library(IDEATools)
 
 Note: 3 packages ne sont pas automatiquement installés (afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :
 
-- {pagedown} pour les rapports html
+- {pagedown} pour les rapports html et pdf
 
 - {officedown} pour les rapports docx
 
@@ -58,10 +58,6 @@ Il suffit de les installer à l'aide de :
 ```{r eval = FALSE}
 install.packages(c("pagedown","officedown","openxlsx"))
 ```
-
-Il est aussi nécessaire d'installer [LaTeX](latex-project.org) pour la production d'un rapport PDF. Vous pouvez installer une version très allégée (mais suffisante) de LaTeX avec  [tinytex](https://yihui.org/tinytex/).
-
-Il est tout de même possible de produire un PDF sans installer LaTeX. Il suffit de produire un rapport au format HTML, puis de l'enregistrer au format PDF via l'interface d'impression d'un navigateur web tel que Google Chrome.
 
 Deux polices sont également requises pour l'utilisation de ce package : [Roboto](https://fonts.google.com/specimen/Roboto) et [Rubik](https://fonts.google.com/specimen/Rubik).
 
