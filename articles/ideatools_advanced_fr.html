@@ -46,20 +46,20 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home"></span>
+    <span class="fas fa-home"></span>
      
   </a>
 </li>
 <li>
   <a href="../reference/index.html">
-    <span class="fa fa-file-code-o"></span>
+    <span class="fas fa-file-code-o"></span>
      
     Fonctions
   </a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    <span class="fa fa-book"></span>
+    <span class="fas fa-book"></span>
      
     Articles
      
@@ -79,7 +79,7 @@
 </li>
 <li>
   <a href="../news/index.html">
-    <span class="fa fa-newspaper"></span>
+    <span class="fas fa-newspaper"></span>
      
     News
   </a>
@@ -88,13 +88,13 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/davidcarayon/IDEATools">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
 <li>
   <a href="https://idea.chlorofil.fr/idea-version-4.html">
-    <span class="fa fa-info"></span>
+    <span class="fas fa-info"></span>
      
   </a>
 </li>
@@ -108,8 +108,7 @@
 
       
 
-      </header><script src="ideatools_advanced_fr_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="ideatools_advanced_fr_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="ideatools_advanced_fr_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="ideatools_advanced_fr_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Présentation d’IDEATools 2.0</h1>
@@ -164,7 +163,7 @@
 </ul>
 <p>Enfin, 3 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :</p>
 <ul>
-<li><p>{pagedown} pour les rapports html</p></li>
+<li><p>{pagedown} pour les rapports html et pdf</p></li>
 <li><p>{officedown} pour les rapports docx</p></li>
 <li><p>{openxlsx} pour les rapports xlsx</p></li>
 </ul>
@@ -175,8 +174,6 @@
 <div id="autres-dépendances" class="section level2">
 <h2 class="hasAnchor">
 <a href="#autres-d%C3%A9pendances" class="anchor"></a>Autres dépendances</h2>
-<p>Il est aussi nécessaire d’installer <a href="latex-project.org">LaTeX</a> pour la production d’un rapport PDF. Il est possible d’installer une version très allégée (mais suffisante) de LaTeX : <a href="https://yihui.org/tinytex/">tinytex</a>.</p>
-<p>Il est tout de même possible de produire un PDF sans installer LaTeX. Il suffit de produire un rapport au format HTML, puis de l’enregistrer au format PDF via l’interface d’impression d’un navigateur web tel que Google Chrome.</p>
 <p>Deux polices sont également requises pour l’utilisation de ce package : <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> et <a href="https://fonts.google.com/specimen/Rubik">Rubik</a>.</p>
 </div>
 </div>
@@ -646,7 +643,7 @@ Exemple de figures produites par IDEATools
 <p>L’utilisateur peut ici choisir un <strong>ou plusieurs</strong> formats de sortie parmis pdf, docx, odt, pptx, xlsx, html.</p>
 <ul>
 <li><p>Si le format est pdf, docx, odt, pptx, les packages utilisés sont {rmarkdown}, {officer} et {officedown} et s’appuient sur des modèles stockés dans les fichiers internes du package.</p></li>
-<li><p>Si le format est html, alors c’est {pagedown} qui est utilisé pour produire des rapports HTML paginés. Les feuilles de style (css) sont stockées dans les fichiers internes du package</p></li>
+<li><p>Si le format est html ou pdf, alors c’est {pagedown} qui est utilisé pour produire des rapports HTML paginés. Les feuilles de style (css) sont stockées dans les fichiers internes du package. Le fichier peut ensuite être converti en PDF via une impression utilisant le moteur de google chrome.</p></li>
 <li><p>Si le format est xlsx, alors c’est {openxlsx} qui est utilisé pour produire les documents excel. La structure du document est construite par une fonction interne d’IDEATools non exportée, <code>excel_report()</code>.</p></li>
 </ul>
 </div>
