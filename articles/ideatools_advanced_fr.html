@@ -535,12 +535,31 @@ Exemple de figures produites par IDEATools
 <div id="dimensions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dimensions" class="anchor"></a>Dimensions</h3>
-<p>Les graphiques de l’approche par les dimensions sont pour la plupart des histogrammes générés via <a href="http://ggplot2.tidyverse.org">ggplot2</a>. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l’encodage de l’intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : <code><a href="../reference/theme_idea.html">theme_idea()</a></code>.</p>
+<div id="palette-graphique" class="section level4">
+<h4 class="hasAnchor">
+<a href="#palette-graphique" class="anchor"></a>Palette graphique</h4>
+<p>Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte graphique IDEA4 et sont les suivants :</p>
+<p><img src="ideatools_advanced_fr_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+</div>
+<div id="tracé-des-graphiques" class="section level4">
+<h4 class="hasAnchor">
+<a href="#trac%C3%A9-des-graphiques" class="anchor"></a>Tracé des graphiques</h4>
+<p>Les graphiques de l’approche par les dimensions sont pour la plupart des histogrammes générés via <a href="https://ggplot2.tidyverse.org">ggplot2</a>. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l’encodage de l’intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : <code><a href="../reference/theme_idea.html">theme_idea()</a></code>.</p>
 <p>Pour le cas du diagramme polarisé des composantes, un premier fichier PDF contenant un radar des composantes est d’abord exporté dans un fichier temporaire. Puis, un second graphique ggplot ‘donut’ est généré, importe le radar PDF en son centre puis insère des pictogrammes stockés dans le dossier d’installation du package.</p>
+</div>
 </div>
 <div id="arbres-éclairés" class="section level3">
 <h3 class="hasAnchor">
 <a href="#arbres-%C3%A9clair%C3%A9s" class="anchor"></a>Arbres éclairés</h3>
+<div id="palette-graphique-1" class="section level4">
+<h4 class="hasAnchor">
+<a href="#palette-graphique-1" class="anchor"></a>Palette graphique</h4>
+<p>Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte graphique IDEA4 et sont les suivants, à partir de très défavorable jusqu’à très favorable en passant par la couleur “intermédiaire” :</p>
+<p><img src="ideatools_advanced_fr_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+</div>
+<div id="tracé-des-arbres" class="section level4">
+<h4 class="hasAnchor">
+<a href="#trac%C3%A9-des-arbres" class="anchor"></a>Tracé des arbres</h4>
 <p>L’algorithme de production des arbres éclairés est issu d’un travail de longue haleine impliquant le test de très nombreuses méthodes et packages R. Au final, la solution retenue a été de dessiner les modèles en “blanc” sur un logiciel de dessin vectoriel (Inkscape) au format svg. Le SVG est un langage de balisage (similaire au XML ou HTML) sur lequel il est assez facile d’appliquer des algorithmes de rechercher/remplacer. En effet, une balise de rectangle (correspondant à un noeud de l’arbre éclairé) s’écrit :</p>
 <pre><code>&lt;rect
        style="fill:#ffffff;fill-opacity:1;stroke:#001800;stroke-width:0.1"
@@ -557,10 +576,11 @@ Exemple de figures produites par IDEATools
 <p>L’objet renvoyé par la fonction contient une liste similaire à “<code>canvas</code>”, mais avec le blanc remplacé par les bonnes couleurs. Les fonctions dans <code><a href="../reference/write_idea.html">write_idea()</a></code> sont ensuite capables de convertir ce code SVG en image PNG et/ou PDF.</p>
 <p><strong>Attention</strong> : Pour les futures modifications des modèles, il est particulièrement important de ne pas modifier les “id” de chaque rectangle, au risque de ne pas assigner le bon indicateur à son rectangle.</p>
 </div>
+</div>
 <div id="radars" class="section level3">
 <h3 class="hasAnchor">
 <a href="#radars" class="anchor"></a>Radars</h3>
-<p>Ces graphiques sont produits avec <a href="http://ggplot2.tidyverse.org">ggplot2</a> et sont une version polarisée (<code>coord_polar()</code>) d’histogrammes des indicateurs regroupés par propriétés. On rajoute également une standardisation des scores d’indicateurs en les passant en pourcentage (ceci afin que les indicateurs soient tous sur la même échelle).</p>
+<p>Ces graphiques sont produits avec <a href="https://ggplot2.tidyverse.org">ggplot2</a> et sont une version polarisée (<code>coord_polar()</code>) d’histogrammes des indicateurs regroupés par propriétés. On rajoute également une standardisation des scores d’indicateurs en les passant en pourcentage (ceci afin que les indicateurs soient tous sur la même échelle).</p>
 <p>En réalité, il ne s’agit pas de diagrammes radar mais d’histogrammes transformés dans des coordonnées polaires. Nous utilisons cependant la dénomination radar par facilité.</p>
 <p>Puisque les intitulés d’indicateurs sont bien trop longs pour être affichés sur le diagramme polarisé, un tableau associé au graphique est à chaque fois produit, donnant la correspondance entre code indicateur et intitulé de l’indicateur. Les lignes du tableau (ainsi que les histogrammes) sont aussi colorés en fonction de la dimension d’appartenance de l’indicateur. Enfin, les graphique et tableaux sont regroupés pour produire une figure unique pour chaque propriété.</p>
 </div>
