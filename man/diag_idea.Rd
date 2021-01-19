@@ -12,7 +12,7 @@ diag_idea(
   plot_choices = c("dimensions", "trees", "radars"),
   report_format = "docx",
   prefix = NULL,
-  dpi = 300,
+  dpi = "retina",
   quiet = FALSE
 )
 }

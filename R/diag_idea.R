@@ -58,7 +58,7 @@
 #'   quiet = FALSE
 #' )
 #' }
-diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "docx", prefix = NULL, dpi = 300, quiet = FALSE) {
+diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "docx", prefix = NULL, dpi = "retina", quiet = FALSE) {
 
   ## Estimating total duration
   global_start <- Sys.time()
@@ -177,7 +177,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     } else {
       write_idea(IDEA_plots, output_directory,
         type = export_type, prefix = prefix,
-        dpi = 300, report_format = report_format, quiet = quiet
+        dpi = dpi, report_format = report_format, quiet = quiet
       )
     }
   }
@@ -250,7 +250,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       } else {
         write_idea(IDEA_plots, output_directory,
           type = export_type,
-          prefix = IDEA_data$metadata$MTD_01, dpi = 300, report_format = report_format, quiet = TRUE
+          prefix = IDEA_data$metadata$MTD_01, dpi = dpi, report_format = report_format, quiet = TRUE
         )
       }
 
@@ -413,7 +413,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     } else {
       write_idea(IDEA_group_plots, output_directory,
         type = export_type, prefix = prefix,
-        dpi = 300, report_format = report_format, quiet = quiet
+        dpi = dpi, report_format = report_format, quiet = quiet
       )
     }
 

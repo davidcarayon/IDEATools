@@ -46,20 +46,20 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fa fa-home"></span>
+    <span class="fas fa-home"></span>
      
   </a>
 </li>
 <li>
   <a href="reference/index.html">
-    <span class="fa fa-file-code-o"></span>
+    <span class="fas fa-file-code-o"></span>
      
     Fonctions
   </a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    <span class="fa fa-book"></span>
+    <span class="fas fa-book"></span>
      
     Articles
      
@@ -79,7 +79,7 @@
 </li>
 <li>
   <a href="news/index.html">
-    <span class="fa fa-newspaper"></span>
+    <span class="fas fa-newspaper"></span>
      
     News
   </a>
@@ -88,13 +88,13 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/davidcarayon/IDEATools">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
 <li>
   <a href="https://idea.chlorofil.fr/idea-version-4.html">
-    <span class="fa fa-info"></span>
+    <span class="fas fa-info"></span>
      
   </a>
 </li>
@@ -123,12 +123,12 @@
 <h1 class="hasAnchor">
 <a href="#installation--pr%C3%A9requis" class="anchor"></a>Installation &amp; Prérequis</h1>
 <p>En attendant sa publication officielle sur le CRAN, vous pouvez télécharger et utiliser la version en cours de développement depuis GitHub avec :</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
 <p>Puis charger le package avec :</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></code></pre></div>
 <p>Note: 3 packages ne sont pas automatiquement installés (afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :</p>
 <ul>
 <li><p>{pagedown} pour les rapports html et pdf</p></li>
@@ -136,8 +136,8 @@
 <li><p>{openxlsx} pour les rapports xlsx</p></li>
 </ul>
 <p>Il suffit de les installer à l’aide de :</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pagedown"</span>,<span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pagedown"</span>,<span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Deux polices sont également requises pour l’utilisation de ce package : <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> et <a href="https://fonts.google.com/specimen/Rubik">Rubik</a>.</p>
 </div>
 <div id="utilisation" class="section level1">
@@ -176,8 +176,8 @@
 </li>
 </ul>
 <p>Voici un appel complet à cette fonction avec toutes les possibilités de paramétrage :</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
           <span class="va">output_directory</span>,
           type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,
           export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,
@@ -185,7 +185,7 @@
           report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"html"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"pptx"</span>,<span class="st">"xlsx"</span><span class="op">)</span>,
           prefix <span class="op">=</span> <span class="st">"EA"</span>,
           dpi <span class="op">=</span> <span class="fl">300</span>,
-          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
+          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>On distingue 3 grands types de diagnostics :</p>
 <div id="les-analyses-individuelles" class="section level2">
 <h2 class="hasAnchor">

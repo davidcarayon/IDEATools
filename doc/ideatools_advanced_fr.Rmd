@@ -324,11 +324,39 @@ Si la classe d'entrée est "`IDEA_data`", alors il s'agit d'une analyse individu
 
 ### Dimensions
 
+#### Palette graphique
+
+Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte graphique IDEA4 et sont les suivants :
+
+```{r, echo = FALSE}
+scales::show_col(c("Agroécologique"= "#2e9c15", "Socio-Territoriale" = "#5077FE", "Economique" = "#FE962B"), borders = FALSE)
+```
+
+
+#### Tracé des graphiques
+
 Les graphiques de l'approche par les dimensions sont pour la plupart des histogrammes générés via `{ggplot2}`. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l'encodage de l'intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : `theme_idea()`.
 
 Pour le cas du diagramme polarisé des composantes, un premier fichier PDF contenant un radar des composantes est d'abord exporté dans un fichier temporaire. Puis, un second graphique ggplot 'donut' est généré, importe le radar PDF en son centre puis insère des pictogrammes stockés dans le dossier d'installation du package.
 
 ### Arbres éclairés
+
+
+#### Palette graphique
+
+Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte graphique IDEA4 et sont les suivants, à partir de très défavorable jusqu'à très favorable en passant par la couleur "intermédiaire" :
+
+```{r echo = FALSE}
+scales::show_col(c(
+  "tres defavorable" = "#FF0000",
+  "defavorable" = "#FF6348",
+  "intermédiaire" = "#FFA300",
+  "favorable" = "#1CDA53",
+  "tres favorable" = "#0D8A00"
+), borders = FALSE)
+```
+
+#### Tracé des arbres
 
 L'algorithme de production des arbres éclairés est issu d'un travail de longue haleine impliquant le test de très nombreuses méthodes et packages R. Au final, la solution retenue a été de dessiner les modèles en "blanc" sur un logiciel de dessin vectoriel (Inkscape) au format svg. Le SVG est un langage de balisage (similaire au XML ou HTML) sur lequel il est assez facile d'appliquer des algorithmes de rechercher/remplacer. En effet, une balise de rectangle (correspondant à un noeud de l'arbre éclairé) s'écrit :
 

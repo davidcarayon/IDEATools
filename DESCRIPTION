@@ -41,4 +41,5 @@ Suggests:
     covr,
     pagedown,
     officedown,
-    openxlsx
+    openxlsx,
+    scales
