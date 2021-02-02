@@ -160,19 +160,19 @@ read_idea <- function(input) {
     }
 
     # Standardizing the MTD_14 field
-    if (metadata$MTD_14 == "0 - pas d'\u00e9levage") {
+    if (metadata$MTD_14 == "0 - pas d'\u00e9levage" | metadata$MTD_14 == "pas d'\u00e9levage") {
       metadata$MTD_14 <- "0"
     }
-    if (metadata$MTD_14 == "2 - herbivore") {
+    if (metadata$MTD_14 == "2 - herbivore" | metadata$MTD_14 == "herbivore") {
       metadata$MTD_14 <- "2"
     }
-    if (metadata$MTD_14 == "1 - monogastrique") {
+    if (metadata$MTD_14 == "1 - monogastrique" | metadata$MTD_14 == "monogastrique") {
       metadata$MTD_14 <- "1"
     }
 
     # If version > 4.2.5, then we have to convert MTD_15 to a ratio between 0 and 1 rather than a percentage
     if (version_number >= 425) {
-      metadata$MTD_15 <- metadata$MTD_15 / 100
+      metadata$MTD_15 <- as.numeric(metadata$MTD_15) / 100
     }
 
     # If no MTD_01, we assign the file name

@@ -1,3 +1,8 @@
+# IDEATools 2.0.2
+
+* Fixed a bug causing A7 to not be considered as "NC" in the properties approach (due to mis-reading of MTD_14)
+* Fixed a bug causing new excel files to be considered as "old" because of MTD_15 which generated an error when divided by 100 while being imported as a character.
+
 # IDEATools 2.0.1
 
 * Fixed a bug for excel individual reports
