@@ -159,7 +159,7 @@ knitr::include_graphics(file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbre
 ## Diagrammes radar des notes obtenues au sein de chaque propriété
 
 
-```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Angrage territorial"', fig.width = 16.1, fig.height=7.61}
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Ancrage territorial"', fig.width = 16.1, fig.height=7.61}
 knitr::include_graphics(file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Ancrage Territorial.png")))
 ```
 

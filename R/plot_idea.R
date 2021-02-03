@@ -608,7 +608,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         full_prop_name <- switch(i,
                                  "Ancrage" = "Ancrage Territorial",
                                  "Autonomie" = "Autonomie",
-                                 "Robustesse" = "Autonomie",
+                                 "Robustesse" = "Robustesse",
                                  "Responsabilite" = "Responsabilit\u00e9 globale",
                                  "Capacite" = "Capacit\u00e9 productive et reproductive \nde biens et de services"
         )

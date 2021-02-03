@@ -179,7 +179,7 @@ fpar(ftext("Figure 13 : Arbre éclairé global de la lecture par les propriété
 fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Ancrage Territorial.png"))
 fpar(external_img(src = img_path, width = 6.53, height = 2.76),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 14 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Angrage territorial"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 14 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Ancrage territorial"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 fpar(run_linebreak())
 ```
 
