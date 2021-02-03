@@ -9,7 +9,7 @@ write_idea(
   output_directory = "IDEATools_output",
   type = c("local", "report"),
   prefix = NULL,
-  dpi = 300,
+  dpi = 320,
   report_format = "docx",
   quiet = FALSE
 )
@@ -23,7 +23,7 @@ write_idea(
 
 \item{prefix}{a prefix which will be added to output files names. Typically, the name of the farm. Ignored in the case of a group analysis : The \code{metadata$MTD_01} field will then be used to identify each farm.}
 
-\item{dpi}{ggplot output resolution. Also accepts a string input: "retina" (320), "print" (300), or "screen" (72).}
+\item{dpi}{ggplot output resolution.}
 
 \item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","docx")}). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".}
 

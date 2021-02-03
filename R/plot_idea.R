@@ -324,7 +324,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           axis.title = ggplot2::element_blank()
         ) +
         ggplot2::guides(fill = FALSE) +
-        ggplot2::ggsave(temp_pdf, dpi = "retina", width = 10.1, height = 7.53, device = cairo_pdf)
+        ggplot2::ggsave(temp_pdf, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
 
 
       ## Preparing surrounding donut

@@ -9,7 +9,7 @@
 #' @param plot_choices the type of plots to be produced. Can be either "dimensions", "trees" or "radars" or a combination of these 3. Ignored if the export type is "report".
 #' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","docx")}). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored if \code{length(input) > 1} or in the case of a group analysis : the \code{metadata$MTD_01} field will be used to identify each farm.
-#' @param dpi ggplot output resolution. Also accepts a string input: "retina" (320), "print" (300), or "screen" (72).
+#' @param dpi ggplot output resolution.
 #' @param quiet A command to remove console printing.
 #'
 #' @return Either reports and/or raw plots in \code{output_directory} or a named list with all the results.
@@ -58,7 +58,7 @@
 #'   quiet = FALSE
 #' )
 #' }
-diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "docx", prefix = NULL, dpi = "retina", quiet = FALSE) {
+diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "docx", prefix = NULL, dpi = 320, quiet = FALSE) {
 
   ## Estimating total duration
   global_start <- Sys.time()

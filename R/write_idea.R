@@ -7,7 +7,7 @@
 #' @param type the type of output to produce. Can be either "report" to produce compiled reports or "local" to write raw plots as PNG files.
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored in the case of a group analysis : The \code{metadata$MTD_01} field will then be used to identify each farm.
 #' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","docx")}). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".
-#' @param dpi ggplot output resolution. Also accepts a string input: "retina" (320), "print" (300), or "screen" (72).
+#' @param dpi ggplot output resolution.
 #' @param quiet A command to remove console printing.
 #'
 #' @details This function automatically creates in \code{output_directory} a subdirectory named after the system date for users to use the same output_directory for multiple diagnosis.
@@ -58,7 +58,7 @@
 #'   type = "report", dpi = 300, report_format = c("pdf", "docx")
 #' )
 #' }
-write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 300, report_format = "docx", quiet = FALSE) {
+write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", quiet = FALSE) {
 
   # Checks ------------------------------------------------------------------
   if (!any(class(IDEA_plots) %in% c("IDEA_group_plots", "IDEA_plots"))) (stop("The input data is not of class 'IDEA_data'"))

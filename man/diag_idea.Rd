@@ -12,7 +12,7 @@ diag_idea(
   plot_choices = c("dimensions", "trees", "radars"),
   report_format = "docx",
   prefix = NULL,
-  dpi = "retina",
+  dpi = 320,
   quiet = FALSE
 )
 }
@@ -31,7 +31,7 @@ diag_idea(
 
 \item{prefix}{a prefix which will be added to output files names. Typically, the name of the farm. Ignored if \code{length(input) > 1} or in the case of a group analysis : the \code{metadata$MTD_01} field will be used to identify each farm.}
 
-\item{dpi}{ggplot output resolution. Also accepts a string input: "retina" (320), "print" (300), or "screen" (72).}
+\item{dpi}{ggplot output resolution.}
 
 \item{quiet}{A command to remove console printing.}
 }
