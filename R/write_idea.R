@@ -520,10 +520,10 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
       ## Creating a table with all paths for ggsave
       tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) %>%
         dplyr::filter(plotname != "data") %>%
-        dplyr::mutate(plotname = dplyr::recode(plotname, "heatmap" = "Matrice_propri\u00e9t\u00e9s", "dimensions_histogram" = "Histogramme_dimensions", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) %>%
+        dplyr::mutate(plotname = dplyr::recode(plotname, "heatmap" = "Matrice_propri\u00e9t\u00e9s","freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_histogram" = "Histogramme_dimensions", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) %>%
         dplyr::mutate(
-          widths = c(10.4, 10.5, 7.95, 11.3, 11.9, 11.9, 11.9),
-          heights = c(6.82, 8.61, 6.91, 8.94, 12.5, 14, 11)
+          widths = c(10.4,10, 10.5, 7.95, 11.3, 11.9, 11.9, 11.9),
+          heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
         ) %>%
         dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) %>%
         dplyr::mutate(path = file.path(group_directory, plotname)) %>%

@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.3</span>
       </span>
     </div>
 
@@ -544,7 +544,7 @@ Exemple de figures produites par IDEATools
 <div id="tracé-des-graphiques" class="section level4">
 <h4 class="hasAnchor">
 <a href="#trac%C3%A9-des-graphiques" class="anchor"></a>Tracé des graphiques</h4>
-<p>Les graphiques de l’approche par les dimensions sont pour la plupart des histogrammes générés via <a href="http://ggplot2.tidyverse.org">ggplot2</a>. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l’encodage de l’intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : <code><a href="../reference/theme_idea.html">theme_idea()</a></code>.</p>
+<p>Les graphiques de l’approche par les dimensions sont pour la plupart des histogrammes générés via <a href="https://ggplot2.tidyverse.org">ggplot2</a>. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l’encodage de l’intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : <code><a href="../reference/theme_idea.html">theme_idea()</a></code>.</p>
 <p>Pour le cas du diagramme polarisé des composantes, un premier fichier PDF contenant un radar des composantes est d’abord exporté dans un fichier temporaire. Puis, un second graphique ggplot ‘donut’ est généré, importe le radar PDF en son centre puis insère des pictogrammes stockés dans le dossier d’installation du package.</p>
 </div>
 </div>
@@ -580,7 +580,7 @@ Exemple de figures produites par IDEATools
 <div id="radars" class="section level3">
 <h3 class="hasAnchor">
 <a href="#radars" class="anchor"></a>Radars</h3>
-<p>Ces graphiques sont produits avec <a href="http://ggplot2.tidyverse.org">ggplot2</a> et sont une version polarisée (<code>coord_polar()</code>) d’histogrammes des indicateurs regroupés par propriétés. On rajoute également une standardisation des scores d’indicateurs en les passant en pourcentage (ceci afin que les indicateurs soient tous sur la même échelle).</p>
+<p>Ces graphiques sont produits avec <a href="https://ggplot2.tidyverse.org">ggplot2</a> et sont une version polarisée (<code>coord_polar()</code>) d’histogrammes des indicateurs regroupés par propriétés. On rajoute également une standardisation des scores d’indicateurs en les passant en pourcentage (ceci afin que les indicateurs soient tous sur la même échelle).</p>
 <p>En réalité, il ne s’agit pas de diagrammes radar mais d’histogrammes transformés dans des coordonnées polaires. Nous utilisons cependant la dénomination radar par facilité.</p>
 <p>Puisque les intitulés d’indicateurs sont bien trop longs pour être affichés sur le diagramme polarisé, un tableau associé au graphique est à chaque fois produit, donnant la correspondance entre code indicateur et intitulé de l’indicateur. Les lignes du tableau (ainsi que les histogrammes) sont aussi colorés en fonction de la dimension d’appartenance de l’indicateur. Enfin, les graphique et tableaux sont regroupés pour produire une figure unique pour chaque propriété.</p>
 </div>

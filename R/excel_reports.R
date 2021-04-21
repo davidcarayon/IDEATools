@@ -878,6 +878,9 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   ## Add properties heatmap
   openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Matrice_propri\u00e9t\u00e9s.png"), startRow = 2, startCol = "H", width = 21.44, height = 14.06, units = "cm")
 
+  ## Add properties frequency
+  openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Fr\u00e9quence_propri\u00e9t\u00e9s.png"), startRow = 31, startCol = "H", width = 25.4, height = 12.7, units = "cm")
+
   ## Col widths
   openxlsx::setColWidths(wb, "Synth\u00e8se Proprietes", cols = 1:6, widths = "auto")
   openxlsx::setColWidths(wb, "Synth\u00e8se Proprietes", cols = 7, widths = 2)

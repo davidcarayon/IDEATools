@@ -1,3 +1,7 @@
+# IDEATools 2.0.3
+
+* New Feature : Frequency plot for group analysis of properties
+
 # IDEATools 2.0.2
 
 * Fixed a bug causing A7 to not be considered as "NC" in the properties approach (due to mis-reading of MTD_14)

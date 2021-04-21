@@ -704,6 +704,28 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       theme_idea() +
       ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
+
+    freq_data <- heatmap_data %>%
+      dplyr::group_by(indic_name,result) %>%
+      dplyr::summarise(n = dplyr::n_distinct(farm_id)) %>%
+      dplyr::group_by(indic_name) %>%
+      dplyr::mutate(prop = n / sum(n)*100) %>%
+      dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) %>%
+      dplyr::mutate(result = vec_colors[result]) %>%
+      dplyr::mutate(result = factor(result, levels = c("#FF0000","#FF6348","#1CDA53","#0D8A00")))
+
+
+      freq_plot <- ggplot2::ggplot(freq_data, aes(x = indic_name, y = prop, fill = result)) +
+      ggplot2::geom_col(position = "stack", color ="black") +
+      ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5)) +
+      ggplot2::scale_fill_identity("Evaluation", labels = legend_names, guide = "legend") +
+      theme_idea() +
+      ggplot2::coord_flip()+
+      ggplot2::labs(x = "", y = "Fr\u00e9quence (%)") +
+      ggplot2::scale_y_continuous(breaks = seq(0,100,5))
+
+
+
     ## Histograms for dimensions
 
     ## Data for dimensions
@@ -918,6 +940,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## Saving plots to plotlist
     plotlist$heatmap <- heatmap
+    plotlist$freq_plot <- freq_plot
     plotlist$dimensions_histogram <- dimensions_histogram
     plotlist$dimensions_boxplot <- dimensions_boxplot
     plotlist$components_boxplot <- components_boxplot

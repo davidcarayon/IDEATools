@@ -1,6 +1,6 @@
 Package: IDEATools
 Title: A Collection of Tools Dedicated to the IDEA4 Method
-Version: 2.0.2
+Version: 2.0.3
 Authors@R: 
     person(given = "David",
            family = "Carayon",

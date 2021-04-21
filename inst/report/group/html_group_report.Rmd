@@ -91,6 +91,14 @@ knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Gr
 
 # Lecture par les propriétés
 
+## Matrice des résultats individuels
+
 ```{r fig.cap= "Figure 7 : Matrice des résultats par les propriétés du groupe", fig.width = 10.4, fig.height=6.82}
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Matrice_propriétés.png"))
+```
+
+## Fréquence d'attribution de chaque modalité
+
+```{r fig.cap= "Figure 8 : Fréquence d'attribution de chaque modalité pour chaque propriété", fig.width = 10, fig.height=5}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Fréquence_propriétés.png"))
 ```

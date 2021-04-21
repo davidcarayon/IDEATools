@@ -116,9 +116,20 @@ fpar(run_pagebreak())
 
 # La seconde lecture de la durabilité : approche par les cinq propriétés de la durabilité
 
+## Matrice des résultats individuels
+
 ```{r}
 fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Matrice_propriétés.png")
 fpar(external_img(src = img_path, width = 6.5, height = 3.9))
-fpar(ftext('Figure 7 :  Matrice collective des résultats par les propriétés',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 7 :  Matrice collective des résultats individuels par les propriétés',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+```
+
+## Fréquence d'attribution de chaque modalité
+
+```{r}
+fpar(run_linebreak())
+img_path <- file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Fr\u00e9quence_propri\u00e9t\u00e9s.png")
+fpar(external_img(src = img_path, width = 6.5, height = 3.9))
+fpar(ftext("Figure 8 :  Fréquence d'attribution de chaque modalité pour chaque propriété",prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 ```
