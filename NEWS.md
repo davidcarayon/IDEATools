@@ -1,3 +1,7 @@
+# IDEATools 2.0.4
+
+* Added new compatibility with the 4.3.0 version of the IDEA calculator spreadcheet (json/xls/xlsx)
+
 # IDEATools 2.0.3
 
 * New Feature : Frequency plot for group analysis of properties

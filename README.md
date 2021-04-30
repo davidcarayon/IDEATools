@@ -6,12 +6,10 @@
 <!-- badges: start -->
 
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-2.0-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-2.0.4-orange.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
-[![Codecov test
-coverage](https://codecov.io/gh/davidcarayon/IDEATools/branch/master/graph/badge.svg)](https://codecov.io/gh/davidcarayon/IDEATools?branch=master)
 <!-- badges: end -->
 
 IDEATools est un package R dédié à la méthode IDEA4, visant à fournir

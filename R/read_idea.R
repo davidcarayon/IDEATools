@@ -216,17 +216,31 @@ read_idea <- function(input) {
       dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
 
     ## Error if not complete
-    if (nrow(tidyr::drop_na(items)) != 118) (stop(paste0("The items field in '", basename(input), "' has ", nrow(items), " entries but expects 118.")))
+
+    if(version_number < 430) {
+      if (nrow(tidyr::drop_na(items)) != 118) (stop(paste0("The items field in '", basename(input), "' has ", nrow(items), " entries but expects 118.")))
+    } else {
+      if (nrow(tidyr::drop_na(items)) != 119) (stop(paste0("The items field in '", basename(input), "' has ", nrow(items), " entries but expects 119.")))
+    }
+
+
   }
 
   if (filetype %in% c("xls", "xlsx")) {
-    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E143")) %>%
+    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E144")) %>%
       dplyr::select(item = Code, value = `A Exporter`) %>%
       dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) %>% # Convert A01 to A1
       dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
 
     ## Error if not complete
+    if(version_number < 430) {
     if (nrow(tidyr::drop_na(items)) != 118) (stop(paste0("The 118-rows dataframe for items in 'Renvoi BDD' can't be found in range A25:E143 for the file '", basename(input), "'.")))
+    } else {
+      if (nrow(tidyr::drop_na(items)) != 119) (stop(paste0("The 119-rows dataframe for items in 'Renvoi BDD' can't be found in range A25:E144 for the file '", basename(input), "'.")))
+    }
+
+
+
   }
 
   ## Building the output list
