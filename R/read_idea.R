@@ -213,7 +213,8 @@ read_idea <- function(input) {
     items <- dplyr::bind_rows(json_file$items) %>%
       tidyr::pivot_longer(tidyr::everything(), names_to = "item") %>%
       dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) %>% # Convert A01 to A1
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) %>%
+      tidyr::drop_na(item)
 
     ## Error if not complete
 
@@ -230,7 +231,8 @@ read_idea <- function(input) {
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E144")) %>%
       dplyr::select(item = Code, value = `A Exporter`) %>%
       dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) %>% # Convert A01 to A1
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) %>%
+      tidyr::drop_na(item)
 
     ## Error if not complete
     if(version_number < 430) {
