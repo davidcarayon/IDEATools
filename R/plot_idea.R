@@ -177,7 +177,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           axis.title = ggplot2::element_blank(),
           plot.title = ggplot2::element_blank()
         ) +
-        ggplot2::guides(fill = FALSE) +
+        ggplot2::guides(fill = "none") +
         ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
 
@@ -244,7 +244,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y") +
         ggplot2::geom_label(ggplot2::aes(label = paste0(scaled_value, "/", max_indic)), fill = "white", size = 4) +
         theme_idea(base_size = 14) +
-        ggplot2::guides(fill = FALSE) +
+        ggplot2::guides(fill = "none") +
         ggplot2::labs(fill = "Dimension", y = "Valeur de l'indicateur / valeur max") +
         ggplot2::theme(legend.position = "top") +
         ggplot2::theme(axis.title = ggplot2::element_blank()) +
@@ -265,7 +265,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y") +
         ggplot2::geom_label(ggplot2::aes(label = paste0(scaled_value, "/", max_indic)), fill = "white", size = 4) +
         theme_idea(base_size = 14) +
-        ggplot2::guides(fill = FALSE) +
+        ggplot2::guides(fill = "none") +
         ggplot2::labs(fill = "Dimension", y = "Valeur de l'indicateur / valeur max") +
         ggplot2::theme(legend.position = "top") +
         ggplot2::theme(axis.title = ggplot2::element_blank()) +
@@ -287,7 +287,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y") +
         ggplot2::geom_label(ggplot2::aes(label = paste0(scaled_value, "/", max_indic)), fill = "white", size = 4) +
         theme_idea(base_size = 14) +
-        ggplot2::guides(fill = FALSE) +
+        ggplot2::guides(fill = "none") +
         ggplot2::labs(fill = "Dimension", y = "Valeur de l'indicateur / valeur max") +
         ggplot2::theme(legend.position = "top") +
         ggplot2::theme(axis.title = ggplot2::element_blank()) +
@@ -304,7 +304,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         dplyr::mutate(score = round((component_value / max_compo) * 100))
 
       ## First plot : Polarised histogram exported to pdf
-      ggplot2::ggplot(component_data, ggplot2::aes(x = component_code, y = score, fill = dimension)) +
+      donut <- ggplot2::ggplot(component_data, ggplot2::aes(x = component_code, y = score, fill = dimension)) +
         ggplot2::geom_rect(xmin = 0, xmax = 13, ymin = -3, ymax = 0, fill = "black") +
         ggplot2::geom_col(color = "black", width = 1) +
         ggplot2::geom_vline(xintercept = c(seq(0.5, 13.5, 1)), color = "black") +
@@ -323,8 +323,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           axis.ticks = ggplot2::element_blank(),
           axis.title = ggplot2::element_blank()
         ) +
-        ggplot2::guides(fill = FALSE) +
-        ggplot2::ggsave(temp_pdf, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
+        ggplot2::guides(fill = "none")
+
+        ggplot2::ggsave(temp_pdf,plot = donut, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
 
 
       ## Preparing surrounding donut
@@ -398,7 +399,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::scale_fill_identity() +
         ggplot2::xlim(c(2, 4.9)) +
         ggplot2::theme_void() +
-        ggplot2::guides(fill = FALSE) +
+        ggplot2::guides(fill = "none") +
         ggplot2::theme(plot.margin = ggplot2::unit(c(-5, -5, -5, -5), "cm"))
 
 
@@ -830,7 +831,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::theme(axis.title.y = ggplot2::element_blank()) +
       ggplot2::labs(y = "Valeur de la composante", fill = "Dimension", color = "L\u00e9gende", caption = paste0("(N = ", n_farms, ")")) +
       ggplot2::coord_flip() +
-      ggplot2::guides(fill = FALSE) +
+      ggplot2::guides(fill = "none") +
       ggplot2::facet_wrap(~dimension, ncol = 1, scales = "free", drop = TRUE) +
       ggplot2::scale_y_continuous(breaks = seq(0, 100, 5))
 

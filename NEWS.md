@@ -1,3 +1,7 @@
+# IDEATools 2.0.6
+
+* Bug fixes and modifying `plot_idea()` as the unofficial hack `<ggplot_object> + ggsave()` does not work anymore.
+
 # IDEATools 2.0.5
 
 * Added new compatibility with the 4.3.1 version of the IDEA calculator spreadcheet (json/xls/xlsx)
