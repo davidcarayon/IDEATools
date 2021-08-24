@@ -45,6 +45,9 @@ compute_idea <- function(data) {
 
   ## Extracting metadata from input data
   metadata <- data$metadata
+  version <- metadata$MTD_00
+  version_number <- as.numeric(stringr::str_remove_all(version, "\\."))
+
 
   # 5 Decision rules for indicators using custom functions --------------------------------------------------------
 
@@ -60,7 +63,15 @@ compute_idea <- function(data) {
       }
 
       if (indicateur == "A5") {
-        value <- ifelse(metadata$MTD_15 >= 0.75, yes = 5, no = sum(items))
+
+        if(version_number < 430) {
+          value <- ifelse(metadata$MTD_15 >= 0.75, yes = 5, no = sum(items))
+        } else {
+          value <- sum(items)
+        }
+
+
+
       }
 
       if (indicateur == "A7") {
@@ -72,7 +83,15 @@ compute_idea <- function(data) {
       }
 
       if (indicateur == "A8") {
-        value <- ifelse(metadata$MTD_15 >= 0.95, yes = 8, no = sum(items))
+
+        if(version_number <= 430) {
+          value <- ifelse(metadata$MTD_15 >= 0.95, yes = 8, no = sum(items))
+        } else {
+          value <- sum(items)
+        }
+
+
+
       }
 
       if (indicateur == "A14") {

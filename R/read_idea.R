@@ -217,13 +217,11 @@ read_idea <- function(input) {
       tidyr::drop_na(item)
 
     ## Error if not complete
-
-    if(version_number < 430) {
-      if (nrow(tidyr::drop_na(items)) != 118) (stop(paste0("The items field in '", basename(input), "' has ", nrow(items), " entries but expects 118.")))
-    } else {
-      if (nrow(tidyr::drop_na(items)) != 119) (stop(paste0("The items field in '", basename(input), "' has ", nrow(items), " entries but expects 119.")))
+    if (sum(is.na(items$value)) > 0) {
+      stop(
+        paste0("The items field in '", basename(input), "' has missing values")
+      )
     }
-
 
   }
 
@@ -235,10 +233,10 @@ read_idea <- function(input) {
       tidyr::drop_na(item)
 
     ## Error if not complete
-    if(version_number < 430) {
-    if (nrow(tidyr::drop_na(items)) != 118) (stop(paste0("The 118-rows dataframe for items in 'Renvoi BDD' can't be found in range A25:E143 for the file '", basename(input), "'.")))
-    } else {
-      if (nrow(tidyr::drop_na(items)) != 119) (stop(paste0("The 119-rows dataframe for items in 'Renvoi BDD' can't be found in range A25:E144 for the file '", basename(input), "'.")))
+    if (sum(is.na(items$value)) > 0) {
+      stop(
+        paste0("The items field in '", basename(input), "' has missing values")
+      )
     }
 
 

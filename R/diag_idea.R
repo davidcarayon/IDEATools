@@ -100,7 +100,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     ## If the first pipeline fails, try the old_idea one
     if (any(class(test_version) == "try-error")) {
       if (!quiet) {
-        cli::cat_bullet("Note : Le calculateur ins\u00e9r\u00e9 est soit ancien (Version < 4.2.0) soit incomplet. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es...\n", bullet = "warning", bullet_col = "orange", col = "orange")
+        cli::cat_bullet("Note : Erreur dans la lecture du calculateur (Utilisez la fonction `read_idea()` pour plus d'informations). Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours.\n ", bullet = "warning", bullet_col = "orange", col = "orange")
       }
 
       ## Reading items (and estimating duration)
@@ -229,7 +229,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          cli::cat_bullet(paste0("Note : Le calculateur '", basename(i), "' est soit ancien (Version < 4.2.0) soit incomplet. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es...\n"), bullet = "warning", bullet_col = "orange", col = "orange")
+          cli::cat_bullet("Note : Erreur dans la lecture du calculateur (Utilisez la fonction `read_idea()` pour plus d'informations). Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours.\n ", bullet = "warning", bullet_col = "orange", col = "orange")
         }
 
         # Old alternative
@@ -336,7 +336,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          cli::cat_bullet(paste0("Note : Le calculateur '", basename(i), "' est soit ancien (Version < 4.2.0) soit incomplet. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es...\n"), bullet = "warning", bullet_col = "orange", col = "orange")
+          cli::cat_bullet("Note : Erreur dans la lecture du calculateur (Utilisez la fonction `read_idea()` pour plus d'informations). Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours.\n ", bullet = "warning", bullet_col = "orange", col = "orange")
         }
 
         # Old alternative

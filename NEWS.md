@@ -1,3 +1,10 @@
+# IDEATools 2.0.7
+
+* Changed the error message occuring when `read_idea()` fails in `diag_idea()`
+* added a better and easier to maintain check for NA's in the output of `read_idea()`
+* New categorisation rules for indicators
+* New computation rules for items
+
 # IDEATools 2.0.6
 
 * Bug fixes and modifying `plot_idea()` as the unofficial hack `<ggplot_object> + ggsave()` does not work anymore.

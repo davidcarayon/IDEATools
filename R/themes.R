@@ -57,7 +57,7 @@ theme_idea <- function(base_size = 15, base_family = "") {
 
       # Strip (Used with multiple panels)
       strip.background = ggplot2::element_rect(fill = "#2c3e50", color = "black"),
-      strip.text = ggplot2::element_text(color = white, face = "bold", size = ggplot2::rel(0.8), margin = ggplot2::margin(t = 5, b = 5)),
+      strip.text = ggplot2::element_text(color = white, face = "bold", size = ggplot2::rel(0.7), margin = ggplot2::margin(t = 5, b = 5)),
 
       # Plot
       plot.title = ggplot2::element_text(
