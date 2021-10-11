@@ -140,16 +140,30 @@ read_idea <- function(input) {
     metadata$MTD_15 <- round(as.numeric(metadata$MTD_15), 1)
     metadata$MTD_16 <- as.character(metadata$MTD_16)
 
-    ## Error if not complete
-    if (length(metadata) != 17) (stop(paste0("The metadonnees field in '", basename(input), "' has ", nrow(items), " entries but expects 17.")))
+    ## Special case for newer versions
+    if(version_number >= 433){
+      metadata$MTD_17 <- as.character(metadata$MTD_17)
+
+      ## Error if not complete
+      if (length(metadata) != 18) (stop(paste0("The metadonnees field in '", basename(input), "' has ", length(metadata), " entries but expects 18.")))
+
+    } else {
+
+      ## Error if not complete
+      if (length(metadata) != 17) (stop(paste0("The metadonnees field in '", basename(input), "' has ", length(metadata), " entries but expects 17.")))
+
+    }
+
+
   }
 
   ## excel files
   if (filetype %in% c("xls", "xlsx")) {
 
     ## Reading metadata from "Renvoi BDD"
-    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E21") %>%
+    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22") %>%
       dplyr::select(c(1, 4)) %>%
+      tidyr::drop_na(Code) %>%
       tidyr::pivot_wider(names_from = Code, values_from = Valeur) %>%
       as.list()
 
@@ -201,8 +215,22 @@ read_idea <- function(input) {
     metadata$MTD_15 <- round(as.numeric(metadata$MTD_15), 1)
     metadata$MTD_16 <- as.character(metadata$MTD_16)
 
-    ## Error if not complete
-    if (length(metadata) != 17) (stop(paste0("The 17-rows dataframe for metadata in 'Renvoi BDD' can't be found in range A4:E21 for the file '", basename(input), "'.")))
+
+    ## Special case for newer versions
+    if(version_number >= 433){
+      metadata$MTD_17 <- as.character(metadata$MTD_17)
+
+      ## Error if not complete
+      if (length(metadata) != 18) (stop(paste0("The 18-rows dataframe for metadata in 'Renvoi BDD' can't be found in range A4:E22 for the file '", basename(input), "'.")))
+
+    } else {
+
+      ## Error if not complete
+      if (length(metadata) != 17) (stop(paste0("The 17-rows dataframe for metadata in 'Renvoi BDD' can't be found in range A4:E21 for the file '", basename(input), "'.")))
+
+    }
+
+
   }
 
   ## Final check : checking the presence of crucial metadata needed for indicator calculation.

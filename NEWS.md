@@ -1,3 +1,7 @@
+# IDEATools 2.0.8
+
+* Added new compatibility with the 4.3.3 version of the IDEA calculator spreadcheet (json/xls/xlsx)
+
 # IDEATools 2.0.7
 
 * Changed the error message occuring when `read_idea()` fails in `diag_idea()`
