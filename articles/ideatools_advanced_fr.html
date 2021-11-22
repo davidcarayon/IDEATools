@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -74,6 +74,9 @@
     </li>
     <li>
       <a href="../articles/colored_trees.html">About colored trees</a>
+    </li>
+    <li>
+      <a href="../articles/utils.html">utility functions</a>
     </li>
   </ul>
 </li>
@@ -121,12 +124,15 @@
 
     
     
+<p><strong>NOTE : CETTE VIGNETTE N’EST PLUS A JOUR DEPUIS LA SORTIE DE LA VERSION 3.0.0</strong></p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l’automatisation et le reporting de diagnostics IDEA4.</p>
 <p>IDEATools 1.0 puis 1.1 ont été développés au cours de l’année 2020 pour répondre à des besoins (urgents) de sorties graphiques pour la méthode IDEA4, notamment en ce qui concerne l’approche par les propriétés. Cette première version du package était donc fonctionnelle mais largement perfectible et n’était pas assez documentée. Dans une optique de recherche reproductible et afin d’être mieux préparé aux adaptations / évolutions de la méthode, IDEATools a subi d’assez lourdes modifications pour aujourd’hui être proposé dans sa version 2.0.</p>
 <p>IDEATools 2.0 propose un processus automatisé de diagnostic composé de différents modules (<code><a href="../reference/read_idea.html">read_idea()</a></code>, <code><a href="../reference/compute_idea.html">compute_idea()</a></code>, <code><a href="../reference/old_idea.html">old_idea()</a></code>, <code><a href="../reference/plot_idea.html">plot_idea()</a></code>, <code><a href="../reference/write_idea.html">write_idea()</a></code>) tous regroupés dans une fonction globale, <code><a href="../reference/diag_idea.html">diag_idea()</a></code>. La présente vignette présente le fonctionnement général de chacun de ces modules et la logique générale développée dans IDEATools.</p>
+<p>IDEATools 3.0 a apporté une refonte complète du système de production des arbres éclairés.</p>
+<p>**NOTE : CETTE VIGNETTE N’EST PLUS A JOUR DEPUIS LA SORTIE DE LA VERSION 3.0.0</p>
 </div>
 <div id="pré-requis" class="section level1">
 <h1 class="hasAnchor">
@@ -156,25 +162,24 @@
 <li><p>{ggrepel} permet notamment l’affichage d’étiquettes avec décalage automatique sur des graphiques</p></li>
 <li><p>{ggimage} permet d’insérer des images dans des graphiques</p></li>
 <li><p>{pdftools} permet d’insérer des fichiers pdf dans des graphiques</p></li>
-<li><p>{rsvg} permet la conversion entre code source SVG vers des formats png/pdf</p></li>
 <li><p>{cli} permet un affichage console esthétique</p></li>
 <li><p>{rmarkdown} est un moteur permettant la production de rapports automatiques</p></li>
 <li><p>{knitr} permet de transformer tableaux et graphiques en éléments pouvant être insérés dans des rapports automatiques</p></li>
+<li><p>{ggtext} permet la production de cases avec textes pour les arbres éclairés (geom_textbox)</p></li>
 </ul>
-<p>Enfin, 3 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :</p>
+<p>Enfin, 2 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :</p>
 <ul>
-<li><p>{pagedown} pour les rapports html et pdf</p></li>
 <li><p>{officedown} pour les rapports docx</p></li>
 <li><p>{openxlsx} pour les rapports xlsx</p></li>
 </ul>
 <p>Il suffit de les installer à l’aide de :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pagedown"</span>,<span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="autres-dépendances" class="section level2">
 <h2 class="hasAnchor">
 <a href="#autres-d%C3%A9pendances" class="anchor"></a>Autres dépendances</h2>
-<p>Deux polices sont également requises pour l’utilisation de ce package : <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> et <a href="https://fonts.google.com/specimen/Rubik">Rubik</a>.</p>
+<p>Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html">tinytex::install_tinytex()</a></code> pour installer une version minimale de LaTeX vous permettant d’éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n’avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).</p>
 </div>
 </div>
 <div id="read_idea" class="section level1">
@@ -313,10 +318,15 @@
 <td>Usage des produits phytos: oui /non</td>
 <td>Texte</td>
 </tr>
+<tr class="even">
+<td>MTD_17</td>
+<td>Lycée agricole: oui /non</td>
+<td>Texte</td>
+</tr>
 </tbody>
 </table>
 </center>
-<p>Enfin, si l’algorithme ne trouve pas très exactement 17 valeurs de métadonnées, il renverra un message d’erreur.</p>
+<p>Enfin, si l’algorithme ne trouve pas très exactement 17 ou 18 valeurs de métadonnées, il renverra un message d’erreur.</p>
 <p>Dans le cas d’un fichier excel, on va chercher les métadonnées dans la plage <strong>A4:E21</strong> de l’onglet “Renvoi BDD”. Si par un souci technique MTD_00 n’a pas pu être récupéré dans ce tableau (0 par exemple), on tente d’y insèrer ‘Notice$K4’. Ensuite, les mêmes contrôles sont appliqués que pour le JSON (MTD_01, MTD_14, présence de 17 valeurs)</p>
 <p>Dans les deux cas, à la fin, on regarde si il existe bien une valeur pour MTD_14, MTD_15 et MTD_16 car ce sont des métadonnées cruciales pour le calcul d’indicateurs. Si il manque une de ces valeurs, un message d’erreur sera produit.</p>
 </div>
@@ -572,7 +582,7 @@ Exemple de figures produites par IDEATools
 <p>Il suffit donc d’assigner chaque “id” à un indicateur, puis on peut rechercher-remplacer l’argument “<code>fill:#ffffff</code>” par la couleur adéquate correspondant à l’évaluation.</p>
 <p>Les modèles sont compilés puis stockés sous forme d’un objet interne R nommé “<code>canvas</code>”. Il s’agit d’une liste contenant le code source SVG de chaque modèle. Ces modèles blancs sont exportables / consultables via :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">::</span><span class="fu"><a href="../reference/show_canvas.html">show_canvas</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">::</span><span class="fu">show_canvas</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>L’objet renvoyé par la fonction contient une liste similaire à “<code>canvas</code>”, mais avec le blanc remplacé par les bonnes couleurs. Les fonctions dans <code><a href="../reference/write_idea.html">write_idea()</a></code> sont ensuite capables de convertir ce code SVG en image PNG et/ou PDF.</p>
 <p><strong>Attention</strong> : Pour les futures modifications des modèles, il est particulièrement important de ne pas modifier les “id” de chaque rectangle, au risque de ne pas assigner le bon indicateur à son rectangle.</p>
 </div>

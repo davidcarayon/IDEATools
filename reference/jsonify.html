@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pipe operator
-See magrittr::%&gt;% for details. — %&gt;% • IDEATools</title>
+<title>Convert IDEA excel files to json — jsonify • IDEATools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -47,10 +46,8 @@ See magrittr::%&gt;% for details. — %&gt;% • IDEATools</title>
 
 
 
-<meta property="og:title" content="Pipe operator
-See magrittr::%&gt;% for details. — %&gt;%" />
-<meta property="og:description" content="Pipe operator
-See magrittr::%&amp;gt;% for details." />
+<meta property="og:title" content="Convert IDEA excel files to json — jsonify" />
+<meta property="og:description" content="Convert IDEA excel files to json" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -159,20 +156,33 @@ See magrittr::%&amp;gt;% for details." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Pipe operator
-See <code>magrittr::%&gt;%</code> for details.</h1>
+    <h1>Convert IDEA excel files to json</h1>
     
-    <div class="hidden name"><code>pipe.Rd</code></div>
+    <div class="hidden name"><code>jsonify.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Pipe operator
-See <code>magrittr::%&gt;%</code> for details.</p>
+    <p>Convert IDEA excel files to json</p>
     </div>
 
-    <pre class="usage"><span class='va'>lhs</span> <span class='op'>%&gt;%</span> <span class='va'>rhs</span></pre>
+    <pre class="usage"><span class='fu'>jsonify</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>input</th>
+      <td><p>the directory containing the xls/xlsx files to convert</p></td>
+    </tr>
+    <tr>
+      <th>output</th>
+      <td><p>the directory where the json files will be created</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list of json files exported to the output directory</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

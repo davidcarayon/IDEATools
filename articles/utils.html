@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About decision rules • IDEATools</title>
+<title>Utility functions developed in this package • IDEATools</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="About decision rules">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Utility functions developed in this package">
 <meta property="og:description" content="IDEATools">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -111,133 +111,27 @@
 
       
 
-      </header><script src="decision_rules_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="utils_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>About decision rules</h1>
+      <h1 data-toc-skip>Utility functions developed in this package</h1>
             
       
       
-      <div class="hidden name"><code>decision_rules.Rmd</code></div>
+      <div class="hidden name"><code>utils.Rmd</code></div>
 
     </div>
 
     
     
-<p>The aggregations from items to indicators, components, dimensions and properties are based on <strong>decision rules</strong>.</p>
-<p>These decision rules are mainly expert-advice judgment combined with a thorough review of scientific literature.</p>
-<p>In IDEATools, the decision rules are stored in an internal object named <code>decision_rules_total</code>. This list can be easily exported in the directory of your choice as an excel file using the internal function :</p>
+<div id="jsonify" class="section level1">
+<h1 class="hasAnchor">
+<a href="#jsonify" class="anchor"></a><code>jsonify()</code>
+</h1>
+<p>This (not-exported) helper function was developped to produce a JSON data file with an excel IDEA data input file (older than 2019-06-01).</p>
+<p>This function only needs an input, either a folder or a single file, and an output directory to save the produced JSON files. This function can be helpfull for users that aren’t able to use the VBA macro developed in the excel IDEA data file.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/show_decision_rules.html">show_decision_rules</a></span><span class="op">(</span><span class="st">"my_directory"</span><span class="op">)</span></code></pre></div>
-<div id="decision-rules-for-the-dimensions-approach" class="section level2">
-<h2 class="hasAnchor">
-<a href="#decision-rules-for-the-dimensions-approach" class="anchor"></a>Decision rules for the Dimensions approach</h2>
-<p>In the majority of cases, each indicator value can be obtained as the sum of all items related to this indicator. However, there are a few exceptions :</p>
-<table class="table">
-<thead><tr class="header">
-<th>Indicator</th>
-<th>If… (Condition)</th>
-<th>Then… (Result)</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>A1</td>
-<td>Item2 = 4</td>
-<td>A1 = 4</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>Item2 != 4</td>
-<td>A1 = sum(items)</td>
-</tr>
-<tr class="odd">
-<td>A5</td>
-<td>MTD_15 &gt;= 0.75</td>
-<td>A5 = 5</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>MTD_15 &lt; 0.75</td>
-<td>A5 = sum(items)</td>
-</tr>
-<tr class="odd">
-<td>A7</td>
-<td>MTD_14 = 0</td>
-<td>A7 = 0;</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>MTD_14 = 1,</td>
-<td>A7 = Item2</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MTD_14 = 2</td>
-<td>A7 = 0.7xItem1 + 0.3xItem2</td>
-</tr>
-<tr class="even">
-<td>A8</td>
-<td>MTD_15 &gt;= 0.95</td>
-<td>A8 = 8</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MTD_15 &lt; 0.95</td>
-<td>A8 = sum(items)</td>
-</tr>
-<tr class="even">
-<td>A14</td>
-<td>MTD_16 = 0</td>
-<td>A14 = 4</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>MTD_14 = 0</td>
-<td>A14 = Item1</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>MTD_16 != 0 AND MTD_14 != 0</td>
-<td>A7 = min(items)</td>
-</tr>
-<tr class="odd">
-<td>A19</td>
-<td>MTD_14 = 0</td>
-<td>A19 = Item1</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>MTD_14 != 0</td>
-<td>A19 = min(items)</td>
-</tr>
-<tr class="odd">
-<td>B2</td>
-<td>MTD_14 = 0</td>
-<td>B2 = Item2</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>MTD_14 != 0</td>
-<td>B2 = Item1</td>
-</tr>
-<tr class="odd">
-<td>B23</td>
-<td>MTD_14 = 0</td>
-<td>B23 = Item2</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>MTD_14 != 0</td>
-<td>B23 = round(mean(items))</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="decision-rules-for-the-properties-approach" class="section level2">
-<h2 class="hasAnchor">
-<a href="#decision-rules-for-the-properties-approach" class="anchor"></a>Decision rules for the Properties approach</h2>
-<p>For the properties approach, the decision rules are 46 data frames giving the evaluation for each node depending on the previous leaves and nodes, named with the pattern “node_xx”, based on this numeration of the heuristic tree (see <a href="https://doi.org/10.1051/cagri/2019004">Zahm et al., 2019</a>) :</p>
-<p><img src="img/heuristic_numbers.png" width="100%"></p>
+<code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/jsonify.html">jsonify</a></span><span class="op">(</span>input <span class="op">=</span> <span class="st">"input_directory"</span>, output <span class="op">=</span> <span class="st">"output_directory"</span><span class="op">)</span></code></pre></div>
 </div>
   </div>
 
