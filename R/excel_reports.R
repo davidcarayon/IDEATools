@@ -4,13 +4,18 @@
 
 
 ## Function to produce Excel single reports
-excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi) {
+excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi, append = FALSE, input_file_append = NULL) {
 
   # Creating plots
   write_idea(IDEAdata, output_directory = outdir, type = "local", prefix = prefix, dpi = dpi, quiet = TRUE)
 
   # Creating workbook
-  wb <- openxlsx::createWorkbook()
+
+  if(append == TRUE) {
+    wb <- openxlsx::loadWorkbook(input_file_append)
+  } else {
+    wb <- openxlsx::createWorkbook()
+  }
 
   ## Setting styles
 
@@ -48,7 +53,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Dimensions data
   df <- IDEAdata$data$dataset %>%
-    dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+    dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) %>%
     dplyr::select(Dimension = dimension, Score = dimension_value) %>%
     dplyr::distinct()
 
@@ -71,8 +76,8 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Create dataset
   df <- IDEAdata$data$dataset %>%
-    dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
-    dplyr::select(Dimension = dimension, Composante = component, Score = component_value, `Max possible` = max_compo) %>%
+    dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) %>%
+    dplyr::select(Dimension = dimension, Composante = component, Score = component_value, `Max possible` = component_max) %>%
     dplyr::distinct()
 
   ## Write the data
@@ -103,7 +108,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Create dataset
   df <- IDEAdata$data$dataset %>%
-    dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+    dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) %>%
     dplyr::select(Dimension = dimension, Composante = component, indicateur = indic, nom_indicateur = indic_name, Score = scaled_value, `Max possible` = max_indic) %>%
     dplyr::distinct() %>%
     tidyr::unite(Indicateur, c("indicateur", "nom_indicateur"), sep = " - ")
@@ -141,9 +146,9 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   openxlsx::addWorksheet(wb, "Synth\u00e8se Proprietes", gridLines = FALSE, tabColour = "yellow")
 
   ## Create list of properties names
-  props <- reference_table %>%
+  props <- reference_list$properties_nodes %>%
     dplyr::filter(level == "propriete") %>%
-    dplyr::pull(indic_name)
+    dplyr::pull(node_code)
 
   ## Create the dataset
   df <- IDEAdata$data$nodes$Global %>%
@@ -167,16 +172,20 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   }
 
   ## Add sheets with conditional tab color
-  openxlsx::addWorksheet(wb, "Robustesse", gridLines = FALSE, tabColour = colorise(to_col["Robustesse"]))
-  openxlsx::addWorksheet(wb, "Ancrage Territorial", gridLines = FALSE, tabColour = colorise(to_col["Ancrage territorial"]))
-  openxlsx::addWorksheet(wb, "Capacit\u00e9", gridLines = FALSE, tabColour = colorise(to_col["Capacit\u00e9 productive et reproductive de biens et de services"]))
-  openxlsx::addWorksheet(wb, "Autonomie", gridLines = FALSE, tabColour = colorise(to_col["Autonomie"]))
-  openxlsx::addWorksheet(wb, "Responsabilit\u00e9 globale", gridLines = FALSE, tabColour = colorise(to_col["Responsabilit\u00e9 globale"]))
+  openxlsx::addWorksheet(wb, "Robustesse", gridLines = FALSE, tabColour = colorise(to_col["R10"]))
+  openxlsx::addWorksheet(wb, "Ancrage Territorial", gridLines = FALSE, tabColour = colorise(to_col["AN5"]))
+  openxlsx::addWorksheet(wb, "Capacit\u00e9", gridLines = FALSE, tabColour = colorise(to_col["CP10"]))
+  openxlsx::addWorksheet(wb, "Autonomie", gridLines = FALSE, tabColour = colorise(to_col["AU6"]))
+  openxlsx::addWorksheet(wb, "Responsabilit\u00e9 globale", gridLines = FALSE, tabColour = colorise(to_col["RG15"]))
 
 
   ## Global synthesis
 
   ## Write the data
+  df <- df %>%
+    dplyr::inner_join(reference_list$properties_nodes, by = c("Propriete"="node_code")) %>%
+    dplyr::select(Propriete = node_name,Resultat)
+
   openxlsx::writeData(wb, "Synth\u00e8se Proprietes", df,
                       colNames = TRUE, rowNames = TRUE, startCol = "A",
                       startRow = 2, borders = "all", headerStyle = hs1, borderStyle = "medium"
@@ -194,23 +203,19 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   openxlsx::setColWidths(wb, "Synth\u00e8se Proprietes", cols = 4, widths = 2)
   openxlsx::setColWidths(wb, "Synth\u00e8se Proprietes", cols = 1:3, widths = "auto")
 
-  ## Add synthetic tree
-  img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Arbre synth\u00e9tique.png"))
-  openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = img, startRow = 2, startCol = "E", width = 22.67, height = 15.26, units = "cm")
-
   ## Add global tree
   img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Arbre global.png"))
-  openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = img, startRow = 35, startCol = "E", width = 22.92, height = 15.85, units = "cm")
+  openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = img, startRow = 2, startCol = "E", width = 8.38, height = 5.21, units = "in")
 
   ## Robustesse
 
   ## Create the dataset
   df <- IDEAdata$data$nodes$Robustesse %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
-    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
+    dplyr::mutate(full_name = indic_name) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
     dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
@@ -235,7 +240,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Add plots
   img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Robustesse.png"))
-  openxlsx::insertImage(wb, "Robustesse", file = img, startRow = 2, startCol = "G", width = 18.86, height = 13.49, units = "cm")
+  openxlsx::insertImage(wb, "Robustesse", file = img, startRow = 2, startCol = "G", width = 8.74, height = 5.66, units = "in")
 
 
   ## Ancrage
@@ -243,10 +248,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Ancrage %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
-    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
+    dplyr::mutate(full_name = indic_name) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
     dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
@@ -272,7 +277,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Add plots
   img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Ancrage Territorial.png"))
-  openxlsx::insertImage(wb, "Ancrage Territorial", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
+  openxlsx::insertImage(wb, "Ancrage Territorial", file = img, startRow = 2, startCol = "G", width = 6.66, height = 3.97, units = "in")
 
 
   ## Capacit\u00e9 productive
@@ -280,10 +285,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Capacite %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
-    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
+    dplyr::mutate(full_name = indic_name) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
     dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
@@ -308,17 +313,17 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Add plots
   img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Capacit\u00e9 productive et reproductive de biens et de services.png"))
-  openxlsx::insertImage(wb, "Capacit\u00e9", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
+  openxlsx::insertImage(wb, "Capacit\u00e9", file = img, startRow = 2, startCol = "G", width = 8.74, height = 5.35, units = "in")
 
   ## Autonomie
 
   ## Create the dataset
   df <- IDEAdata$data$nodes$Autonomie %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
-    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
+    dplyr::mutate(full_name = indic_name) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
     dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
@@ -344,7 +349,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Add plots
   img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Autonomie.png"))
-  openxlsx::insertImage(wb, "Autonomie", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
+  openxlsx::insertImage(wb, "Autonomie", file = img, startRow = 2, startCol = "G", width = 7.78, height = 4.82, units = "in")
 
 
   ## Responsabilit\u00e9 globale
@@ -352,10 +357,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
   ## Create the dataset
   df <- IDEAdata$data$nodes$Responsabilite %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
-    dplyr::left_join(reference_table, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
-    dplyr::mutate(full_name = ifelse(is.na(full_name), yes = indicateur, no = full_name)) %>%
+    dplyr::mutate(full_name = indic_name) %>%
     dplyr::select(indicateur, Indicateur = full_name, Niveau = level, "Resultat") %>%
     dplyr::left_join(IDEAdata$data$dataset, by = c("indicateur" = "indic")) %>%
     dplyr::select(Indicateur, Niveau, "Score_brut" = unscaled_value, "Resultat")
@@ -381,7 +386,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi)
 
   ## Add plots
   img <- file.path(outdir, Sys.Date(), prefix, "Propri\u00e9t\u00e9s", "Arbres \u00e9clair\u00e9s", paste0(prefix, "_", "Responsabilit\u00e9 globale.png"))
-  openxlsx::insertImage(wb, "Responsabilit\u00e9 globale", file = img, startRow = 2, startCol = "G", width = 18.97, height = 10.64, units = "cm")
+  openxlsx::insertImage(wb, "Responsabilit\u00e9 globale", file = img, startRow = 2, startCol = "G", width = 10.20, height = 7.75, units = "in")
 
 
   # Appendix ------------------------------------------------------------------
@@ -478,7 +483,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   ## Creating dataset
   df_dim <- IDEAdata$data$dataset %>%
     dplyr::distinct(farm_id, dimension_code, dimension_value) %>%
-    dplyr::inner_join(reference_table, by = "dimension_code") %>%
+    dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") %>%
     dplyr::distinct(farm_id, dimension, dimension_value) %>%
     dplyr::mutate(dimension = factor(dimension, levels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique")))
 
@@ -496,7 +501,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
         "Minimum" = min(dimension_value),
         "1er quartile" = quantile(dimension_value, 0.25),
         "Mediane" = quantile(dimension_value, 0.5),
-        "Moyenne" = mean(dimension_value),
+        "Moyenne" = round(mean(dimension_value)),
         "3e quartile" = quantile(dimension_value, 0.75),
         "Maximum" = max(dimension_value)
       ) %>%
@@ -560,7 +565,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   ## Create dataset
   df_compo <- IDEAdata$data$dataset %>%
     dplyr::distinct(farm_id, dimension_code, component_code, component_value) %>%
-    dplyr::inner_join(reference_table, by = c("component_code", "dimension_code")) %>%
+    dplyr::inner_join(reference_list$indic_dim, by = c("component_code", "dimension_code")) %>%
     dplyr::mutate(dimension = factor(dimension, levels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique")))
 
   ## Individual stats
@@ -585,13 +590,13 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
         "Minimum" = min(component_value),
         "1er quartile" = quantile(component_value, 0.25),
         "Mediane" = quantile(component_value, 0.5),
-        "Moyenne" = mean(component_value),
+        "Moyenne" = round(mean(component_value)),
         "3e quartile" = quantile(component_value, 0.75),
         "Maximum" = max(component_value),
-        "Maximum theorique" = unique(max_compo)
+        "Maximum theorique" = unique(component_max)
       ) %>%
       tidyr::gather(key = "Statistique", value = value, -component_code) %>%
-      dplyr::inner_join(reference_table %>% dplyr::distinct(component_code, component), by = "component_code") %>%
+      dplyr::inner_join(reference_list$indic_dim %>% dplyr::distinct(component_code, component), by = "component_code") %>%
       dplyr::arrange(component_code) %>%
       dplyr::mutate(component = factor(component, levels = unique(component))) %>%
       dplyr::select(-component_code) %>%
@@ -681,9 +686,13 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   ## Create dataset
   df_indic <- IDEAdata$data$dataset %>%
     dplyr::distinct(farm_id, dimension_code, indic, scaled_value) %>%
-    dplyr::inner_join(reference_table, by = c("indic" = "indic_code", "dimension_code")) %>%
+    dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code")) %>%
     dplyr::mutate(dimension = factor(dimension, levels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
+    dplyr::ungroup() %>%
     dplyr::arrange(dimension, indic_number) %>%
+    dplyr::mutate(full_name = indic_name) %>%
     dplyr::mutate(full_name = factor(full_name, levels = unique(full_name)))
 
   ## Individual stats
@@ -699,7 +708,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
       "Minimum" = min(scaled_value),
       "1er quartile" = quantile(scaled_value, 0.25),
       "Mediane" = quantile(scaled_value, 0.5),
-      "Moyenne" = mean(scaled_value),
+      "Moyenne" = round(mean(scaled_value)),
       "3e quartile" = quantile(scaled_value, 0.75),
       "Maximum" = max(scaled_value),
       "Maximum theorique" = unique(max_indic)
@@ -751,8 +760,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
 
   # Custom function to attribute a code to each node
   replace_indic <- function(indic) {
-    list_indic <- reference_table %>%
-      dplyr::filter(level == "indicateur") %>%
+    list_indic <- reference_list$indic_dim %>%
       dplyr::pull(indic_code)
 
     res <- dplyr::case_when(
@@ -820,26 +828,18 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   openxlsx::addWorksheet(wb, "Synth\u00e8se Proprietes")
 
   # List of indicators
-  list_indic <- reference_table %>%
-    dplyr::filter(level == "indicateur") %>%
+  list_indic <- reference_list$indic_dim %>%
     dplyr::pull(indic_code)
 
   ## Crating dataset
   df <- IDEAdata$data$nodes$Global %>%
     tidyr::gather(key = indic, value = resultat, -farm_id) %>%
-    dplyr::mutate(indic = replace_indic(indic)) %>%
-    dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+    dplyr::inner_join(reference_list$properties_nodes, by = c("indic" = "node_code")) %>%
     dplyr::mutate(resultat = factor(resultat, levels = c("tr\u00e8s favorable", "favorable", "interm\u00e9diaire", "d\u00e9favorable", "tr\u00e8s d\u00e9favorable", "NC"))) %>%
-    dplyr::mutate(indic_name = ifelse(indic_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = indic_name)) %>%
-    dplyr::arrange(dimension_code, indic_number) %>%
-    dplyr::mutate(indic = factor(indic, levels = unique(indic))) %>%
-    dplyr::mutate(level = dplyr::case_when(
-      level == "indicateur" ~ "Indicateur",
-      level == "propriete" ~ "Propriete"
-    )) %>%
-    dplyr::filter(level == "Propriete") %>%
-    dplyr::select(Exploitation = farm_id, indic_name, resultat) %>%
-    tidyr::spread(key = indic_name, value = resultat)
+    dplyr::mutate(node_name = ifelse(node_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = node_name)) %>%
+    dplyr::filter(level == "propriete") %>%
+    dplyr::select(Exploitation = farm_id, node_name, resultat) %>%
+    tidyr::spread(key = node_name, value = resultat)
 
 
   ## Empty row between data and counter

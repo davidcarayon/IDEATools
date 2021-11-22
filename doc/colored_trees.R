@@ -5,8 +5,11 @@ knitr::opts_chunk$set(
 )
 
 ## ----out.width = "100%", echo = FALSE-----------------------------------------
-knitr::include_graphics("img/cap_canvas.png")
+knitr::include_graphics("img/ex_robustesse.png")
 
-## ----eval=FALSE---------------------------------------------------------------
-#  IDEATools::show_canvas("my_directory")
+## ----echo = TRUE, eval = FALSE------------------------------------------------
+#  IDEATools:::show_tree_structure("my_directory")
+
+## ----out.width = "100%", echo = FALSE-----------------------------------------
+knitr::include_graphics("img/cap_canvas.png")
 

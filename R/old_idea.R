@@ -62,7 +62,7 @@ old_idea <- function(input) {
 
   ## Scale indicators
   ScaleIndicator <- function(indic, value) {
-    max <- reference_table %>%
+    max <- reference_list$indic_dim %>%
       dplyr::filter(indic_code == indic) %>%
       dplyr::pull(max_indic)
 
@@ -80,7 +80,7 @@ old_idea <- function(input) {
 
   ## Re-scales the component value according to the max authorized value
   ScaleComponent <- function(compo, value) {
-    max <- reference_table %>%
+    max <- reference_list$indic_dim %>%
       dplyr::filter(component_code == compo) %>%
       dplyr::pull(max_compo) %>%
       unique()
@@ -290,7 +290,7 @@ old_idea <- function(input) {
   ## Aggregation of indicators
   computed_dimensions <- dplyr::bind_rows(AE, ST, EC) %>%
     dplyr::mutate(unscaled_value = as.numeric(unscaled_value)) %>%
-    dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+    dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) %>%
     dplyr::mutate(scaled_value = purrr::map2_dbl(indic, unscaled_value, ScaleIndicator)) %>%
     ## Adding indicator values to calculate components
     dplyr::group_by(component_code) %>%
@@ -324,7 +324,7 @@ old_idea <- function(input) {
 
   # Custom function to simplify indicator names for joining
   simplify_indicator_name <- function(name) {
-    list_indic <- reference_table %>%
+    list_indic <- reference_list$indic_dim %>%
       dplyr::filter(level == "indicateur") %>%
       dplyr::pull(indic_code)
 

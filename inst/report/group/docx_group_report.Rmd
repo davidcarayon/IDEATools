@@ -25,18 +25,14 @@ library(officedown)
 library(officer)
 ```
 
-```{r ressources}
-## Légende associée aux métadonnées du fichier .json
-ref_table <- IDEATools:::reference_table
-```
-
 ```{r input, include = FALSE}
 outdir <- params$outdir
-IDEAdata <- params$data
-metadata <- IDEAdata$data$metadata
+IDEA_plots <- params$data
+IDEAdata <- IDEA_plots$data
+metadata <- IDEAdata$metadata
 n_farm <- nrow(metadata)
 
-write_idea(IDEAdata,output_directory = outdir,type = "local", dpi = params$dpi, quiet = TRUE)
+write_idea(IDEA_plots,output_directory = outdir,type = "local", dpi = params$dpi, quiet = TRUE)
 ```
 
 ```{r}

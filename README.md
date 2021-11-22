@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-2.0.8-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.0.0-orange.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
@@ -33,25 +33,28 @@ Puis charger le package avec :
 library(IDEATools)
 ```
 
-Note: 3 packages ne sont pas automatiquement installés (afin de réduire
-la liste des dépendances) mais restent nécessaires pour la production de
-certains rapports automatiques :
+## Prérequis pour la production de rapports
 
-  - {pagedown} pour les rapports html et pdf
+Deux packages ne sont pas automatiquement installés (afin de réduire la
+liste des dépendances) mais restent nécessaires pour la production de
+certains formats de rapports automatiques :
 
   - {officedown} pour les rapports docx
-
   - {openxlsx} pour les rapports xlsx
 
 Il suffit de les installer à l’aide de :
 
 ``` r
-install.packages(c("pagedown","officedown","openxlsx"))
+install.packages(c("officedown","openxlsx"))
 ```
 
-Deux polices sont également requises pour l’utilisation de ce package :
-[Roboto](https://fonts.google.com/specimen/Roboto) et
-[Rubik](https://fonts.google.com/specimen/Rubik).
+Pour la production de rapport PDF, une installation de LaTeX est
+requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la
+fonction `tinytex::install_tinytex()` pour installer une version
+minimale de LaTeX vous permettant d’éditer des rapports au format PDF en
+utilisant le package IDEATools. Une fois installé, vous n’avez plus
+besoin de vous soucier de LaTeX (opération à réaliser seulement lors de
+la première utilisation).
 
 # Utilisation
 
@@ -77,6 +80,7 @@ de l’utilisateur, les modules d’IDEATools vont être appelés
 séquentiellement afin de produire les résultats demandés. L’utilisateur
 peut notamment paramétrer :
 
+  - Le fichier/dossier d’entrée des données `input`
   - Le dossier de sortie des résultats `output_directory`
   - Le type d’analyse (individuelle ou de groupe) `type`
   - Le type de sorties (rapport et/ou graphiques bruts) `export_type`
@@ -90,6 +94,11 @@ peut notamment paramétrer :
     des sorties) `dpi`
   - Si l’algorithme doit afficher sa progression dans la console.
     `quiet`
+  - (*nouveau*) Dans le cas particulier ou un calculateur au format
+    .xlsx est inséré et qu’un rapport individuel au format xlsx est
+    demandé, `append` paramétré en TRUE permet de coller les onglets de
+    résultats à la suite des onglets du calculateur initial, créant
+    ainsi un calculateur “tout en un” avec données + résultats.
 
 Voici un appel complet à cette fonction avec toutes les possibilités de
 paramétrage :
@@ -100,10 +109,11 @@ diag_idea(input,
           type = c("single","group"),
           export_type = c("report","local",NULL),
           plot_choices = c("dimensions","trees","radars"),
-          report_format = c("pdf","html","docx","odt","pptx","xlsx"),
+          report_format = c("pdf","docx","odt","xlsx"),
           prefix = "EA",
           dpi = 300,
-          quiet = FALSE)
+          quiet = FALSE,
+          append = FALSE)
 ```
 
 On distingue 3 grands types de diagnostics :
@@ -132,15 +142,14 @@ calculateurs en même temps.
 
 Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais
 a juste besoin pour chaque exploitation d’un rapport au format word
-qu’il pourra commenter ainsi qu’une présentation powerpoint qu’il
-pourra facilement partager. Le code sera alors :
+qu’il pourra commenter. Le code sera alors :
 
 ``` r
 diag_idea(input = "chemin_vers_dossier",
           output_directory = "mes_résultats",
           type = "single",
           export_type = "report"
-          report_format = c("docx","pptx")
+          report_format = c("docx")
           quiet = FALSE)
 ```
 

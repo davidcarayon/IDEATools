@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 #  remotes::install_github("davidcarayon/IDEATools")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  install.packages(c("pagedown","officedown","openxlsx"))
+#  install.packages(c("officedown","openxlsx"))
 
 ## ----out.width = "100%", echo = FALSE-----------------------------------------
 knitr::include_graphics("img/heuristic_numbers.png")
@@ -22,12 +22,12 @@ scales::show_col(c("Agroécologique"= "#2e9c15", "Socio-Territoriale" = "#5077FE
 
 ## ----echo = FALSE-------------------------------------------------------------
 scales::show_col(c(
-  "tres defavorable" = "#FF0000",
-  "defavorable" = "#FF6348",
-  "intermédiaire" = "#FFA300",
-  "favorable" = "#1CDA53",
-  "tres favorable" = "#0D8A00"
-), borders = FALSE)
+  "tres defavorable" = "#CD0000",
+  "defavorable" = "#FF6347",
+  "intermédiaire" = "#FCD400",
+  "favorable" = "#33FF00",
+  "tres favorable" = "#008B00"
+), borders = TRUE)
 
 ## ----out.width = "100%", echo = FALSE-----------------------------------------
 knitr::include_graphics("img/pipeline_individuel.png")

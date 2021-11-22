@@ -6,8 +6,10 @@
 #' @param output_directory the desired output directory for the rendered reports and/or plots. Defaults to "IDEATools_output"
 #' @param type the type of output to produce. Can be either "report" to produce compiled reports or "local" to write raw plots as PNG files.
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored in the case of a group analysis : The \code{metadata$MTD_01} field will then be used to identify each farm.
-#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","docx")}). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".
+#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"
 #' @param dpi ggplot output resolution.
+#' @param append If the input is an xlsx format, should the individual output be appended to the original file ?
+#' @param input_file_append file path to an xslx IDEA data spreadsheet
 #' @param quiet A command to remove console printing.
 #'
 #' @details This function automatically creates in \code{output_directory} a subdirectory named after the system date for users to use the same output_directory for multiple diagnosis.
@@ -31,8 +33,8 @@
 #' @importFrom glue glue
 #' @importFrom purrr pwalk
 #' @importFrom rmarkdown render
-#' @importFrom rsvg rsvg_png rsvg_pdf
 #' @importFrom tibble tibble
+#' @importFrom pdftools pdf_convert
 #' @import knitr
 #'
 #' @examples
@@ -52,13 +54,19 @@
 #'   prefix = "myFarm", dpi = 300
 #' )
 #'
-#' # Export as docx/odt reports to your tempdir.
+#' # Export as xlsx reports to your tempdir.
 #' write_idea(idea_plots,
 #'   output_directory = tempdir, prefix = "myFarm",
-#'   type = "report", dpi = 300, report_format = c("pdf", "docx")
+#'   type = "report", dpi = 300, report_format = c("pdf", "xlsx")
 #' )
 #' }
-write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", quiet = FALSE) {
+write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", append = FALSE, input_file_append = NULL, quiet = FALSE) {
+
+
+  if(append == TRUE) {
+    filetype <- tools::file_ext(input_file_append)
+    if(filetype != "xlsx") {stop("To append the results to the original file, it should be in xlsx format.")}
+  }
 
   # Checks ------------------------------------------------------------------
   if (!any(class(IDEA_plots) %in% c("IDEA_group_plots", "IDEA_plots"))) (stop("The input data is not of class 'IDEA_data'"))
@@ -188,46 +196,43 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(name = names(tree_plots), itemlist = tree_plots) %>%
           dplyr::mutate(folder = tree_directory) %>%
-          dplyr::mutate(plotname = dplyr::recode(name, "tree_Capacite" = "Capacit\u00e9 productive et reproductive de biens et de services", "tree_Ancrage" = "Ancrage Territorial", "tree_Autonomie" = "Autonomie", "tree_Robustesse" = "Robustesse", "tree_Responsabilite" = "Responsabilit\u00e9 globale", "tree_Global" = "Arbre global", "tree_Global_zoom" = "Arbre synth\u00e9tique")) %>%
+          dplyr::mutate(plotname = dplyr::recode(name, "Capacite" = "Capacit\u00e9 productive et reproductive de biens et de services", "Ancrage" = "Ancrage Territorial", "Autonomie" = "Autonomie", "Robustesse" = "Robustesse", "Responsabilite" = "Responsabilit\u00e9 globale", "Global" = "Arbre global")) %>%
           dplyr::mutate(path = file.path(tree_directory, paste0(prefix, "_", plotname))) %>%
           dplyr::mutate(
-            svg_path = glue::glue("{path}.svg"),
             png_path = glue::glue("{path}.png"),
             pdf_path = glue::glue("{path}.pdf")
           )
 
         ## Custom function to iterate (faster than for loop)
-        export_heuristic_map <- function(prop, itemlist, folder, png_path, pdf_path, svg_path) {
+        export_heuristic_map <- function(prop, itemlist, folder, png_path, pdf_path) {
 
           ## List with dimension of trees
           heuristic_res <- list(
-            tree_Robustesse = c(1072, 767),
-            tree_Capacite = c(1193, 652),
-            tree_Autonomie = c(1073, 601),
-            tree_Responsabilite = c(1063, 674),
-            tree_Ancrage = c(1072, 601),
-            tree_Global = c(1488, 1052),
-            tree_Global_zoom = c(829, 558)
+            Robustesse = c(40, 26),
+            Capacite = c(48, 30),
+            Autonomie = c(48, 30),
+            Responsabilite = c(49, 37),
+            Ancrage = c(33, 20),
+            Global = c(45, 28)
           )
 
           # Dimensions of tree
           dim <- heuristic_res[[prop]]
 
-          # Export SVG
-          writeLines(itemlist, svg_path)
+          # Save to PDF
+          ggplot2::ggsave(itemlist, filename = pdf_path, width = dim[1], height = dim[2])
 
-          # Convert SVG to PNG
-          rsvg::rsvg_png(svg_path, png_path, width = dim[1], height = dim[2])
+          # Convert to PNG
+          pdftools::pdf_convert(pdf = pdf_path, format = "png", pages = NULL, filenames = basename(png_path), opw = "", upw = "", verbose = FALSE)
 
-          # Convert SVG to PDF
-          rsvg::rsvg_pdf(svg_path, pdf_path)
+          # Move the PNG file to the appropriate folder
+          file.copy(basename(png_path),png_path)
+          file.remove(basename(png_path))
 
-          # SVG removed
-          file.remove(svg_path)
         }
 
         # Iterating
-        purrr::pwalk(.l = list(tab_res$name, tab_res$itemlist, tab_res$folder, tab_res$png_path, tab_res$pdf_path, tab_res$svg_path), .f = export_heuristic_map)
+        purrr::pwalk(.l = list(tab_res$name, tab_res$itemlist, tab_res$folder, tab_res$png_path, tab_res$pdf_path), .f = export_heuristic_map)
       }
 
       ## Duration estimation
@@ -254,26 +259,21 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         cli::cli_h2(paste0("Production des ", length(report_format), " rapports demand\u00e9s"))
       }
 
-      ### HTML reports
-      if (any(report_format == "html")) {
+      ### PDF reports
+      if (any(report_format == "pdf")) {
 
-        if (!quiet) (cli::cli_h3("Production du rapport web (Chrome/Firefox)..."))
-
-        if(!requireNamespace("pagedown", quietly = TRUE)){stop("Package {pagedown} is required for HTML reports. Please use `install.packages('pagedown')`")}
+        if (!quiet) (cli::cli_h3("Production du rapport PDF..."))
 
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","single", "html_report.Rmd")
+        report_path <- file.path(knitting_dir, "report","single", "pdf_report.Rmd")
 
         # Defining params
         params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          prefix = prefix,
-          dpi = dpi
+          data = IDEA_plots
         )
 
-        output_file <- paste0("Rapport_individuel_", prefix, ".html")
+        output_file <- paste0("Rapport_individuel_", prefix, ".pdf")
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,
@@ -306,8 +306,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         params <- list(
           data = IDEA_plots,
           outdir = "tmp",
-          prefix = prefix,
-          dpi = dpi
+          prefix = prefix
         )
 
         output_file <- paste0("Rapport_individuel_", prefix, ".docx")
@@ -341,8 +340,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         params <- list(
           data = IDEA_plots,
           outdir = "tmp",
-          prefix = prefix,
-          dpi = dpi
+          prefix = prefix
         )
 
         output_file <- paste0("Rapport_individuel_", prefix, ".odt")
@@ -353,94 +351,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
                                            params = params,
                                            envir = new.env(parent = globalenv()), quiet = TRUE
         ))
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          cli::cat_bullet(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"), bullet = "info", bullet_col = "green")
-        }
-      }
-
-
-      ### PPTX reports
-      if (any(report_format == "pptx")) {
-        if (!quiet) {
-          cli::cli_h3("Production de la pr\u00e9sentation Microsoft Powerpoint...")
-        }
-
-        start <- Sys.time()
-
-        report_path <- file.path(knitting_dir, "report","single", "pptx_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          prefix = prefix,
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_individuel_", prefix, ".pptx")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          cli::cat_bullet(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"), bullet = "info", bullet_col = "green")
-        }
-      }
-
-
-      ### PDF reports
-      if (any(report_format == "pdf")) {
-        if (!quiet) {
-          cli::cli_h3("Production du rapport PDF...")
-        }
-
-
-        if(!requireNamespace("pagedown", quietly = TRUE)){stop("Package {pagedown} is required for PDF reports. Please use `install.packages('pagedown')`")}
-
-        start <- Sys.time()
-
-
-        ## Using the html template
-        report_path <- file.path(knitting_dir, "report","single", "html_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          prefix = prefix,
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_individuel_", prefix, ".html")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        # Convert to PDF
-        pagedown::chrome_print(file.path(output_directory, output_file))
-
-        # Removing the HTML file
-        file.remove(file.path(output_directory, output_file))
-
-        # Actualise for printing
-        output_file <- paste0("Rapport_individuel_", prefix, ".pdf")
 
         end <- Sys.time()
         duration <- round(difftime(end, start, units = "secs"))
@@ -469,7 +379,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           output_file = output_file,
           outdir = file.path(knitting_dir, "tmp"),
           prefix = prefix,
-          dpi = dpi
+          dpi = dpi,
+          append = append,
+          input_file_append = input_file_append
         )
 
         end <- Sys.time()
@@ -565,17 +477,17 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
       }
 
 
-      ### HTML reports
-      if (any(report_format == "html")) {
+      ### PDF reports
+      if (any(report_format == "pdf")) {
+        if (!quiet) {
+          cli::cli_h3("Production du rapport PDF...")
+        }
 
-        if (!quiet) (cli::cli_h3("Production du rapport web (Chrome/Firefox)..."))
-
-
-        if(!requireNamespace("pagedown", quietly = TRUE)){stop("Package {pagedown} is required for HTML reports. Please use `install.packages('pagedown')`")}
 
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","group", "html_group_report.Rmd")
+        # Using the HTML report, converted to PDF
+        report_path <- file.path(knitting_dir, "report","group", "pdf_group_report.Rmd")
 
         # Defining params
         params <- list(
@@ -584,7 +496,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           dpi = dpi
         )
 
-        output_file <- paste0("Rapport_groupe_", n_farm, ".html")
+        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,
@@ -592,6 +504,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
                                            params = params,
                                            envir = new.env(parent = globalenv()), quiet = TRUE
         ))
+
+        # Actualise for printing
+        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
 
         end <- Sys.time()
         duration <- round(difftime(end, start, units = "secs"))
@@ -673,88 +588,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         }
       }
 
-
-      ### PPTX reports
-      if (any(report_format == "pptx")) {
-        if (!quiet) {
-          cli::cli_h3("Production de la pr\u00e9sentation Microsoft Powerpoint...")
-        }
-
-        start <- Sys.time()
-
-        report_path <- file.path(knitting_dir, "report","group", "pptx_group_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".pptx")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          cli::cat_bullet(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"), bullet = "info", bullet_col = "green")
-        }
-      }
-
-
-      ### PDF reports
-      if (any(report_format == "pdf")) {
-        if (!quiet) {
-          cli::cli_h3("Production du rapport PDF...")
-        }
-
-        if(!requireNamespace("pagedown", quietly = TRUE)){stop("Package {pagedown} is required for HTML reports. Please use `install.packages('pagedown')`")}
-
-
-        start <- Sys.time()
-
-        # Using the HTML report, converted to PDF
-        report_path <- file.path(knitting_dir, "report","group", "html_group_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".html")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        # Convert to PDF
-        pagedown::chrome_print(file.path(output_directory, output_file))
-
-        # Remove the HTML file
-        file.remove(file.path(output_directory, output_file))
-
-        # Actualise for printing
-        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          cli::cat_bullet(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"), bullet = "info", bullet_col = "green")
-        }
-      }
 
 
       ### XLSX reports

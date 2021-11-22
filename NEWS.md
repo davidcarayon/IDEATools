@@ -1,3 +1,15 @@
+# IDEATools 3.0.0
+
+* New major version
+* New method used for colored trees which are now based on {ggplot2} syntax and internal reference tables for the lines and nodes coordinates. This removes the {rsvg} dependency but adds a dependency to {ggtext}.
+* Changed the internal "reference" concept, from "reference_table" to "reference_list"
+* Updated the pdf reports by reintroducing LaTeX and removing the {pagedown} dependency
+* Updated the pdf, xlsx, docx and odt reports with the new colored trees
+* Removed the html and pptx outputs
+* Created new vignette about utilities such as `jsonify()`
+* removed the internal "canvas" object, linked to old SVG approach for colored trees
+* Fixed 4.3.3 excel IDEA calculator compatibility 
+
 # IDEATools 2.0.8
 
 * Added new compatibility with the 4.3.3 version of the IDEA calculator spreadcheet (json/xls/xlsx)

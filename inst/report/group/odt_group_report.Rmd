@@ -22,17 +22,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r ressources}
-ref_table <- IDEATools:::reference_table
-```
 
 ```{r input, include = FALSE}
 outdir <- params$outdir
-IDEAdata <- params$data
-metadata <- IDEAdata$data$metadata
+IDEA_plots <- params$data
+IDEAdata <- IDEA_plots$data
+metadata <- IDEAdata$metadata
 n_farm <- nrow(metadata)
 
-write_idea(IDEAdata,output_directory = outdir,type = "local", dpi = params$dpi, quiet = TRUE)
+write_idea(IDEA_plots,output_directory = outdir, type = "local", dpi = params$dpi, quiet = TRUE)
 ```
 
 **Nombre d'exploitations : `r n_farm`**

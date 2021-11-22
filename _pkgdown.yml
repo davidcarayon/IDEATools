@@ -17,6 +17,8 @@ navbar:
          href: articles/decision_rules.html
       -  text: About colored trees
          href: articles/colored_trees.html
+      -  text: utility functions
+         href: articles/utils.html
     - icon: fa-newspaper
       text: News
       href: news/index.html

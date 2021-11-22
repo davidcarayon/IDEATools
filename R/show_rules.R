@@ -16,14 +16,13 @@ show_decision_rules <- function(directory = getwd()) {
 }
 
 
-
-#' Show the blank tree canvas
-#' @param directory the directory where to output the blank canvas
+#' Show the reference table used for building colored trees
+#' @param directory the directory where to output the reference tables
 #'
 #' @export
-show_canvas <- function(directory = getwd()) {
-  if (!dir.exists(file.path(directory, "canvas"))) (dir.create(file.path(directory, "canvas")))
-  for (i in names(canvas)) {
-    writeLines(canvas[[i]], file.path(directory, "canvas", paste0(i, ".svg")))
+show_tree_structure <- function(directory = getwd()) {
+  if (!dir.exists(file.path(directory, "tree_structure"))) (dir.create(file.path(directory, "tree_structure")))
+  for (i in names(tree_structure)) {
+    openxlsx::write.xlsx(tree_structure[[i]], file.path(directory, "tree_structure", paste0(i, ".xlsx")))
   }
 }

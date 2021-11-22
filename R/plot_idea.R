@@ -37,16 +37,18 @@
 #'
 #' @encoding UTF-8
 #'
-#' @importFrom dplyr inner_join distinct mutate rowwise ungroup arrange filter pull case_when select
+#' @importFrom dplyr inner_join distinct mutate case_when rowwise ungroup arrange filter everything group_by summarise select bind_rows pull n_distinct desc
 #' @importFrom ggimage geom_image
-#' @import pdftools
-#' @importFrom ggplot2 ggplot geom_bar aes position_dodge geom_hline scale_fill_manual geom_label theme element_text element_blank guides labs coord_flip facet_wrap geom_rect geom_col geom_vline coord_polar ylim ggsave xlim theme_void unit geom_text scale_y_continuous
+#' @importFrom ggplot2 ggplot geom_bar aes position_dodge geom_hline scale_fill_identity geom_label theme element_text element_blank guides scale_x_discrete labs coord_flip facet_wrap geom_rect geom_col geom_vline coord_polar ylim ggsave xlim theme_void unit geom_segment draw_key_rect scale_size_manual scale_color_manual scale_fill_manual guide_legend element_rect scale_y_continuous geom_tile position_stack scale_alpha_manual geom_text stat_boxplot geom_boxplot geom_point
 #' @importFrom ggpubr ggtexttable ttheme colnames_style rownames_style tbody_style ggarrange
+#' @importFrom ggrepel geom_label_repel
+#' @importFrom ggtext geom_textbox
 #' @importFrom glue glue
-#' @importFrom purrr map2_dbl
-#' @importFrom stringr str_detect str_extract_all str_replace
-#' @importFrom tibble tribble tibble
-#' @importFrom tidyr gather
+#' @importFrom readr parse_number
+#' @importFrom stringi stri_trans_general
+#' @importFrom stringr str_split str_to_sentence str_to_upper
+#' @importFrom tibble tribble
+#' @importFrom tidyr pivot_longer gather
 #'
 #' @examples
 #' library(IDEATools)
@@ -66,71 +68,6 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
   # Initializes the empty plot list to return
   plotlist <- list()
 
-  # Custom function to attribute a code to each node
-  replace_indic <- function(indic) {
-    list_indic <- reference_table %>%
-      dplyr::filter(level == "indicateur") %>%
-      dplyr::pull(indic_code)
-
-    res <- dplyr::case_when(
-      indic %in% list_indic ~ indic,
-      indic == "Diversit\u00e9 de l'organisation spatiale et temporelle" ~ "R1",
-      indic == "Limiter l'exposition aux al\u00e9as" ~ "R2",
-      indic == "Diversit\u00e9 des activit\u00e9s" ~ "R3",
-      indic == "En favorisant la diversit\u00e9" ~ "R4",
-      indic == "De l'outil de production" ~ "R5",
-      indic == "En d\u00e9veloppant l'inertie et les capacit\u00e9s tampon" ~ "R6",
-      indic == "R\u00e9duire la sensibilit\u00e9" ~ "R7",
-      indic == "par l'insertion dans les r\u00e9seaux" ~ "R8",
-      indic == "Augmenter la capacit\u00e9 d'adaptation" ~ "R9",
-      indic == "Robustesse" ~ "R10",
-
-      indic == "Naturelles" ~ "CP1",
-      indic == "Travail" ~ "CP2",
-      indic == "Comp\u00e9tences et \u00e9quipements" ~ "CP3",
-      indic == "Sociales et humaines" ~ "CP4",
-      indic == "Pr\u00e9server ou cr\u00e9er des ressources pour l'acte de production" ~ "CP5",
-      indic == "D\u00e9velopper la capacit\u00e9 alimentaire" ~ "CP6",
-      indic == "Capacit\u00e9 \u00e0 produire dans le temps des biens et services remun\u00e9r\u00e9s" ~ "CP7",
-      indic == "Capacit\u00e9 de remboursement" ~ "CP8",
-      indic == "Capacit\u00e9 \u00e0 d\u00e9gager un revenu dans le temps" ~ "CP9",
-      indic == "Capacit\u00e9 productive et reproductive de biens et de services" ~ "CP10",
-
-      indic == "Libert\u00e9 de d\u00e9cision organisationnelle" ~ "AU1",
-      indic == "Libert\u00e9 de d\u00e9cision dans les relations commerciales" ~ "AU2",
-      indic == "Disposer d'une libert\u00e9 de d\u00e9cision dans ses choix de gouvernance et de production" ~ "AU3",
-      indic == "Disposer d'une autonomie financi\u00e8re" ~ "AU4",
-      indic == "Autonomie dans le processus productif" ~ "AU5",
-      indic == "Autonomie" ~ "AU6",
-
-      indic == "Partage et transparence des activit\u00e9s productives" ~ "RG1",
-      indic == "Ouverture et relation au monde non agricole" ~ "RG2",
-      indic == "S\u00e9curit\u00e9 alimentaire" ~ "RG3",
-      indic == "Implications et engagements sociaux" ~ "RG4",
-      indic == "Ressources naturelles" ~ "RG5",
-      indic == "Ressources \u00e9nerg\u00e9tiques et manufactur\u00e9es" ~ "RG6",
-      indic == "Partager \u00e9quitablement les ressources" ~ "RG7",
-      indic == "Conditions de travail de la main d'oeuvre " ~ "RG8",
-      indic == "Conditions de travail de la main d'oeuvre" ~ "RG8",
-      indic == "Conditions de vie et de travail" ~ "RG9",
-      indic == "Bien \u00eatre de la vie animale" ~ "RG10",
-      indic == "Contribuer \u00e0 la qualit\u00e9 de vie sur l'exploitation" ~ "RG11",
-      indic == "R\u00e9duire les \u00e9missions" ~ "RG12",
-      indic == "R\u00e9duire l'usage des produits polluants" ~ "RG13",
-      indic == "R\u00e9duire ses impacts sur la sant\u00e9 et les \u00e9cosyst\u00e8mes" ~ "RG14",
-      indic == "Responsabilit\u00e9 globale" ~ "RG15",
-
-      indic == "Valoriser la qualit\u00e9 territoriale" ~ "AN1",
-      indic == "Contribuer \u00e0 des d\u00e9marches d'\u00e9conomie circulaire" ~ "AN2",
-      indic == "Par le travail et l'emploi" ~ "AN3",
-      indic == "S'inscrire dans des d\u00e9marches de territoire" ~ "AN4",
-      indic == "Ancrage territorial" ~ "AN5"
-    )
-
-
-    return(res)
-  }
-
   # Individual analysis -----------------------------------------------------
   if (any(class(IDEA_data) == "IDEA_data")) {
 
@@ -144,7 +81,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       ## Dimensions dataset
       res_dim <- IDEA_data$dataset %>%
-        dplyr::inner_join(reference_table, by = "dimension_code") %>%
+        dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") %>%
         dplyr::distinct(dimension_code, dimension, dimension_value) %>%
         dplyr::mutate(max_dim = 100) %>%
         dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
@@ -183,8 +120,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       ## Components dataset
       res_compo <- IDEA_data$dataset %>%
-        dplyr::inner_join(reference_table, by = c("dimension_code","component_code")) %>%
-        dplyr::distinct(dimension,dimension_code, component_code, component, component_value, max_compo) %>%
+        dplyr::inner_join(reference_list$indic_dim, by = c("dimension_code","component_code")) %>%
+        dplyr::distinct(dimension,dimension_code, component_code, component, component_value, component_max) %>%
         dplyr::rowwise() %>%
         dplyr::mutate(component = wrapit(component, width = 40)) %>%
         dplyr::ungroup() %>%
@@ -198,7 +135,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         x = component, y = component_value,
         group = factor(dimension)
       )) +
-        ggplot2::geom_bar(ggplot2::aes(x = component, y = max_compo, fill = dimension),
+        ggplot2::geom_bar(ggplot2::aes(x = component, y = component_max, fill = dimension),
                           alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8),
                           stat = "identity"
         ) +
@@ -206,7 +143,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
                           color = "black",
                           position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
-        ggplot2::geom_label(ggplot2::aes(label = paste0(component_value, "/", max_compo)), fill = "white", size = 5.5) +
+        ggplot2::geom_label(ggplot2::aes(label = paste0(component_value, "/", component_max)), fill = "white", size = 5.5) +
         ggplot2::scale_fill_identity("Dimension", labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"), guide = "legend") +
         theme_idea(base_size = 16) +
         ggplot2::theme(axis.title = ggplot2::element_blank()) +
@@ -218,14 +155,17 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ## Indicators dataset
       res_indic <- IDEA_data$dataset %>%
         dplyr::distinct(indic, scaled_value, component_value) %>%
-        dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+        dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) %>%
+        dplyr::distinct() %>%
         dplyr::rowwise() %>%
+        dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
+        dplyr::mutate(full_name = paste0(indic," - ",indic_name)) %>%
         dplyr::mutate(full_name = wrapit(full_name, width = 65)) %>%
         dplyr::ungroup() %>%
         dplyr::arrange(dimension_code, indic_number) %>%
         dplyr::mutate(full_name = factor(full_name, levels = rev(full_name))) %>%
         dplyr::rowwise() %>%
-        dplyr::mutate(component = paste0("Composante : ", component, " (", component_value, "/", max_compo, ")")) %>%
+        dplyr::mutate(component = paste0("Composante : ", component, " (", component_value, "/", component_max, ")")) %>%
         dplyr::mutate(component = wrapit(component, width = 70)) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(component = factor(component, levels = unique(component)))
@@ -301,7 +241,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       # data for standardized components (%)
       component_data <- res_compo %>%
-        dplyr::mutate(score = round((component_value / max_compo) * 100))
+        dplyr::mutate(score = round((component_value / component_max) * 100))
 
       ## First plot : Polarised histogram exported to pdf
       donut <- ggplot2::ggplot(component_data, ggplot2::aes(x = component_code, y = score, fill = dimension)) +
@@ -418,98 +358,255 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## If user chooses "trees"
     if (any(choices == "trees")) {
 
-      ## Custom functions
-
-      ### Function to find positions of rect< > tags
-      find_pos <- function(start, end, choice, car) {
-        selection <- car[start:end]
-        rect_id <- start + which(stringr::str_detect(selection, "id=") == TRUE) - 1
-        rect_style <- start + which(stringr::str_detect(selection, "style=") == TRUE) - 1
-        val <- switch(choice,
-                      "id" = rect_id,
-                      "style" = rect_style
-        )
-        return(val)
-      }
-
       # Empty return list
       prop_list <- list()
 
       ## For loop on each property + another synthetic one
-      for (prop in c(names(IDEA_data$nodes), "Global_zoom")) {
-
-        ## Get the list of indicators of a given property
-        list_indic_prop <- indic_codes[[prop]]
-
-        ## We select the correct canvas from internal object (RAW SVG code)
-        car <- canvas[[prop]]
-
-        ## Each canvas has a different number of rectangles to find.
-        span_rect <- switch(prop,
-                            "Ancrage" = 14,
-                            "Autonomie" = 16,
-                            "Robustesse" = 26,
-                            "Responsabilite" = 37,
-                            "Capacite" = 24,
-                            "Global" = 117,
-                            "Global_zoom" = 20
-        )
-
-        ## Get the position of lines starting a rect tag
-        rect_no <- which(stringr::str_detect(car, "    <rect") == TRUE)[1:span_rect]
-
-        # creating a table with the coordinates of rectangle start, end, and style lines, along with the indicator identity
-        tab_rect <- tibble::tibble(rect_no) %>%
-          dplyr::mutate(rect_end = rect_no + 7) %>%
-          dplyr::mutate(rect_id = purrr::map2_dbl(.x = rect_no, .y = rect_end, .f = find_pos, choice = "id", car = car)) %>%
-          dplyr::mutate(rect_style = purrr::map2_dbl(.x = rect_no, .y = rect_end, .f = find_pos, choice = "style", car = car)) %>%
-          dplyr::rowwise() %>%
-          dplyr::mutate(rect_number_p = as.numeric(stringr::str_extract_all(car[rect_id], "[0-9]+")[[1]][1])) %>%
-          dplyr::mutate(rect_number_c = as.numeric(stringr::str_extract_all(car[rect_id], "[0-9]+")[[1]][2])) %>%
-          dplyr::ungroup() %>%
-          dplyr::mutate(indic = list_indic_prop)
-
-        # Extracting style column
-        rect_style <- tab_rect$rect_style
-
-        # Using the "Global" node for "Global_zoom" iteration of the loop
-        filter_prop <- ifelse(prop == "Global_zoom", yes = "Global", no = prop)
-
-        ## Table with the final indicator/color
-        tab_to_color <- IDEA_data$nodes[[filter_prop]] %>%
-          tidyr::gather(key = indic, value = result) %>%
-          dplyr::mutate(indic = replace_indic(indic)) %>%
-          dplyr::inner_join(tab_rect, by = "indic") %>%
-          dplyr::arrange(rect_number_p, rect_number_c)
+      for (prop in names(IDEA_data$nodes)) {
 
 
-        ## Search and replace the "white" style in rectangles by the correct color.
-        for (i in which(tab_to_color$result == "favorable")) {
-          car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]], "fill:#ffffff", "fill:#1CDA53")
+        structure_list <- tree_structure[[prop]]
+
+        nodes = structure_list$nodes
+        lines = structure_list$lines
+
+
+        if(prop != "Global") {
+
+          pivoted_data <- IDEA_data$nodes[[prop]] %>%
+            tidyr::pivot_longer(dplyr::everything())
+
+          leaves <- pivoted_data %>%
+            dplyr::inner_join(reference_list$indic_prop, by = c("name" = "indic_code")) %>%
+            dplyr::group_by(name, indic_name, value) %>%
+            dplyr::summarise(prop_code = paste(prop_code, collapse = " ")) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(name = paste0(name, "/", prop_code, "  ", indic_name)) %>%
+            dplyr::select(prop_code, name, value) %>%
+            dplyr::rowwise() %>%
+            dplyr::mutate(code = stringr::str_split(name, "\\/")[[1]][1]) %>%
+            dplyr::ungroup() %>%
+            dplyr::select(code, name, value)
+
+          branches <- pivoted_data %>%
+            dplyr::inner_join(reference_list$properties_nodes, by = c("name" = "node_code")) %>%
+            dplyr::select(code = name, name = node_name, value)
+
+          data_table <- dplyr::bind_rows(leaves, branches) %>%
+            dplyr::mutate(value = stringr::str_to_sentence(value))
+
+          rect_df_full <- data_table %>%
+            dplyr::inner_join(nodes, by = "code") %>%
+            dplyr::rowwise() %>%
+            dplyr::mutate(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "par l'insertion dans les r\u00e9seaux", yes = "Par l'insertion dans les r\u00e9seaux", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Autonomie", yes = stringr::str_to_upper(name), no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = stringr::str_to_upper(name), no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = stringr::str_to_upper(name), no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = stringr::str_to_upper(name), no = name)) %>%
+            ##### ADD OTHERS
+            dplyr::mutate(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
+
+          if(prop == "Robustesse") {
+
+            main <- rect_df_full %>% dplyr::filter(!code %in% c("R9","R2"))
+            bonus <- rect_df_full %>% dplyr::filter(code %in% c("R9","R2"))
+
+            prop_list[[prop]] <- ggplot2::ggplot() +
+              ggplot2::xlim(c(-120,305)) +
+              ggplot2::ylim(c(15, 210)) +
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch")) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
+              ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
+              ggplot2::scale_fill_manual("\uc9valuation", values = c(
+                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
+                "D\u00e9favorable" = "#FF6347",
+                "Interm\u00e9diaire" = "#FCD400",
+                "Favorable" = "#33FF00",
+                "Tr\u00e8s favorable" = "#008B00",
+                "Non concern\u00e9" = "#BEBEBE"
+              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::theme_void() +
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 40), legend.title = ggplot2::element_text(size = 45, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
+
+
+          }
+
+          if(prop == "Capacite") {
+
+            main <- rect_df_full %>% dplyr::filter(!code %in% c("CP7","CP9","CP10","CP5","CP6","CP8"))
+            bonus <- rect_df_full %>% dplyr::filter(code %in% c("CP7","CP9","CP5","CP6","CP8"))
+            bonus_prop <- rect_df_full %>% dplyr::filter(code %in% c("CP10"))
+
+            prop_list[[prop]] <- ggplot2::ggplot() +
+              ggplot2::xlim(c(-450, 330)) +
+              ggplot2::ylim(c(-10, 215)) +
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6.2","inch"), height = ggplot2::unit("1.2","inch")) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2.2","inch"))+
+              ggtext::geom_textbox(data = bonus_prop, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"))+
+              ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 12, "small" = 8.5), guide = "none") +
+              ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
+              ggplot2::scale_fill_manual("\uc9valuation", values = c(
+                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
+                "D\u00e9favorable" = "#FF6347",
+                "Interm\u00e9diaire" = "#FCD400",
+                "Favorable" = "#33FF00",
+                "Tr\u00e8s favorable" = "#008B00",
+                "Non concern\u00e9" = "#BEBEBE"
+              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::theme_void() +
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
+
+          }
+
+
+          if(prop == "Autonomie") {
+
+            main <- rect_df_full %>% dplyr::filter(!code %in% c("AU3","AU5","AU4"))
+            bonus <- rect_df_full %>% dplyr::filter(code %in% c("AU3","AU5","AU4"))
+
+            prop_list[[prop]] <- ggplot2::ggplot() +
+              ggplot2::xlim(c(-200,320)) +
+              ggplot2::ylim(c(20,210)) +
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch")) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
+              ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
+              ggplot2::scale_fill_manual("\uc9valuation", values = c(
+                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
+                "D\u00e9favorable" = "#FF6347",
+                "Interm\u00e9diaire" = "#FCD400",
+                "Favorable" = "#33FF00",
+                "Tr\u00e8s favorable" = "#008B00",
+                "Non concern\u00e9" = "#BEBEBE"
+              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::theme_void() +
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 33, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
+
+          }
+
+
+          if(prop == "Responsabilite") {
+
+            main <- rect_df_full %>% dplyr::filter(!code %in% paste0("RG",1:15))
+            bonus <- rect_df_full %>% dplyr::filter(code %in% paste0("RG",1:15))
+
+            prop_list[[prop]] <- ggplot2::ggplot() +
+              ggplot2::xlim(c(-270, 320)) +
+              ggplot2::ylim(c(20, 370)) +
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("1.2","inch")) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::scale_size_manual(values = c("very very big" = 18, "very big" = 15, "big" = 12.5, "small" = 10), guide = "none") +
+              ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
+              ggplot2::scale_fill_manual("\uc9valuation", values = c(
+                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
+                "D\u00e9favorable" = "#FF6347",
+                "Interm\u00e9diaire" = "#FCD400",
+                "Favorable" = "#33FF00",
+                "Tr\u00e8s favorable" = "#008B00",
+                "Non concern\u00e9" = "#BEBEBE"
+              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::theme_void() +
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 50), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
+
+          }
+
+
+          if(prop == "Ancrage") {
+
+            main <- rect_df_full %>% dplyr::filter(!code %in% c("AN2","AN1","AN4","AN5"))
+            bonus <- rect_df_full %>% dplyr::filter(code %in% c("AN2","AN1","AN4","AN5"))
+
+            prop_list[[prop]] <- ggplot2::ggplot() +
+              ggplot2::xlim(c(-120,313)) +
+              ggplot2::ylim(c(80, 210)) +
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch")) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
+              ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
+              ggplot2::scale_fill_manual("\uc9valuation", values = c(
+                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
+                "D\u00e9favorable" = "#FF6347",
+                "Interm\u00e9diaire" = "#FCD400",
+                "Favorable" = "#33FF00",
+                "Tr\u00e8s favorable" = "#008B00",
+                "Non concern\u00e9" = "#BEBEBE"
+              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::theme_void() +
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 40, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
+
+
+          }
+
+
+
+
+
+        } else {
+
+          pivoted_data <- IDEA_data$nodes[["Global"]] %>%
+            tidyr::pivot_longer(dplyr::everything())
+
+          branches <- pivoted_data %>%
+            dplyr::inner_join(reference_list$properties_nodes, by = c("name" = "node_code")) %>%
+            dplyr::select(code = name, name = node_name, value)
+
+          data_table <- branches %>%
+            dplyr::mutate(value = stringr::str_to_sentence(value))
+
+          rect_df_full <- data_table %>%
+            dplyr::inner_join(nodes, by = "code") %>%
+            dplyr::rowwise() %>%
+            dplyr::mutate(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\u00e9 PRODUCTIVE ET REPRODUCTIVE DE\u00A0 BIENS ET DE SERVICES", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 \u00e0 produire dans le temps des biens et services remun\u00e9r\u00e9s", yes = "Capacit\u00e9 \u00e0 produire dans le temps des\u00A0biens\u00A0et services remun\u00e9r\u00e9s", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Disposer d'une libert\u00e9 de d\u00e9cision dans ses choix de gouvernance et de production", yes = "Disposer d'une libert\u00e9 de d\u00e9cision\u00A0dans \u00A0ses\u00A0choix de gouvernance et de production", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Autonomie", yes = "AUTONOMIE", no = name)) %>%
+            dplyr::mutate(name = wrapit(name, 45)) %>%
+            dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = "ANCRAGE TERRITORIAL", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\u00e9 GLOBALE", no = name)) %>%
+            dplyr::mutate(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
+
+          main <- rect_df_full %>% dplyr::filter(!code %in% c("CP10"))
+          bonus <- rect_df_full %>% dplyr::filter(code %in% c("CP10"))
+
+          prop_list[[prop]] <- ggplot2::ggplot() +
+            ggplot2::xlim(c(-270, 320)) +
+            ggplot2::ylim(c(120, 370)) +
+            ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
+            ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("9","inch"), height = ggplot2::unit("1.8","inch")) +
+            ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"))+
+            ggtext::geom_textbox(ggplot2::aes(x = 25, y = 280), label = "Exploitation agricole", fill = "white", size = 25, text.color = "black", halign = 0.5, valign = 0.5, width = ggplot2::unit("10","inch"), height = ggplot2::unit("3","inch"))+
+            ggplot2::scale_size_manual(values = c("very very big" = 20, "very big" = 15, "big" = 15, "small" = 12), guide = "none") +
+            ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
+            ggplot2::scale_fill_manual("\uc9valuation", values = c(
+              "Tr\u00e8s d\u00e9favorable" = "#CD0000",
+              "D\u00e9favorable" = "#FF6347",
+              "Interm\u00e9diaire" = "#FCD400",
+              "Favorable" = "#33FF00",
+              "Tr\u00e8s favorable" = "#008B00",
+              "Non concern\u00e9" = "#BEBEBE"
+            ), guide = ggplot2::guide_legend(ncol = 6)) +
+            ggplot2::theme_void() +
+            ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 50, face = "bold"), legend.key.width = ggplot2::unit(20,"mm"), legend.direction = "horizontal", legend.key = ggplot2::element_rect(color = "black",size = 4))
+
+
         }
 
-        for (i in which(tab_to_color$result == "tr\u00e8s favorable")) {
-          car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]], "fill:#ffffff", "fill:#0D8A00")
-        }
 
-        for (i in which(tab_to_color$result == "d\u00e9favorable")) {
-          car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]], "fill:#ffffff", "fill:#FF6348")
-        }
 
-        for (i in which(tab_to_color$result == "tr\u00e8s d\u00e9favorable")) {
-          car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]], "fill:#ffffff", "fill:#FF0000")
-        }
 
-        for (i in which(tab_to_color$result == "interm\u00e9diaire")) {
-          car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]], "fill:#ffffff", "fill:#FFA300")
-        }
 
-        for (i in which(tab_to_color$result == "NC")) {
-          car[rect_style[i]] <- stringr::str_replace(car[rect_style[i]], "fill:#ffffff", "fill:#A0A0A0")
-        }
 
-        ## Add the result to the return list
-        prop_list[[paste0("tree_", prop)]] <- paste(car, collapse = "\n")
+
+
+
       }
 
       ## Add the list of trees to the return plotlist
@@ -522,12 +619,13 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ## Vector of colors for dimensions to use with each dimension plot
       vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
 
-
-
       ## Creating a dataset with standardised indicators (%)
       prop_radar <- IDEA_data$dataset %>%
         dplyr::distinct(indic, scaled_value) %>%
-        dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+        dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
+        dplyr::ungroup() %>%
         dplyr::arrange(dimension_code, indic_number) %>%
         dplyr::mutate(score_indic = round(scaled_value / max_indic * 100, 0)) %>%
         dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
@@ -568,12 +666,14 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           dplyr::filter(indic %in% list_indic_prop) %>%
           dplyr::select(indic) %>%
           dplyr::mutate(indic_code = as.character(indic)) %>%
-          dplyr::inner_join(reference_table, by = "indic_code") %>%
+          dplyr::inner_join(reference_list$indic_dim, by = "indic_code") %>%
           dplyr::rowwise() %>%
+          dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
           dplyr::mutate(indic_name = wrapit(indic_name)) %>%
           dplyr::ungroup() %>%
           dplyr::arrange(dimension_code, indic_number) %>%
-          dplyr::select(Code = indic_code, `Nom de l'indicateur` = indic_name)
+          dplyr::select(Code = indic_code, `Nom de l'indicateur` = indic_name) %>%
+          unique()
 
 
         ## Re-identifying names
@@ -670,19 +770,18 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     n_farms <- dplyr::n_distinct(IDEA_data$dataset$farm_id)
 
     vec_colors <- c(
-      "favorable" = "#1CDA53",
-      "defavorable" = "#FF6348",
-      "tres defavorable" = "#FF0000",
-      "tres favorable" = "#0D8A00"
+      "favorable" = "#33FF00",
+      "defavorable" = "#FF6347",
+      "tres defavorable" = "#CD0000",
+      "tres favorable" = "#008B00"
     )
 
     ## Heatmap for properties
     heatmap_data <- IDEA_data$nodes$Global %>%
       tidyr::gather(key = indic, value = result, -farm_id) %>%
-      dplyr::mutate(indic = replace_indic(indic)) %>%
-      dplyr::inner_join(reference_table, by = c("indic" = "indic_code")) %>%
+      dplyr::inner_join(reference_list$properties_nodes, by = c("indic" = "node_code")) %>%
       dplyr::filter(level == "propriete") %>%
-      dplyr::mutate(indic_name = ifelse(indic_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = indic_name)) %>%
+      dplyr::mutate(node_name = ifelse(node_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = node_name)) %>%
       dplyr::mutate(result_ascii = stringi::stri_trans_general(result,id = "Latin-ASCII")) %>%
       dplyr::mutate(result_ascii = factor(result_ascii, levels = c("tres defavorable","defavorable","favorable","tres favorable"))) %>%
       dplyr::arrange(result_ascii)
@@ -698,7 +797,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) %>%
       dplyr::mutate(result = vec_colors[result]) %>%
       dplyr::mutate(result = factor(result, levels = c("#FF0000","#FF6348","#1CDA53","#0D8A00"))) %>%
-      ggplot2::ggplot(ggplot2::aes(farm_id, indic_name, fill = result)) +
+      ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = result)) +
       ggplot2::geom_tile(color = "black") +
       ggplot2::scale_fill_identity("Evaluation", labels = legend_names, guide = "legend") +
       ggplot2::labs(x = "Exploitation", y = "Propri\u00e9t\u00e9", fill = "Evaluation") +
@@ -707,16 +806,16 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
 
     freq_data <- heatmap_data %>%
-      dplyr::group_by(indic_name,result) %>%
+      dplyr::group_by(node_name,result) %>%
       dplyr::summarise(n = dplyr::n_distinct(farm_id)) %>%
-      dplyr::group_by(indic_name) %>%
+      dplyr::group_by(node_name) %>%
       dplyr::mutate(prop = n / sum(n)*100) %>%
       dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) %>%
       dplyr::mutate(result = vec_colors[result]) %>%
       dplyr::mutate(result = factor(result, levels = c("#FF0000","#FF6348","#1CDA53","#0D8A00")))
 
 
-      freq_plot <- ggplot2::ggplot(freq_data, aes(x = indic_name, y = prop, fill = result)) +
+      freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = result)) +
       ggplot2::geom_col(position = "stack", color ="black") +
       ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5)) +
       ggplot2::scale_fill_identity("Evaluation", labels = legend_names, guide = "legend") +
@@ -747,7 +846,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Full data for the dimension histogram
     hist_data <- dplyr::bind_rows(dim_data, alpha) %>%
       dplyr::mutate(label = ifelse(alpha == "a", yes = "", no = paste0(dimension_value, "/100"))) %>%
-      dplyr::inner_join(reference_table, by = "dimension_code") %>%
+      dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") %>%
       dplyr::distinct(dimension, dimension_value, dimension_code, farm_id, label, alpha) %>%
       dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
                                                  dimension_code == "B" ~ vec_colors["B"],
@@ -759,7 +858,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     # Plotting dimensions histogram
     dimensions_histogram <- ggplot2::ggplot(hist_data, ggplot2::aes(x = farm_id, y = dimension_value, label = label, fill = dimension, alpha = alpha)) +
       ggplot2::scale_alpha_manual(values = c(0.6, 1)) +
-      ggplot2::guides(alpha = FALSE) +
+      ggplot2::guides(alpha = "none") +
       ggplot2::geom_col(color = "black") +
       ggplot2::geom_text(ggplot2::aes(x = farm_id, y = dimension_value, label = label), position = ggplot2::position_stack(vjust = 0.5)) +
       ggplot2::scale_fill_identity("Dimension", labels = c("Economique","Socio-Territoriale","Agro\u00e9cologique"), guide = guide_legend(reverse = TRUE)) +
@@ -774,7 +873,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## Dimension data
     boxplot_dim_data <- dim_data %>%
-      dplyr::inner_join(reference_table, by = "dimension_code") %>%
+      dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") %>%
       dplyr::distinct(farm_id, dimension_code, dimension, dimension_value) %>%
       dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
                                                  dimension_code == "B" ~ vec_colors["B"],
@@ -804,8 +903,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## Component data
     compo_data <- IDEA_data$dataset %>%
-      dplyr::inner_join(reference_table, by = c("dimension_code", "component_code")) %>%
-      dplyr::distinct(farm_id, dimension_code, dimension, component_code, component, component_value, max_compo) %>%
+      dplyr::inner_join(reference_list$indic_dim, by = c("dimension_code", "component_code")) %>%
+      dplyr::distinct(farm_id, dimension_code, dimension, component_code, component, component_value, component_max) %>%
       dplyr::mutate(min_compo = 0) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(component = wrapit(component, width = 60)) %>%
@@ -823,7 +922,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::stat_boxplot(geom = "errorbar", width = 0.3) +
       ggplot2::geom_boxplot(color = "black", ggplot2::aes(fill = dimension), width = 0.8) +
       ggplot2::geom_point(data = means, ggplot2::aes(x = component, y = Mean, color = "Moyenne"), size = 4, shape = 18) +
-      ggplot2::geom_point(ggplot2::aes(y = max_compo), shape = 93, size = 5, color = "red") +
+      ggplot2::geom_point(ggplot2::aes(y = component_max), shape = 93, size = 5, color = "red") +
       ggplot2::geom_point(ggplot2::aes(y = min_compo), shape = 91, size = 5, color = "red") +
       theme_idea() +
       ggplot2::scale_fill_manual(values = c("#2e9c15","#5077FE","#FE962B")) +
@@ -841,14 +940,16 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## Subset for dimension A
     indic_data <- IDEA_data$dataset %>%
-      dplyr::inner_join(reference_table, by = c("indic" = "indic_code", "dimension_code", "component_code")) %>%
+      dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code", "component_code")) %>%
       dplyr::filter(dimension_code == "A") %>%
       dplyr::rowwise() %>%
+      dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) %>%
       dplyr::mutate(full_name = wrapit(full_name, width = 75)) %>%
       dplyr::mutate(component = ifelse(component == "Bouclage de flux \nde mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
                                        yes = "Bouclage de flux de mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
                                        no = component
       )) %>%
+      dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
       dplyr::ungroup() %>%
       dplyr::arrange(indic_number) %>%
       dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) %>%
@@ -876,15 +977,17 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## Subset for dimension B
     indic_data <- IDEA_data$dataset %>%
-      dplyr::inner_join(reference_table, by = c("indic" = "indic_code", "dimension_code", "component_code")) %>%
+      dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code", "component_code")) %>%
       dplyr::filter(dimension_code == "B") %>%
       dplyr::rowwise() %>%
+      dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) %>%
       dplyr::mutate(full_name = wrapit(full_name, width = 75)) %>%
       dplyr::mutate(component = ifelse(component == "D\u00e9veloppement local \net \u00e9conomie circulaire",
                                        yes = "D\u00e9veloppement local et \u00e9conomie circulaire",
                                        no = component
       )) %>%
       dplyr::ungroup() %>%
+      dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
       dplyr::arrange(indic_number) %>%
       dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) %>%
       dplyr::mutate(component = factor(component, levels = unique(component)))
@@ -911,11 +1014,13 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## Subset for dimension C
     indic_data <- IDEA_data$dataset %>%
-      dplyr::inner_join(reference_table, by = c("indic" = "indic_code", "dimension_code", "component_code")) %>%
+      dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code", "component_code")) %>%
       dplyr::filter(dimension_code == "C") %>%
       dplyr::rowwise() %>%
+      dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) %>%
       dplyr::mutate(full_name = wrapit(full_name, width = 75)) %>%
       dplyr::ungroup() %>%
+      dplyr::mutate(indic_number = readr::parse_number(indic)) %>%
       dplyr::arrange(indic_number) %>%
       dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) %>%
       dplyr::mutate(component = factor(component, levels = unique(component)))

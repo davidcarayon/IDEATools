@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -115,6 +115,9 @@
     </li>
     <li>
       <a href="../articles/colored_trees.html">About colored trees</a>
+    </li>
+    <li>
+      <a href="../articles/utils.html">utility functions</a>
     </li>
   </ul>
 </li>
@@ -156,6 +159,22 @@
       
     </div>
 
+    <div id="ideatools-300" class="section level1">
+<h1 class="page-header" data-toc-text="3.0.0">
+<a href="#ideatools-300" class="anchor"></a>IDEATools 3.0.0</h1>
+<ul>
+<li>New major version</li>
+<li>New method used for colored trees which are now based on {ggplot2} syntax and internal reference tables for the lines and nodes coordinates. This removes the {rsvg} dependency but adds a dependency to {ggtext}.</li>
+<li>Changed the internal “reference” concept, from “reference_table” to “reference_list”</li>
+<li>Updated the pdf reports by reintroducing LaTeX and removing the {pagedown} dependency</li>
+<li>Updated the pdf, xlsx, docx and odt reports with the new colored trees</li>
+<li>Removed the html and pptx outputs</li>
+<li>Created new vignette about utilities such as <code><a href="../reference/jsonify.html">jsonify()</a></code>
+</li>
+<li>removed the internal “canvas” object, linked to old SVG approach for colored trees</li>
+<li>Fixed 4.3.3 excel IDEA calculator compatibility</li>
+</ul>
+</div>
     <div id="ideatools-208" class="section level1">
 <h1 class="page-header" data-toc-text="2.0.8">
 <a href="#ideatools-208" class="anchor"></a>IDEATools 2.0.8</h1>

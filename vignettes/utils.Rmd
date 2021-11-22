@@ -1,0 +1,25 @@
+---
+title: "Utility functions developed in this package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Utility functions developed in this package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# `jsonify()`
+
+This (not-exported) helper function was developped to produce a JSON data file with an excel IDEA data input file (older than 2019-06-01).
+
+This function only needs an input, either a folder or a single file, and an output directory to save the produced JSON files. This function can be helpfull for users that aren't able to use the VBA macro developed in the excel IDEA data file.
+
+```{r echo = TRUE, eval=FALSE}
+IDEATools:::jsonify(input = "input_directory", output = "output_directory")
+```

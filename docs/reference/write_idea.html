@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -116,6 +116,9 @@
     </li>
     <li>
       <a href="../articles/colored_trees.html">About colored trees</a>
+    </li>
+    <li>
+      <a href="../articles/utils.html">utility functions</a>
     </li>
   </ul>
 </li>
@@ -169,6 +172,8 @@
   prefix <span class='op'>=</span> <span class='cn'>NULL</span>,
   dpi <span class='op'>=</span> <span class='fl'>320</span>,
   report_format <span class='op'>=</span> <span class='st'>"docx"</span>,
+  append <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  input_file_append <span class='op'>=</span> <span class='cn'>NULL</span>,
   quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
@@ -197,7 +202,15 @@
     </tr>
     <tr>
       <th>report_format</th>
-      <td><p>a string indicating the output format if <code>type = "report"</code>. Can be a single format (e.g <code>"pdf"</code>) or multiple formats (e.g. <code><a href='https://rdrr.io/r/base/c.html'>c("pdf","docx")</a></code>). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".</p></td>
+      <td><p>a string indicating the output format if <code>type = "report"</code>. Can be a single format (e.g <code>"pdf"</code>) or multiple formats (e.g. <code><a href='https://rdrr.io/r/base/c.html'>c("pdf","xlsx")</a></code>). Possible formats are "pdf", "docx", "odt" and "xlsx"</p></td>
+    </tr>
+    <tr>
+      <th>append</th>
+      <td><p>If the input is an xlsx format, should the individual output be appended to the original file ?</p></td>
+    </tr>
+    <tr>
+      <th>input_file_append</th>
+      <td><p>file path to an xslx IDEA data spreadsheet</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -234,10 +247,10 @@
   prefix <span class='op'>=</span> <span class='st'>"myFarm"</span>, dpi <span class='op'>=</span> <span class='fl'>300</span>
 <span class='op'>)</span>
 
-<span class='co'># Export as docx/odt reports to your tempdir.</span>
+<span class='co'># Export as xlsx reports to your tempdir.</span>
 <span class='fu'>write_idea</span><span class='op'>(</span><span class='va'>idea_plots</span>,
   output_directory <span class='op'>=</span> <span class='va'>tempdir</span>, prefix <span class='op'>=</span> <span class='st'>"myFarm"</span>,
-  type <span class='op'>=</span> <span class='st'>"report"</span>, dpi <span class='op'>=</span> <span class='fl'>300</span>, report_format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pdf"</span>, <span class='st'>"docx"</span><span class='op'>)</span>
+  type <span class='op'>=</span> <span class='st'>"report"</span>, dpi <span class='op'>=</span> <span class='fl'>300</span>, report_format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pdf"</span>, <span class='st'>"xlsx"</span><span class='op'>)</span>
 <span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>

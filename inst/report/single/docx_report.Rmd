@@ -8,45 +8,38 @@ subtitle: Eléments de sortie d'analyse individuelle - Version 1.0
 params:
   outdir : "tmp"
   data: "data"
-  dpi: 320
   prefix: "EA"
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 knitr::knit_hooks$set(crop = knitr::hook_pdfcrop)
-knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, out.width = "100%", fig.align = "center",crop = TRUE, dpi = params$dpi)
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, out.width = "100%", fig.align = "center",crop = TRUE)
 library(officedown)
 library(officer)
+library(IDEATools)
 ```
+
 
 ```{r ressources}
-ref_table <- IDEATools:::reference_table
-```
-
-```{r input, include = FALSE}
+IDEA_plots <- params$data
+IDEAdata <- IDEA_plots$data
 outdir <- params$outdir
-IDEAdata <- params$data
-prefix <- params$prefix
-metadata <- IDEAdata$data$metadata
+prefix = params$prefix
 
-write_idea(IDEAdata,output_directory = outdir,type = "local", prefix = prefix,dpi = params$dpi, quiet = TRUE)
+write_idea(IDEA_plots, output_directory = outdir, type = "local", prefix = prefix, quiet = TRUE)
 ```
 
-```{r}
-tab <- metadata %>%
-  dplyr::bind_cols() %>% 
-  tidyr::gather(key = indic_code, value = valeur) %>%
-  dplyr::inner_join(ref_table, by ="indic_code") %>%
-  dplyr::select(`Métadonnée` = indic_name, Valeur = valeur) %>%
-  dplyr::rowwise() %>%
-  dplyr::mutate(Valeur = tidyr::replace_na(Valeur, "Iconnu(e)")) %>% 
-  dplyr::ungroup()
 
- knitr::kable(tab)
-```
+# Caractéristiques principales de l'exploitation {-}
+- Année : `r IDEAdata$metadata$MTD_13`
+- Département : `r IDEAdata$metadata$MTD_11`
+- SAU : `r IDEAdata$metadata$MTD_02` hectares
+- OTEX : `r IDEAdata$metadata$MTD_06`
+- EBE : `r as.character(round(IDEAdata$metadata$MTD_09,2))`€
+- UTH : `r IDEAdata$metadata$MTD_03` individus
+
 
 ```{r}
-fpar(run_linebreak())
 fpar(external_img(src = "bandeau.png", width = 6.5, height = 0.9))
 fpar(run_pagebreak())
 ```
@@ -56,7 +49,7 @@ fpar(run_pagebreak())
 ## Résultats globaux pour les trois dimensions
 
 ```{r}
-min_val <- min(IDEAdata$data$dataset$dimension_value)
+min_val <- min(IDEAdata$dataset$dimension_value)
 ```
 
 La note finale d'IDEA4 obtenue pour cette exploitation est de **`r min_val` / 100** (note la plus faible des trois dimensions).
@@ -71,7 +64,6 @@ fpar(run_pagebreak())
 ## Résultats lus selon les 13 composantes (histogramme)
 
 ```{r}
-fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),prefix,"Dimensions",paste0(prefix,"_","Composantes.png"))
 fpar(external_img(src = img_path, width = 6.5, height = 5))
 fpar(ftext('Figure 2 : Notes de durabilité obtenues pour les 13 composantes',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
@@ -92,7 +84,6 @@ fpar(run_pagebreak())
 ### Indicateurs agroécologiques
 
 ```{r}
-fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),prefix,"Dimensions",paste0(prefix,"_","Indicateurs Agroécologiques.png"))
 fpar(external_img(src = img_path, width = 6.5, height = 7.3))
 fpar(ftext('Figure 4 : Notes obtenues pour les 19 indicateurs agroécologiques, regroupés par composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
@@ -101,7 +92,6 @@ fpar(ftext('Figure 4 : Notes obtenues pour les 19 indicateurs agroécologiques, 
 ### Indicateurs socio-territoriaux
 
 ```{r}
-fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),prefix,"Dimensions",paste0(prefix,"_","Indicateurs Socio-Territoriaux.png"))
 fpar(external_img(src = img_path, width = 6.5, height = 7.6))
 fpar(ftext('Figure 5 : Notes obtenues pour les 23 indicateurs socio-territoriaux, regroupés par composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
@@ -110,68 +100,57 @@ fpar(ftext('Figure 5 : Notes obtenues pour les 23 indicateurs socio-territoriaux
 ### Indicateurs économiques
 
 ```{r}
-fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),prefix,"Dimensions",paste0(prefix,"_","Indicateurs Economiques.png"))
 fpar(external_img(src = img_path, width = 6.5, height = 5.4))
 fpar(ftext('Figure 6 : Notes obtenues pour les 11 indicateurs économiques, regroupés par composante',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-fpar(run_pagebreak())
 ```
-
-<!---BLOCK_LANDSCAPE_START--->
 
 # La seconde lecture de la durabilité : approche par les cinq propriétés de la durabilité
-
-## Les cinq arbres éclairés des propriétés
-
-```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Ancrage Territorial.png"))
-fpar(external_img(src = img_path, width = 8.67, height = 4.72),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 7 : Arbre éclairé de la propriété "Ancrage territorial"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-fpar(run_pagebreak())
-```
-
-```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Autonomie.png"))
-fpar(external_img(src = img_path, width = 8.67, height = 4.72),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 8 : Arbre éclairé de la propriété "Autonomie"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-fpar(run_pagebreak())
-```
-
-```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Capacité productive et reproductive de biens et de services.png"))
-fpar(external_img(src = img_path, width = 8.67, height = 4.72),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 9 : Arbre éclairé de la propriété "Capacité productive et reproductive de biens et de services"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-fpar(run_pagebreak())
-```
-
-```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Responsabilité globale.png"))
-fpar(external_img(src = img_path, width = 8.67, height = 5.5),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 10 : Arbre éclairé de la propriété "Responsabilité globale"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-fpar(run_pagebreak())
-```
-
-```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Robustesse.png"))
-fpar(external_img(src = img_path, width = 8.27, height = 5.9),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 11 : Arbre éclairé de la propriété "Robustesse"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
-```
 
 ## Synthèse : lecture globale par les propriétés
 
 ```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Arbre synthétique.png"))
-fpar(external_img(src = img_path, width = 8.2, height = 5.51),fp_p = fp_par(text.align = "center"))
-fpar(ftext("Figure 12 : Synthèse de la lecture par les propriétés avec un focus sur les premières branches d'agrégation",prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Arbre global.png"))
+fpar(external_img(src = img_path, width = 5.76, height = 3.58),fp_p = fp_par(text.align = "center"))
+fpar(ftext("Figure 7 : Synthèse de la lecture par les propriétés avec un focus sur les premières branches d'agrégation",prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_pagebreak())
+```
+
+## Les cinq arbres éclairés des propriétés
+
+```{r fig.cap = 'Arbre éclairé de la propriété "Ancrage territorial"'}
+img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Ancrage Territorial.png"))
+fpar(external_img(src = img_path, width = 5.74, height = 3.48),fp_p = fp_par(text.align = "center"))
+fpar(ftext('Figure 8 : Arbre éclairé de la propriété "Ancrage territorial"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_linebreak())
 ```
 
 ```{r}
-img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Arbre global.png"))
-fpar(external_img(src = img_path, width = 8.27, height = 5.9),fp_p = fp_par(text.align = "center"))
-fpar(ftext("Figure 13 : Arbre éclairé global de la lecture par les propriétés",prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Autonomie.png"))
+fpar(external_img(src = img_path, width = 5.76, height = 3.60),fp_p = fp_par(text.align = "center"))
+fpar(ftext('Figure 9 : Arbre éclairé de la propriété "Autonomie"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_linebreak())
 ```
 
-<!---BLOCK_LANDSCAPE_STOP--->
+```{r}
+img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Capacité productive et reproductive de biens et de services.png"))
+fpar(external_img(src = img_path, width = 5.76, height = 3.60),fp_p = fp_par(text.align = "center"))
+fpar(ftext('Figure 10 : Arbre éclairé de la propriété "Capacité productive et reproductive de biens et de services"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_linebreak())
+```
+
+```{r}
+img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Responsabilité globale.png"))
+fpar(external_img(src = img_path, width = 5.73, height = 4.33),fp_p = fp_par(text.align = "center"))
+fpar(ftext('Figure 11 : Arbre éclairé de la propriété "Responsabilité globale"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(run_linebreak())
+```
+
+```{r}
+img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Arbres éclairés",paste0(prefix,"_","Robustesse.png"))
+fpar(external_img(src = img_path, width = 5.76, height = 3.74),fp_p = fp_par(text.align = "center"))
+fpar(ftext('Figure 12 : Arbre éclairé de la propriété "Robustesse"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+```
 
 ## Diagrammes radar des notes obtenues au sein de chaque propriété
 
@@ -179,34 +158,34 @@ fpar(ftext("Figure 13 : Arbre éclairé global de la lecture par les propriété
 fpar(run_linebreak())
 img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Ancrage Territorial.png"))
 fpar(external_img(src = img_path, width = 6.53, height = 2.76),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 14 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Ancrage territorial"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 13 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Ancrage territorial"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 fpar(run_linebreak())
 ```
 
 ```{r}
 img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Autonomie.png"))
 fpar(external_img(src = img_path, width = 6.53, height = 2.76),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 15 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Autonomie"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 14 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Autonomie"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 fpar(run_linebreak())
 ```
 
 ```{r}
 img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Capacité productive et reproductive de biens et de services.png"))
 fpar(external_img(src = img_path, width = 6.53, height = 2.76),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 16 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Capacité productive et reproductive de biens et de services"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 15 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Capacité productive et reproductive de biens et de services"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 fpar(run_linebreak())
 ```
 
 ```{r}
 img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Responsabilité globale.png"))
 fpar(external_img(src = img_path, width = 6.53, height = 2.76),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 17 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Responsabilité globale"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 16 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Responsabilité globale"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 fpar(run_linebreak())
 ```
 
 ```{r}
 img_path <- file.path(outdir,Sys.Date(),prefix,"Propriétés","Radars",paste0(prefix,"_","Robustesse.png"))
 fpar(external_img(src = img_path, width = 6.53, height = 2.76),fp_p = fp_par(text.align = "center"))
-fpar(ftext('Figure 18 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Robustesse"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
+fpar(ftext('Figure 17 : Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Robustesse"',prop = fp_text(italic = TRUE)), fp_p = fp_par(padding = 20,text.align = "center"))
 fpar(run_linebreak())
 ```

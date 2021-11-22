@@ -11,6 +11,8 @@ write_idea(
   prefix = NULL,
   dpi = 320,
   report_format = "docx",
+  append = FALSE,
+  input_file_append = NULL,
   quiet = FALSE
 )
 }
@@ -25,7 +27,11 @@ write_idea(
 
 \item{dpi}{ggplot output resolution.}
 
-\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","docx")}). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".}
+\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"}
+
+\item{append}{If the input is an xlsx format, should the individual output be appended to the original file ?}
+
+\item{input_file_append}{file path to an xslx IDEA data spreadsheet}
 
 \item{quiet}{A command to remove console printing.}
 }
@@ -65,10 +71,10 @@ write_idea(idea_plots,
   prefix = "myFarm", dpi = 300
 )
 
-# Export as docx/odt reports to your tempdir.
+# Export as xlsx reports to your tempdir.
 write_idea(idea_plots,
   output_directory = tempdir, prefix = "myFarm",
-  type = "report", dpi = 300, report_format = c("pdf", "docx")
+  type = "report", dpi = 300, report_format = c("pdf", "xlsx")
 )
 }
 }

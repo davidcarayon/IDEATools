@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+**NOTE : CETTE VIGNETTE N'EST PLUS A JOUR DEPUIS LA SORTIE DE LA VERSION 3.0.0**
+
 # Introduction
 
 IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l'automatisation et le reporting de diagnostics IDEA4.
@@ -21,6 +23,12 @@ IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux u
 IDEATools 1.0 puis 1.1 ont été développés au cours de l'année 2020 pour répondre à des besoins (urgents) de sorties graphiques pour la méthode IDEA4, notamment en ce qui concerne l'approche par les propriétés. Cette première version du package était donc fonctionnelle mais largement perfectible et n'était pas assez documentée. Dans une optique de recherche reproductible et afin d'être mieux préparé aux adaptations / évolutions de la méthode, IDEATools a subi d'assez lourdes modifications pour aujourd'hui être proposé dans sa version 2.0.
 
 IDEATools 2.0 propose un processus automatisé de diagnostic composé de différents modules (`read_idea()`, `compute_idea()`, `old_idea()`, `plot_idea()`, `write_idea()`) tous regroupés dans une fonction globale, `diag_idea()`. La présente vignette présente le fonctionnement général de chacun de ces modules et la logique générale développée dans IDEATools.
+
+IDEATools 3.0 a apporté une refonte complète du système de production des arbres éclairés.
+
+**NOTE : CETTE VIGNETTE N'EST PLUS A JOUR DEPUIS LA SORTIE DE LA VERSION 3.0.0
+
+
 
 # Pré-requis
 
@@ -67,17 +75,15 @@ Le code source d'IDEATools s'appuie sur une liste de 20 packages R (aussi appel�
 
 -   {pdftools} permet d'insérer des fichiers pdf dans des graphiques
 
--   {rsvg} permet la conversion entre code source SVG vers des formats png/pdf
-
 -   {cli} permet un affichage console esthétique
 
 -   {rmarkdown} est un moteur permettant la production de rapports automatiques
 
 -   {knitr} permet de transformer tableaux et graphiques en éléments pouvant être insérés dans des rapports automatiques
 
-Enfin, 3 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :
+-   {ggtext} permet la production de cases avec textes pour les arbres éclairés (geom_textbox)
 
--   {pagedown} pour les rapports html et pdf
+Enfin, 2 packages ne sont pas automatiquement installés (ceci afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains rapports automatiques :
 
 -   {officedown} pour les rapports docx
 
@@ -86,12 +92,12 @@ Enfin, 3 packages ne sont pas automatiquement installés (ceci afin de réduire 
 Il suffit de les installer à l'aide de :
 
 ```{r eval = FALSE}
-install.packages(c("pagedown","officedown","openxlsx"))
+install.packages(c("officedown","openxlsx"))
 ```
 
 ## Autres dépendances
 
-Deux polices sont également requises pour l'utilisation de ce package : [Roboto](https://fonts.google.com/specimen/Roboto) et [Rubik](https://fonts.google.com/specimen/Rubik).
+Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n'avez jamais utilisé LaTeX, vous pouvez utiliser la fonction `tinytex::install_tinytex()` pour installer une version minimale de LaTeX vous permettant d'éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n'avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).
 
 # read\_idea()
 
@@ -158,10 +164,11 @@ Enfin, les métadonnées sont converties au bon format, soit numérique soit tex
 | MTD\_14    | Type d'élevage                       | Texte     |
 | MTD\_15    | Part des PP dans la SAU              | Numérique |
 | MTD\_16    | Usage des produits phytos: oui /non  | Texte     |
+| MTD\_17    | Lycée agricole: oui /non             | Texte     |
 
 </center>
 
-Enfin, si l'algorithme ne trouve pas très exactement 17 valeurs de métadonnées, il renverra un message d'erreur.
+Enfin, si l'algorithme ne trouve pas très exactement 17 ou 18 valeurs de métadonnées, il renverra un message d'erreur.
 
 Dans le cas d'un fichier excel, on va chercher les métadonnées dans la plage **A4:E21** de l'onglet "Renvoi BDD". Si par un souci technique MTD\_00 n'a pas pu être récupéré dans ce tableau (0 par exemple), on tente d'y insèrer 'Notice\$K4'. Ensuite, les mêmes contrôles sont appliqués que pour le JSON (MTD\_01, MTD\_14, présence de 17 valeurs)
 
@@ -348,12 +355,12 @@ Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte grap
 
 ```{r echo = FALSE}
 scales::show_col(c(
-  "tres defavorable" = "#FF0000",
-  "defavorable" = "#FF6348",
-  "intermédiaire" = "#FFA300",
-  "favorable" = "#1CDA53",
-  "tres favorable" = "#0D8A00"
-), borders = FALSE)
+  "tres defavorable" = "#CD0000",
+  "defavorable" = "#FF6347",
+  "intermédiaire" = "#FCD400",
+  "favorable" = "#33FF00",
+  "tres favorable" = "#008B00"
+), borders = TRUE)
 ```
 
 #### Tracé des arbres

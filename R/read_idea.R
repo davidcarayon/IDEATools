@@ -254,7 +254,13 @@ read_idea <- function(input) {
   }
 
   if (filetype %in% c("xls", "xlsx")) {
-    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E144")) %>%
+
+    ## Change area if version > 433
+    start_row <- ifelse(version_number < 433, yes = 25, no = 26)
+    end_row <- ifelse(version_number < 433, yes = 144, no = 145)
+    range = paste0("A",start_row,":E",end_row)
+
+    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range)) %>%
       dplyr::select(item = Code, value = `A Exporter`) %>%
       dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) %>% # Convert A01 to A1
       dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) %>%

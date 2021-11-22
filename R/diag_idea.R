@@ -7,9 +7,10 @@
 #' @param type the type of analysis to perform. Can be "single" for single farm-related results, "group" for group-related results, or even both c("single","report"), provided that the number of farms is at least 3.
 #' @param export_type the type of output to produce. Can be either "report" to produce compiled reports and/or "local" to write raw plots. If NULL, the algorithm will not produce any plots on machine and will return a list with the IDEA results.
 #' @param plot_choices the type of plots to be produced. Can be either "dimensions", "trees" or "radars" or a combination of these 3. Ignored if the export type is "report".
-#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","docx")}). Possible formats are "pdf","docx","odt","pptx","xlsx" and "html".
+#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored if \code{length(input) > 1} or in the case of a group analysis : the \code{metadata$MTD_01} field will be used to identify each farm.
 #' @param dpi ggplot output resolution.
+#' @param append In the case of a single excel report and if the input is an xlsx file, should the results be appended to the original file ?
 #' @param quiet A command to remove console printing.
 #'
 #' @return Either reports and/or raw plots in \code{output_directory} or a named list with all the results.
@@ -46,7 +47,7 @@
 #'   quiet = FALSE
 #' )
 #'
-#' # Run a full individual diagnosis with report export as odt
+#' # Run a full individual diagnosis with report export as pdf
 #' diag_idea(
 #'   input = path,
 #'   output_directory = tempdir,
@@ -54,11 +55,11 @@
 #'   export_type = "report",
 #'   prefix = "Exploitation_A",
 #'   dpi = 300,
-#'   report_format = "odt",
+#'   report_format = "xlsx",
 #'   quiet = FALSE
 #' )
 #' }
-diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "docx", prefix = NULL, dpi = 320, quiet = FALSE) {
+diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "pdf", prefix = NULL, dpi = 320, append = FALSE, quiet = FALSE) {
 
   ## Estimating total duration
   global_start <- Sys.time()
@@ -177,7 +178,8 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     } else {
       write_idea(IDEA_plots, output_directory,
         type = export_type, prefix = prefix,
-        dpi = dpi, report_format = report_format, quiet = quiet
+        dpi = dpi, report_format = report_format, quiet = quiet, append = append,
+        input_file_append = input
       )
     }
   }
