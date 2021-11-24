@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.1</span>
       </span>
     </div>
 
@@ -76,7 +76,7 @@
       <a href="articles/colored_trees.html">About colored trees</a>
     </li>
     <li>
-      <a href="articles/utils.html">utility functions</a>
+      <a href="articles/utils.html">Utility functions</a>
     </li>
   </ul>
 </li>
@@ -129,20 +129,13 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
-<p>Puis charger le package avec :</p>
+<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package <a href="https://remotes.r-lib.org">remotes</a>, puisque l’installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a></em></p>
+<p>Une fois installé, vous pouvez charger le package avec :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></code></pre></div>
 <div id="prérequis-pour-la-production-de-rapports" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pr%C3%A9requis-pour-la-production-de-rapports" class="anchor"></a>Prérequis pour la production de rapports</h2>
-<p>Deux packages ne sont pas automatiquement installés (afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains formats de rapports automatiques :</p>
-<ul>
-<li>{officedown} pour les rapports docx</li>
-<li>{openxlsx} pour les rapports xlsx</li>
-</ul>
-<p>Il suffit de les installer à l’aide de :</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html">tinytex::install_tinytex()</a></code> pour installer une version minimale de LaTeX vous permettant d’éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n’avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).</p>
 </div>
 </div>
@@ -174,7 +167,7 @@
 </li>
 <li>Le types de graphiques qu’il souhaite (dans le cas d’un export brut) <code>plot_choices</code>
 </li>
-<li>Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx, html) <code>report_format</code>
+<li>Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx) <code>report_format</code>
 </li>
 <li>Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la ferme) dans le cas d’une analyse individuelle <code>prefix</code>
 </li>
@@ -184,18 +177,25 @@
 </li>
 <li>(<em>nouveau</em>) Dans le cas particulier ou un calculateur au format .xlsx est inséré et qu’un rapport individuel au format xlsx est demandé, <code>append</code> paramétré en TRUE permet de coller les onglets de résultats à la suite des onglets du calculateur initial, créant ainsi un calculateur “tout en un” avec données + résultats.</li>
 </ul>
-<p>Voici un appel complet à cette fonction avec toutes les possibilités de paramétrage :</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>Voici un appel complet à la fonction <code><a href="reference/diag_idea.html">diag_idea()</a></code> avec toutes les possibilités de paramétrage :</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
           <span class="va">output_directory</span>,
           type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,
           export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,
           plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,
-          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span><span class="op">)</span>,
+          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,
           prefix <span class="op">=</span> <span class="st">"EA"</span>,
           dpi <span class="op">=</span> <span class="fl">300</span>,
           quiet <span class="op">=</span> <span class="cn">FALSE</span>,
           append <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p><em>Pour information, les utilisateurs les moins habitués à l’écosystème R peuvent utiliser les commandes suivantes (à condition d’utiliser RStudio) pour sélectionner les dossier/fichiers via une fenêtre en presse-bouton:</em></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu">selectDirectory</span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span>
+<span class="co"># OU</span>
+<span class="va">input</span><span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu">selectFile</span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span>
+
+<span class="va">output_directory</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu">selectDirectory</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>On distingue 3 grands types de diagnostics :</p>
 <div id="les-analyses-individuelles" class="section level2">
 <h2 class="hasAnchor">
@@ -213,12 +213,12 @@
 <h2 class="hasAnchor">
 <a href="#les-analyses-multi-individuelles" class="anchor"></a>Les analyses multi-individuelles</h2>
 <p>Ensuite, certains utilisateurs ont besoin de traiter plusieurs calculateurs en même temps.</p>
-<p>Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais a juste besoin pour chaque exploitation d’un rapport au format word qu’il pourra commenter. Le code sera alors :</p>
+<p>Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais a juste besoin pour chaque exploitation d’un rapport au format word qu’il pourra commenter ainsi qu’une présentation powerpoint contenant toutes les figures et prête à projeter. Le code sera alors :</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">diag_idea</span>(<span class="dt">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
 <span id="cb6-2"><a href="#cb6-2"></a>          <span class="dt">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3"></a>          <span class="dt">type =</span> <span class="st">"single"</span>,</span>
 <span id="cb6-4"><a href="#cb6-4"></a>          <span class="dt">export_type =</span> <span class="st">"report"</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>          <span class="dt">report_format =</span> <span class="kw">c</span>(<span class="st">"docx"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a>          <span class="dt">report_format =</span> <span class="kw">c</span>(<span class="st">"docx"</span>,<span class="st">"pptx"</span>)</span>
 <span id="cb6-6"><a href="#cb6-6"></a>          <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
 </div>
 <div id="les-analyses-de-groupe" class="section level2">
@@ -281,7 +281,7 @@ Quick Link
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle:experimental"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.0.0-orange.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.0.1-orange.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://github.com/davidcarayon/IDEATools/actions"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
