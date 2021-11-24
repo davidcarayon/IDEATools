@@ -1,6 +1,6 @@
 Package: IDEATools
 Title: A Collection of Tools Dedicated to the IDEA4 Method
-Version: 3.0.0
+Version: 3.0.1
 Authors@R: 
     person(given = "David",
            family = "Carayon",
@@ -33,13 +33,13 @@ Imports:
     rmarkdown,
     knitr,
     ggrepel,
-    ggtext
+    ggtext,
+    officedown,
+    openxlsx
 License: GPL-3
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr
 Suggests: 
     covr,
-    officedown,
-    openxlsx,
     scales

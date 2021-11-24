@@ -402,8 +402,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             dplyr::mutate(name = ifelse(name == "par l'insertion dans les r\u00e9seaux", yes = "Par l'insertion dans les r\u00e9seaux", no = name)) %>%
             dplyr::mutate(name = ifelse(name == "Autonomie", yes = stringr::str_to_upper(name), no = name)) %>%
             dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = stringr::str_to_upper(name), no = name)) %>%
-            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = stringr::str_to_upper(name), no = name)) %>%
-            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = stringr::str_to_upper(name), no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE BIENS ET DE SERVICES", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) %>%
             ##### ADD OTHERS
             dplyr::mutate(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
 
@@ -564,13 +564,13 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             dplyr::inner_join(nodes, by = "code") %>%
             dplyr::rowwise() %>%
             dplyr::mutate(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) %>%
-            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\u00e9 PRODUCTIVE ET REPRODUCTIVE DE\u00A0 BIENS ET DE SERVICES", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE\u00A0 BIENS ET DE SERVICES", no = name)) %>%
             dplyr::mutate(name = ifelse(name == "Capacit\u00e9 \u00e0 produire dans le temps des biens et services remun\u00e9r\u00e9s", yes = "Capacit\u00e9 \u00e0 produire dans le temps des\u00A0biens\u00A0et services remun\u00e9r\u00e9s", no = name)) %>%
             dplyr::mutate(name = ifelse(name == "Disposer d'une libert\u00e9 de d\u00e9cision dans ses choix de gouvernance et de production", yes = "Disposer d'une libert\u00e9 de d\u00e9cision\u00A0dans \u00A0ses\u00A0choix de gouvernance et de production", no = name)) %>%
             dplyr::mutate(name = ifelse(name == "Autonomie", yes = "AUTONOMIE", no = name)) %>%
             dplyr::mutate(name = wrapit(name, 45)) %>%
             dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = "ANCRAGE TERRITORIAL", no = name)) %>%
-            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\u00e9 GLOBALE", no = name)) %>%
+            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) %>%
             dplyr::mutate(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
 
           main <- rect_df_full %>% dplyr::filter(!code %in% c("CP10"))
@@ -796,11 +796,11 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     heatmap <- heatmap_data %>%
       dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) %>%
       dplyr::mutate(result = vec_colors[result]) %>%
-      dplyr::mutate(result = factor(result, levels = c("#FF0000","#FF6348","#1CDA53","#0D8A00"))) %>%
+      dplyr::mutate(result = factor(result, levels = c("#CD0000","#FF6347","#33FF00","#008B00"))) %>%
       ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = result)) +
       ggplot2::geom_tile(color = "black") +
-      ggplot2::scale_fill_identity("Evaluation", labels = legend_names, guide = "legend") +
-      ggplot2::labs(x = "Exploitation", y = "Propri\u00e9t\u00e9", fill = "Evaluation") +
+      ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
+      ggplot2::labs(x = "Exploitation", y = "Propri\u00e9t\u00e9", fill = "\uc9valuation") +
       theme_idea() +
       ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
@@ -812,13 +812,13 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       dplyr::mutate(prop = n / sum(n)*100) %>%
       dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) %>%
       dplyr::mutate(result = vec_colors[result]) %>%
-      dplyr::mutate(result = factor(result, levels = c("#FF0000","#FF6348","#1CDA53","#0D8A00")))
+      dplyr::mutate(result = factor(result, levels = c("#CD0000","#FF6347","#33FF00","#008B00")))
 
 
       freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = result)) +
       ggplot2::geom_col(position = "stack", color ="black") +
       ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5)) +
-      ggplot2::scale_fill_identity("Evaluation", labels = legend_names, guide = "legend") +
+      ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
       theme_idea() +
       ggplot2::coord_flip()+
       ggplot2::labs(x = "", y = "Fr\u00e9quence (%)") +

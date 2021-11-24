@@ -1,3 +1,10 @@
+# IDEATools 3.0.1
+
+* Re-introduced PPTX output format
+* Fixed bugs in the "Robustesse" and "Global" trees
+* Updated documentation
+
+
 # IDEATools 3.0.0
 
 * New major version

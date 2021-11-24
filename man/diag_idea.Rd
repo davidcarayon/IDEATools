@@ -28,7 +28,7 @@ diag_idea(
 
 \item{plot_choices}{the type of plots to be produced. Can be either "dimensions", "trees" or "radars" or a combination of these 3. Ignored if the export type is "report".}
 
-\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"}
+\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"}
 
 \item{prefix}{a prefix which will be added to output files names. Typically, the name of the farm. Ignored if \code{length(input) > 1} or in the case of a group analysis : the \code{metadata$MTD_01} field will be used to identify each farm.}
 
@@ -83,7 +83,7 @@ diag_idea(
   export_type = "report",
   prefix = "Exploitation_A",
   dpi = 300,
-  report_format = "xlsx",
+  report_format = "pdf",
   quiet = FALSE
 )
 }

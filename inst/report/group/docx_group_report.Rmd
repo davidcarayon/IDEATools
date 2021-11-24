@@ -5,7 +5,7 @@ output:
   officedown::rdocx_document:
     reference_docx: templates/template.docx
     toc: true
-subtitle: Eléments de sortie d'analyse de groupe - Version 1.0
+subtitle: Eléments de sortie d'analyse de groupe - Version 2.0
 params:
   outdir : "tmp"
   data: "data"

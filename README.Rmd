@@ -22,7 +22,7 @@ library(IDEATools)
 
 <!-- badges: start -->
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.0.0-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.0.1-orange.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
 <!-- badges: end -->
@@ -33,29 +33,20 @@ IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux u
 
 En attendant sa publication officielle sur le CRAN, vous pouvez télécharger et utiliser la version en cours de développement depuis GitHub avec :
 
-```{r}
+```{r eval = FALSE}
 install.packages("remotes")
 remotes::install_github("davidcarayon/IDEATools")
 ```
 
-Puis charger le package avec :
+_NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package `{remotes}`, puisque l'installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l'installer ici : [Rtools](https://cran.r-project.org/bin/windows/Rtools/)_
+
+Une fois installé, vous pouvez charger le package avec :
 
 ```{r eval = FALSE}
 library(IDEATools)
 ```
 
 ## Prérequis pour la production de rapports
-
-Deux packages ne sont pas automatiquement installés (afin de réduire la liste des dépendances) mais restent nécessaires pour la production de certains formats de rapports automatiques :
-
-- {officedown} pour les rapports docx
-- {openxlsx} pour les rapports xlsx
-
-Il suffit de les installer à l’aide de :
-
-``` r
-install.packages(c("officedown","openxlsx"))
-```
 
 Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n'avez jamais utilisé LaTeX, vous pouvez utiliser la fonction `tinytex::install_tinytex()` pour installer une version minimale de LaTeX vous permettant d'éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n'avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).
 
@@ -76,13 +67,13 @@ Afin de simplifier l'utilisation du package, une fonction globale `diag_idea()` 
 -   Le type d'analyse (individuelle ou de groupe) `type`
 -   Le type de sorties (rapport et/ou graphiques bruts) `export_type`
 -   Le types de graphiques qu'il souhaite (dans le cas d'un export brut) `plot_choices`
--   Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx, html) `report_format`
+-   Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx) `report_format`
 -   Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la ferme) dans le cas d'une analyse individuelle `prefix`
 -   La résolution de sortie des graphiques (impacte notamment le poids des sorties) `dpi`
 -   Si l'algorithme doit afficher sa progression dans la console. `quiet`
 -   (*nouveau*) Dans le cas particulier ou un calculateur au format .xlsx est inséré et qu'un rapport individuel au format xlsx est demandé, `append` paramétré en TRUE permet de coller les onglets de résultats à la suite des onglets du calculateur initial, créant ainsi un calculateur "tout en un" avec données + résultats.
 
-Voici un appel complet à cette fonction avec toutes les possibilités de paramétrage :
+Voici un appel complet à la fonction `diag_idea()` avec toutes les possibilités de paramétrage :
 
 ``` {r eval = FALSE}
 diag_idea(input,
@@ -90,11 +81,21 @@ diag_idea(input,
           type = c("single","group"),
           export_type = c("report","local",NULL),
           plot_choices = c("dimensions","trees","radars"),
-          report_format = c("pdf","docx","odt","xlsx"),
+          report_format = c("pdf","docx","odt","xlsx","pptx"),
           prefix = "EA",
           dpi = 300,
           quiet = FALSE,
           append = FALSE)
+```
+
+_Pour information, les utilisateurs les moins habitués à l'écosystème R peuvent utiliser les commandes suivantes (à condition d'utiliser RStudio) pour sélectionner les dossier/fichiers via une fenêtre en presse-bouton:_
+
+```{r}
+input <- rstudioapi::selectDirectory() # Dans le cas d'un répertoire 
+# OU
+input<- rstudioapi::selectFile() # Si un seul calculateur
+
+output_directory <- rstudioapi::selectDirectory()
 ```
 
 On distingue 3 grands types de diagnostics :
@@ -118,14 +119,14 @@ diag_idea(input = "chemin_calculateur",
 
 Ensuite, certains utilisateurs ont besoin de traiter plusieurs calculateurs en même temps. 
 
-Ici par exemple, l'utilisateur n'a pas besoin des figures "brutes", mais a juste besoin pour chaque exploitation d'un rapport au format word qu'il pourra commenter. Le code sera alors :
+Ici par exemple, l'utilisateur n'a pas besoin des figures "brutes", mais a juste besoin pour chaque exploitation d'un rapport au format word qu'il pourra commenter ainsi qu'une présentation powerpoint contenant toutes les figures et prête à projeter. Le code sera alors :
 
 ```{r eval = FALSE}
 diag_idea(input = "chemin_vers_dossier",
           output_directory = "mes_résultats",
           type = "single",
           export_type = "report"
-          report_format = c("docx")
+          report_format = c("docx","pptx")
           quiet = FALSE)
 ```
 

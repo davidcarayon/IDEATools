@@ -27,7 +27,7 @@ write_idea(
 
 \item{dpi}{ggplot output resolution.}
 
-\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"}
+\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"}
 
 \item{append}{If the input is an xlsx format, should the individual output be appended to the original file ?}
 

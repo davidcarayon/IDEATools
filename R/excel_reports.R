@@ -35,11 +35,11 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   ECStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FE962B")
 
   ## Properties
-  FStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#1CDA53")
-  TFStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#0D8A00")
-  IStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FFA300")
-  DStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FF6348")
-  TDStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FF0000")
+  FStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#33FF00")
+  TFStyle <- openxlsx::createStyle(fontColour = "#FFFFFF", bgFill = "#008B00")
+  IStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FCD400")
+  DStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FF6347")
+  TDStyle <- openxlsx::createStyle(fontColour = "#FFFFFF", bgFill = "#CD0000")
   NCStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#cecece")
 
   ## Beginning the openxlsx sequence
@@ -164,10 +164,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   ## Custom function with suited colors
   colorise <- function(res) {
     dplyr::case_when(
-      res == "favorable" ~ "#1CDA53",
-      res == "d\u00e9favorable" ~ "#FF6348",
-      res == "tr\u00e8s favorable" ~ "#0D8A00",
-      res == "tr\u00e8s d\u00e9favorable" ~ "#FF0000"
+      res == "favorable" ~ "#33FF00",
+      res == "d\u00e9favorable" ~ "#FF6347",
+      res == "tr\u00e8s favorable" ~ "#008B00",
+      res == "tr\u00e8s d\u00e9favorable" ~ "#CD0000"
     )
   }
 
@@ -213,6 +213,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   df <- IDEAdata$data$nodes$Robustesse %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
     dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$properties_nodes, by = c("indicateur"="node_code")) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(indic_name = ifelse(is.na(indic_name), yes = node_name, no = indic_name)) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
     dplyr::mutate(full_name = indic_name) %>%
@@ -249,6 +253,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   df <- IDEAdata$data$nodes$Ancrage %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
     dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$properties_nodes, by = c("indicateur"="node_code")) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(indic_name = ifelse(is.na(indic_name), yes = node_name, no = indic_name)) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
     dplyr::mutate(full_name = indic_name) %>%
@@ -286,6 +294,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   df <- IDEAdata$data$nodes$Capacite %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
     dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$properties_nodes, by = c("indicateur"="node_code")) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(indic_name = ifelse(is.na(indic_name), yes = node_name, no = indic_name)) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
     dplyr::mutate(full_name = indic_name) %>%
@@ -321,6 +333,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   df <- IDEAdata$data$nodes$Autonomie %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
     dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$properties_nodes, by = c("indicateur"="node_code")) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(indic_name = ifelse(is.na(indic_name), yes = node_name, no = indic_name)) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
     dplyr::mutate(full_name = indic_name) %>%
@@ -358,6 +374,10 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
   df <- IDEAdata$data$nodes$Responsabilite %>%
     tidyr::gather(key = indicateur, value = "Resultat") %>%
     dplyr::left_join(reference_list$indic_dim, by = c("indicateur" = "indic_code")) %>%
+    dplyr::left_join(reference_list$properties_nodes, by = c("indicateur"="node_code")) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(indic_name = ifelse(is.na(indic_name), yes = node_name, no = indic_name)) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(level = ifelse(is.na(max_indic), yes = "Noeud", no = "Indicateur")) %>%
     dplyr::arrange(level) %>%
     dplyr::mutate(full_name = indic_name) %>%
@@ -462,11 +482,11 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   standard <- openxlsx::createStyle(fontColour = "#000000", halign = "CENTER", borderStyle = "medium", border = "TopBottomLeftRight")
 
   # Properties
-  FStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#1CDA53")
-  TFStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#0D8A00")
-  IStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FFA300")
-  DStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FF6348")
-  TDStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FF0000")
+  FStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#33FF00")
+  TFStyle <- openxlsx::createStyle(fontColour = "#FFFFFF", bgFill = "#008B00")
+  IStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FCD400")
+  DStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#FF6347")
+  TDStyle <- openxlsx::createStyle(fontColour = "#FFFFFF", bgFill = "#CD0000")
   NCStyle <- openxlsx::createStyle(fontColour = "#000000", bgFill = "#cecece")
 
 
@@ -879,7 +899,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Matrice_propri\u00e9t\u00e9s.png"), startRow = 2, startCol = "H", width = 21.44, height = 14.06, units = "cm")
 
   ## Add properties frequency
-  openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Fr\u00e9quence_propri\u00e9t\u00e9s.png"), startRow = 31, startCol = "H", width = 25.4, height = 12.7, units = "cm")
+  openxlsx::insertImage(wb, "Synth\u00e8se Proprietes", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Fr\u00e9quence_propri\u00e9t\u00e9s.png"), startRow = 31, startCol = "H", width = 27.4, height = 12.7, units = "cm")
 
   ## Col widths
   openxlsx::setColWidths(wb, "Synth\u00e8se Proprietes", cols = 1:6, widths = "auto")

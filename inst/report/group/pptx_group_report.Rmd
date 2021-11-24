@@ -1,10 +1,11 @@
 ---
 title: "Diagnostic IDEAv4"
 date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
-output: 
-  odt_document:
-    reference_odt: templates/template.odt
 subtitle: Eléments de sortie d'analyse de groupe - Version 2.0
+output: 
+  powerpoint_presentation:
+    slide_level: 3
+    reference_doc: templates/template.pptx
 params:
   outdir : "tmp"
   data: "data"
@@ -17,11 +18,9 @@ knitr::opts_chunk$set(
 	echo = FALSE,
 	message = FALSE,
 	warning = FALSE,
-	dpi = params$dpi,
 	out.width = "100%"
 )
 ```
-
 
 ```{r input, include = FALSE}
 outdir <- params$outdir
@@ -33,17 +32,7 @@ n_farm <- nrow(metadata)
 write_idea(IDEA_plots,output_directory = outdir, type = "local", dpi = params$dpi, quiet = TRUE)
 ```
 
-**Nombre d'exploitations : `r n_farm`**
-
-```{r, fig.width = 6.5, fig.height = 0.9, out.width = "100%"}
-knitr::include_graphics("bandeau.png")
-```
-
-\newpage
-
-# Lecture de la durabilité : approche par les trois dimensions de la durabilité
-
-## Résultats collectifs globaux pour les trois dimensions
+## Lecture de la durabilité : approche par les trois dimensions de la durabilité
 
 ### Distribution des résultats du groupe
 
@@ -51,23 +40,17 @@ knitr::include_graphics("bandeau.png")
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_dimensions.png"))
 ```
 
-\newpage
-
-## Résultats individuels globaux pour les trois dimensions
+###  Résultats individuels globaux pour les trois dimensions
 
 ```{r fig.cap = "Figure 2 : Visualisation des notes obtenues par chaque exploitation pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=13}
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Histogramme_dimensions.png"))
 ```
 
-\newpage
-
-## Résultats lus selon les 13 composantes
+### Résultats lus selon les 13 composantes
 
 ```{r fig.cap= "Figure 3 : Distribution des notes de durabilité obtenues pour chaque composante", fig.width = 11.3, fig.height=8.94}
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_composantes.png"))
 ```
-
-\newpage
 
 ## Résultats détaillés par indicateur
 
@@ -89,9 +72,7 @@ knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Gr
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_indicateurs_economiques.png"))
 ```
 
-\newpage
-
-# Lecture par les propriétés
+## Lecture par les propriétés
 
 ### Matrice des propriétés
 

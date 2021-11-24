@@ -7,7 +7,7 @@
 #' @param type the type of analysis to perform. Can be "single" for single farm-related results, "group" for group-related results, or even both c("single","report"), provided that the number of farms is at least 3.
 #' @param export_type the type of output to produce. Can be either "report" to produce compiled reports and/or "local" to write raw plots. If NULL, the algorithm will not produce any plots on machine and will return a list with the IDEA results.
 #' @param plot_choices the type of plots to be produced. Can be either "dimensions", "trees" or "radars" or a combination of these 3. Ignored if the export type is "report".
-#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"
+#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored if \code{length(input) > 1} or in the case of a group analysis : the \code{metadata$MTD_01} field will be used to identify each farm.
 #' @param dpi ggplot output resolution.
 #' @param append In the case of a single excel report and if the input is an xlsx file, should the results be appended to the original file ?
@@ -55,7 +55,7 @@
 #'   export_type = "report",
 #'   prefix = "Exploitation_A",
 #'   dpi = 300,
-#'   report_format = "xlsx",
+#'   report_format = "pdf",
 #'   quiet = FALSE
 #' )
 #' }
@@ -368,6 +368,8 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
         cli::cat_bullet(paste0("Calculateur '", basename(i), "' trait\u00e9 (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
       }
     }
+
+    if(sum(duplicated(group_list$metadata$MTD_01)) > 1) {stop("farm ids are duplicated, please use a distict id for each farm")}
 
     ## printing state
     if (!quiet) {

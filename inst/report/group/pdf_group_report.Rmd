@@ -122,6 +122,6 @@ knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Gr
 
 ## Fréquence d'attribution de chaque modalité
 
-```{r fig.cap= "Fréquence d'attribution de chaque modalité pour chaque propriété", fig.width = 10, fig.height=5}
+```{r fig.cap= "Fréquence d'attribution de chaque modalité pour chaque propriété", fig.width = 14 ,fig.height=5}
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Fréquence_propriétés.png"))
 ```

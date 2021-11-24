@@ -6,7 +6,7 @@
 #' @param output_directory the desired output directory for the rendered reports and/or plots. Defaults to "IDEATools_output"
 #' @param type the type of output to produce. Can be either "report" to produce compiled reports or "local" to write raw plots as PNG files.
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored in the case of a group analysis : The \code{metadata$MTD_01} field will then be used to identify each farm.
-#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt" and "xlsx"
+#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"
 #' @param dpi ggplot output resolution.
 #' @param append If the input is an xlsx format, should the individual output be appended to the original file ?
 #' @param input_file_append file path to an xslx IDEA data spreadsheet
@@ -226,7 +226,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           pdftools::pdf_convert(pdf = pdf_path, format = "png", pages = NULL, filenames = basename(png_path), opw = "", upw = "", verbose = FALSE)
 
           # Move the PNG file to the appropriate folder
-          file.copy(basename(png_path),png_path)
+          file.copy(basename(png_path),png_path, overwrite = TRUE)
           file.remove(basename(png_path))
 
         }
@@ -360,6 +360,42 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         }
       }
 
+      ### PPTX reports
+      if (any(report_format == "pptx")) {
+        if (!quiet) {
+          cli::cli_h3("Production de la pr\u00e9sentation Microsoft Powerpoint...")
+        }
+
+        start <- Sys.time()
+
+        report_path <- file.path(knitting_dir, "report","single", "pptx_report.Rmd")
+
+        # Defining params
+        params <- list(
+          data = IDEA_plots,
+          outdir = "tmp",
+          prefix = prefix
+        )
+
+        output_file <- paste0("Rapport_individuel_", prefix, ".pptx")
+
+        # Render in new env
+        suppressWarnings(rmarkdown::render(report_path,
+                                           output_file = output_file, output_dir = output_directory,
+                                           params = params,
+                                           envir = new.env(parent = globalenv()), quiet = TRUE
+        ))
+
+
+
+        end <- Sys.time()
+        duration <- round(difftime(end, start, units = "secs"))
+
+        if (!quiet) {
+          cli::cat_bullet(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"), bullet = "info", bullet_col = "green")
+        }
+      }
+
       ### XLSX reports
       if (any(report_format == "xlsx")) {
         if (!quiet) {
@@ -434,7 +470,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         dplyr::filter(plotname != "data") %>%
         dplyr::mutate(plotname = dplyr::recode(plotname, "heatmap" = "Matrice_propri\u00e9t\u00e9s","freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_histogram" = "Histogramme_dimensions", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) %>%
         dplyr::mutate(
-          widths = c(10.4,10, 10.5, 7.95, 11.3, 11.9, 11.9, 11.9),
+          widths = c(10.4,10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
           heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
         ) %>%
         dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) %>%
@@ -572,6 +608,40 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         )
 
         output_file <- paste0("Rapport_groupe_", n_farm, ".docx")
+
+        # Render in new env
+        suppressWarnings(rmarkdown::render(report_path,
+                                           output_file = output_file, output_dir = output_directory,
+                                           params = params,
+                                           envir = new.env(parent = globalenv()), quiet = TRUE
+        ))
+
+        end <- Sys.time()
+        duration <- round(difftime(end, start, units = "secs"))
+
+        if (!quiet) {
+          cli::cat_bullet(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"), bullet = "info", bullet_col = "green")
+        }
+      }
+
+      ### PPTX reports
+      if (any(report_format == "pptx")) {
+        if (!quiet) {
+          cli::cli_h3("Production de la pr\u00e9sentation Microsoft Powerpoint...")
+        }
+
+        start <- Sys.time()
+
+        report_path <- file.path(knitting_dir, "report","group", "pptx_group_report.Rmd")
+
+        # Defining params
+        params <- list(
+          data = IDEA_plots,
+          outdir = "tmp",
+          dpi = dpi
+        )
+
+        output_file <- paste0("Rapport_groupe_", n_farm, ".pptx")
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,

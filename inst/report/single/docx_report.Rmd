@@ -4,7 +4,7 @@ date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
 output: 
   officedown::rdocx_document:
     reference_docx: templates/template.docx
-subtitle: Eléments de sortie d'analyse individuelle - Version 1.0
+subtitle: Eléments de sortie d'analyse individuelle - Version 2.0
 params:
   outdir : "tmp"
   data: "data"

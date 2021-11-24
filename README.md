@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.0.0-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.0.1-orange.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
@@ -27,26 +27,19 @@ install.packages("remotes")
 remotes::install_github("davidcarayon/IDEATools")
 ```
 
-Puis charger le package avec :
+*NB : Le logiciel RTools est parfois nécessaire sur les machines Windows
+pour pouvoir installer le package `{remotes}`, puisque l’installation
+ici se fait depuis un dépôt de développement (Github) et non un dépôt
+officiel R. Vous pouvez l’installer ici :
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/)*
+
+Une fois installé, vous pouvez charger le package avec :
 
 ``` r
 library(IDEATools)
 ```
 
 ## Prérequis pour la production de rapports
-
-Deux packages ne sont pas automatiquement installés (afin de réduire la
-liste des dépendances) mais restent nécessaires pour la production de
-certains formats de rapports automatiques :
-
-  - {officedown} pour les rapports docx
-  - {openxlsx} pour les rapports xlsx
-
-Il suffit de les installer à l’aide de :
-
-``` r
-install.packages(c("officedown","openxlsx"))
-```
 
 Pour la production de rapport PDF, une installation de LaTeX est
 requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la
@@ -87,7 +80,7 @@ peut notamment paramétrer :
   - Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
     `plot_choices`
   - Le format de sortie du rapport si désiré (au choix : pdf, docx, odt,
-    pptx, xlsx, html) `report_format`
+    pptx, xlsx) `report_format`
   - Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
     ferme) dans le cas d’une analyse individuelle `prefix`
   - La résolution de sortie des graphiques (impacte notamment le poids
@@ -100,8 +93,8 @@ peut notamment paramétrer :
     résultats à la suite des onglets du calculateur initial, créant
     ainsi un calculateur “tout en un” avec données + résultats.
 
-Voici un appel complet à cette fonction avec toutes les possibilités de
-paramétrage :
+Voici un appel complet à la fonction `diag_idea()` avec toutes les
+possibilités de paramétrage :
 
 ``` r
 diag_idea(input,
@@ -109,11 +102,24 @@ diag_idea(input,
           type = c("single","group"),
           export_type = c("report","local",NULL),
           plot_choices = c("dimensions","trees","radars"),
-          report_format = c("pdf","docx","odt","xlsx"),
+          report_format = c("pdf","docx","odt","xlsx","pptx"),
           prefix = "EA",
           dpi = 300,
           quiet = FALSE,
           append = FALSE)
+```
+
+*Pour information, les utilisateurs les moins habitués à l’écosystème R
+peuvent utiliser les commandes suivantes (à condition d’utiliser
+RStudio) pour sélectionner les dossier/fichiers via une fenêtre en
+presse-bouton:*
+
+``` r
+input <- rstudioapi::selectDirectory() # Dans le cas d'un répertoire 
+# OU
+input<- rstudioapi::selectFile() # Si un seul calculateur
+
+output_directory <- rstudioapi::selectDirectory()
 ```
 
 On distingue 3 grands types de diagnostics :
@@ -142,14 +148,15 @@ calculateurs en même temps.
 
 Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais
 a juste besoin pour chaque exploitation d’un rapport au format word
-qu’il pourra commenter. Le code sera alors :
+qu’il pourra commenter ainsi qu’une présentation powerpoint contenant
+toutes les figures et prête à projeter. Le code sera alors :
 
 ``` r
 diag_idea(input = "chemin_vers_dossier",
           output_directory = "mes_résultats",
           type = "single",
           export_type = "report"
-          report_format = c("docx")
+          report_format = c("docx","pptx")
           quiet = FALSE)
 ```
 
