@@ -226,8 +226,26 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           pdftools::pdf_convert(pdf = pdf_path, format = "png", pages = NULL, filenames = basename(png_path), opw = "", upw = "", verbose = FALSE)
 
           # Move the PNG file to the appropriate folder
-          file.copy(basename(png_path),png_path, overwrite = TRUE)
-          file.remove(basename(png_path))
+
+          if(prop == "Responsabilite") {
+
+            exported_name <- basename(list.files(".", pattern = "Respons"))
+            file.copy(exported_name,png_path, overwrite = TRUE)
+            file.remove(exported_name)
+
+          } else if(prop == "Capacite") {
+
+            exported_name <- basename(list.files(".", pattern = "Capacit"))
+            file.copy(exported_name,png_path, overwrite = TRUE)
+            file.remove(exported_name)
+
+          } else {
+
+            file.copy(basename(png_path),png_path, overwrite = TRUE)
+            file.remove(basename(png_path))
+
+          }
+
 
         }
 

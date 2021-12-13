@@ -1,3 +1,8 @@
+# IDEATools 3.0.2
+
+* Attempt to fix a bug with colored trees for windows users
+* Updated the pkgdown architecture
+
 # IDEATools 3.0.1
 
 * Re-introduced PPTX output format

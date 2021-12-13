@@ -26,7 +26,7 @@ navbar:
     - icon: fa-github
       href: https://github.com/davidcarayon/IDEATools
     - icon: fa-info
-      href: https://idea.chlorofil.fr/idea-version-4.html
+      href: https://methode-idea.org/
 reference:
 - title: "Main module"
   desc: >
@@ -46,5 +46,5 @@ reference:
   desc: "Other miscellaneous functions"
 - contents:
   - theme_idea
-  - show_canvas
   - show_decision_rules
+  - show_tree_structure
