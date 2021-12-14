@@ -1,3 +1,8 @@
+# IDEATools 3.1.0
+
+* Changed default font for PDF reports
+* Another update to pkgdown
+
 # IDEATools 3.0.2
 
 * Attempt to fix a bug with colored trees for windows users
