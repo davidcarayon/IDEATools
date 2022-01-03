@@ -27,7 +27,6 @@ header-includes:
 - \fancyhead[C]{}
 - \fancyhead[L]{}
 - \renewcommand{\headrulewidth}{0pt}
-mainfont: Ubuntu
 subtitle: Eléments de sortie d'analyse de groupe - Version 2.0
 params:
   outdir : "tmp"

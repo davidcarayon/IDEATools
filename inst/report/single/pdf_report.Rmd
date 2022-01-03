@@ -23,7 +23,6 @@ header-includes:
 - \pagestyle{fancy}
 - \fancyfoot[C]{Diagnostic IDEA4 - `r format(Sys.Date(), "%d %B %Y")`}
 - \fancyfoot[R]{Page \thepage  / \pageref{LastPage}}
-mainfont: Ubuntu
 subtitle: Eléments de sortie d'analyse individuelle - Version 2.0
 params:
   data: "data"
