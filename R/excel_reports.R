@@ -2,7 +2,6 @@
 #### EXCEL REPORTING #
 ######################
 
-
 ## Function to produce Excel single reports
 excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi, append = FALSE, input_file_append = NULL) {
 
@@ -564,7 +563,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   openxlsx::insertImage(wb, "Dimensions", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Distribution_dimensions.png"), nrow(stat_indiv) + 15, startCol = "A", width = 14.87, height = 12.92, units = "cm")
 
   ## Add dimension histogram
-  openxlsx::insertImage(wb, "Dimensions", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Histogramme_dimensions.png"), startRow = 3, startCol = "F", width = 20.97, height = 17.19, units = "cm")
+  openxlsx::insertImage(wb, "Dimensions", file = file.path(outdir, Sys.Date(), paste0("Groupe_", n_farm), "Graphiques", "Histogramme_dimensions.png"), startRow = 3, startCol = "F", width = 8.5, height = 5.05, units = "in")
 
   ## Format color according to dimensions
   openxlsx::conditionalFormatting(wb, "Dimensions", cols = 1:5, rows = 1:300, type = "contains", rule = "Agro\u00e9cologique", style = AEStyle)
@@ -877,8 +876,9 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
     dplyr::rowwise() %>%
     dplyr::mutate(Exploitation = paste0("Nombre de ", Exploitation, " :")) %>%
     dplyr::ungroup() %>%
-    dplyr::summarise_all(as.character) %>%
-    dplyr::summarise_all(tidyr::replace_na, replace = 0)
+    dplyr::mutate_at(dplyr::vars(-Exploitation),tidyr::replace_na, replace = 0) %>%
+    dplyr::summarise_all(as.character)
+
 
 
   ## Write both data and counters
@@ -949,8 +949,8 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
       dplyr::rowwise() %>%
       dplyr::mutate(Exploitation = paste0("Nombre de ", Exploitation, " :")) %>%
       dplyr::ungroup() %>%
-      dplyr::summarise_all(as.character) %>%
-      dplyr::summarise_all(tidyr::replace_na, replace = 0)
+      dplyr::mutate_at(dplyr::vars(-Exploitation),tidyr::replace_na, replace = 0) %>%
+      dplyr::summarise_all(as.character)
 
     ## Writing title
     title <- data.frame(NA, NA)
@@ -962,7 +962,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
 
 
     ## Writing both data and counter
-    openxlsx::writeData(wb, "D\u00e9tail Proprietes", df %>% bind_rows(empty, to_add),
+    openxlsx::writeData(wb, "D\u00e9tail Proprietes", df %>% dplyr::bind_rows(empty, to_add),
                         startCol = "A",
                         startRow = no_rows + 1, borders = "all", borderStyle = "medium", headerStyle = hs1
     )
