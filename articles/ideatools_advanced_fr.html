@@ -126,36 +126,36 @@
 
     
     
-<div class="section level1">
-<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h1>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l’automatisation et le reporting de diagnostics IDEA4.</p>
 <p>IDEATools 1.0 puis 1.1 ont été développés au cours de l’année 2020 pour répondre à des besoins (urgents) de sorties graphiques pour la méthode IDEA4, notamment en ce qui concerne l’approche par les propriétés. Cette première version du package était donc fonctionnelle mais largement perfectible et n’était pas assez documentée. Dans une optique de recherche reproductible et afin d’être mieux préparé aux adaptations / évolutions de la méthode, IDEATools a subi d’assez lourdes modifications pour aujourd’hui être proposé dans sa version 2.0.</p>
 <p>IDEATools 2.0 propose un processus automatisé de diagnostic composé de différents modules (<code><a href="../reference/read_idea.html">read_idea()</a></code>, <code><a href="../reference/compute_idea.html">compute_idea()</a></code>, <code><a href="../reference/old_idea.html">old_idea()</a></code>, <code><a href="../reference/plot_idea.html">plot_idea()</a></code>, <code><a href="../reference/write_idea.html">write_idea()</a></code>) tous regroupés dans une fonction globale, <code><a href="../reference/diag_idea.html">diag_idea()</a></code>. La présente vignette présente le fonctionnement général de chacun de ces modules et la logique générale développée dans IDEATools.</p>
 <p>IDEATools 3.0 a apporté une refonte complète du système de production des arbres éclairés et la correction de nombreux bugs.</p>
 </div>
-<div class="section level1">
-<h1 id="ideatools-3-0">IDEATools 3.0<a class="anchor" aria-label="anchor" href="#ideatools-3-0"></a>
-</h1>
+<div class="section level2">
+<h2 id="ideatools-3-0">IDEATools 3.0<a class="anchor" aria-label="anchor" href="#ideatools-3-0"></a>
+</h2>
 <p>La 3e version majeure d’IDEATools n’apporte pas de différence significative sur le processus global de traitement développé pour la version 2, excepté la correction de quelques bugs et la compatibilité avec les dernières versions du calculateur.</p>
 <p>Cette version apporte principalement une évolution au niveau du traitement de la production des arbres éclairés. En effet, ces arbres ne sont plus basés sur de la coloration de template “blanc” par des algorithmes de rechercher-remplacer conditionnels, mais sur une syntaxe ggplot s’appuyant sur des tables de références donnant les coordonées de chaque ligne / noeud. Ce changement d’approche permet une meilleure résilience aux changements de noms de noeuds et ouvre même la possibilité d’une traduction automatique des arbres.</p>
 <p>La palette de couleurs utilisée a également été revue pour accentuer les contrastes et améliorer la lisibilité pour des utilisateurs avec problèmes de distinction des couleurs :</p>
 <p><img src="ideatools_advanced_fr_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 </div>
-<div class="section level1">
-<h1 id="ideatools-2-0">IDEATools 2.0<a class="anchor" aria-label="anchor" href="#ideatools-2-0"></a>
-</h1>
 <div class="section level2">
-<h2 id="pré-requis">Pré-requis<a class="anchor" aria-label="anchor" href="#pr%C3%A9-requis"></a>
+<h2 id="ideatools-2-0">IDEATools 2.0<a class="anchor" aria-label="anchor" href="#ideatools-2-0"></a>
 </h2>
+<div class="section level3">
+<h3 id="pré-requis">Pré-requis<a class="anchor" aria-label="anchor" href="#pr%C3%A9-requis"></a>
+</h3>
 <p>Le package R {IDEATools} nécessite en premier lieu l’installation de <a href="https://cran.r-project.org/" class="external-link">R</a> puis de <a href="https://rstudio.com/products/rstudio/download/" class="external-link">Rstudio</a>.</p>
 <p>En attendant son acceptation sur les dépôts officiels du CRAN, IDEATools nécessite l’installation d’un premier package, {remotes}, qui lui permettra d’installer IDEATools depuis un dépôt “non officiel” Github.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
-<div class="section level3">
-<h3 id="dépendances-r">Dépendances R<a class="anchor" aria-label="anchor" href="#d%C3%A9pendances-r"></a>
-</h3>
+<div class="section level4">
+<h4 id="dépendances-r">Dépendances R<a class="anchor" aria-label="anchor" href="#d%C3%A9pendances-r"></a>
+</h4>
 <p>Le code source d’IDEATools s’appuie sur une liste de 20 packages R (aussi appelées dépendances). Ces packages (ainsi que leurs propres dépendances) sont automatiquement installés en même temps qu’IDEATools :</p>
 <ul>
 <li><p>{tidyr} permet le nettoyage de données</p></li>
@@ -187,26 +187,26 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="autres-dépendances">Autres dépendances<a class="anchor" aria-label="anchor" href="#autres-d%C3%A9pendances"></a>
-</h3>
+<div class="section level4">
+<h4 id="autres-dépendances">Autres dépendances<a class="anchor" aria-label="anchor" href="#autres-d%C3%A9pendances"></a>
+</h4>
 <p>Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">tinytex::install_tinytex()</a></code> pour installer une version minimale de LaTeX vous permettant d’éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n’avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="read_idea">read_idea()<a class="anchor" aria-label="anchor" href="#read_idea"></a>
-</h2>
+<div class="section level3">
+<h3 id="read_idea">read_idea()<a class="anchor" aria-label="anchor" href="#read_idea"></a>
+</h3>
 <p>Il s’agit de la toute première fonction du processus, permettant d’identifier la validité du fichier d’entrée et d’en extraire métadonnées et items.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/read_idea.html">read_idea</a></span><span class="op">(</span><span class="st">"chemin_calculateur"</span><span class="op">)</span></code></pre></div>
 <p>Après plusieurs itérations du développement de cette fonction, Il s’avère trop difficile de retrouver les items de manière automatique pour des versions &lt; 4.2.0. Si la version est trop ancienne, l’algorithme renverra une erreur et suggèrera une autre fonction, <code>old_idea</code>, qui récupère directement les indicateurs plutôt que les items et remplace donc <code><a href="../reference/read_idea.html">read_idea()</a></code> + <code><a href="../reference/compute_idea.html">compute_idea()</a></code>.</p>
 <p>La fonction <code><a href="../reference/read_idea.html">read_idea()</a></code> n’est développée que pour un input d’un fichier INDIVIDUEL. Pour du traitement multi-individuel et/ou de groupe, la fonction globale <code><a href="../reference/diag_idea.html">diag_idea()</a></code> appliquera cette fonction de manière itérative.</p>
-<div class="section level3">
-<h3 id="fonctionnement">Fonctionnement<a class="anchor" aria-label="anchor" href="#fonctionnement"></a>
-</h3>
 <div class="section level4">
-<h4 id="lecture-du-fichier-dentrée-et-contrôle-de-version">Lecture du fichier d’entrée et contrôle de version<a class="anchor" aria-label="anchor" href="#lecture-du-fichier-dentr%C3%A9e-et-contr%C3%B4le-de-version"></a>
+<h4 id="fonctionnement">Fonctionnement<a class="anchor" aria-label="anchor" href="#fonctionnement"></a>
 </h4>
+<div class="section level5">
+<h5 id="lecture-du-fichier-dentrée-et-contrôle-de-version">Lecture du fichier d’entrée et contrôle de version<a class="anchor" aria-label="anchor" href="#lecture-du-fichier-dentr%C3%A9e-et-contr%C3%B4le-de-version"></a>
+</h5>
 <ul>
 <li><p>Quelle extension ? Si il n’y en a pas (= dossier) alors l’algorithme renvoie un message d’erreur</p></li>
 <li><p>Est-ce que l’extension est XLS, XLSX ou JSON ? Sinon, renvoi d’un message d’erreur.</p></li>
@@ -228,9 +228,9 @@
 </li>
 </ul>
 </div>
-<div class="section level4">
-<h4 id="trouver-les-métadonnées">Trouver les métadonnées<a class="anchor" aria-label="anchor" href="#trouver-les-m%C3%A9tadonn%C3%A9es"></a>
-</h4>
+<div class="section level5">
+<h5 id="trouver-les-métadonnées">Trouver les métadonnées<a class="anchor" aria-label="anchor" href="#trouver-les-m%C3%A9tadonn%C3%A9es"></a>
+</h5>
 <p>Dans le cas d’un fichier json, les métadonnées sont facile à trouver car stockées dans le champs “$metadonnees”.</p>
 <p>Si la version est supérieure ou égale à la 4.2.5, alors on va diviser la valeur de MTD_15 par 100. En effet, à partir de cette version, MTD_15 n’est plus une proportion (0-1) mais un pourcentage. Afin de ne pas rencontrer de soucis dans les algorithmes suivants, cette valeur est à nouveau convertie en proportion pour être compatible avec les anciennes versions.</p>
 <p>Si on ne trouve pas de MTD_01 (NA ou 0), alors on utilise <strong>le nom du fichier (limité à 10 signes), sans extension.</strong></p>
@@ -341,23 +341,23 @@
 <p>Dans le cas d’un fichier excel, on va chercher les métadonnées dans la plage <strong>A4:E21</strong> de l’onglet “Renvoi BDD”. Si par un souci technique MTD_00 n’a pas pu être récupéré dans ce tableau (0 par exemple), on tente d’y insèrer ‘Notice$K4’. Ensuite, les mêmes contrôles sont appliqués que pour le JSON (MTD_01, MTD_14, présence de 17 valeurs)</p>
 <p>Dans les deux cas, à la fin, on regarde si il existe bien une valeur pour MTD_14, MTD_15 et MTD_16 car ce sont des métadonnées cruciales pour le calcul d’indicateurs. Si il manque une de ces valeurs, un message d’erreur sera produit.</p>
 </div>
-<div class="section level4">
-<h4 id="extraction-des-items">Extraction des items<a class="anchor" aria-label="anchor" href="#extraction-des-items"></a>
-</h4>
+<div class="section level5">
+<h5 id="extraction-des-items">Extraction des items<a class="anchor" aria-label="anchor" href="#extraction-des-items"></a>
+</h5>
 <p>Dans le cas d’un input en json, les items sont facile à extraire dans le champs “$item” du fichier. On rajoute ici juste une modification de chaîne de caractère pour que, par exemple, “IDEA_A01_1” devienne “A1_1”. Si l’algorithme ne retrouve pas très exactement 118 valeurs d’items, alors il renverra un message d’erreur.</p>
 <p>Dans le cas d’un fichier excel, on va rechercher les items dans la plage <strong>A25:E143</strong> de l’onglet “Renvoi BDD”. Ici encore, on convertit les chaînes de caractères pour que “IDEA_A01_1” devienne “A1_1”.</p>
 <p>Si l’algorithme ne retrouve pas très exactement 118 valeurs d’items, alors il renverra à nouveau un message d’erreur.</p>
 </div>
-<div class="section level4">
-<h4 id="sortie">Sortie<a class="anchor" aria-label="anchor" href="#sortie"></a>
-</h4>
+<div class="section level5">
+<h5 id="sortie">Sortie<a class="anchor" aria-label="anchor" href="#sortie"></a>
+</h5>
 <p>Renvoi d’un objet contenant metadonnées et items, avec l’étiquette (aussi appelée “classe” en R) ‘IDEA_items’ pour que la fonction suivante, <code><a href="../reference/compute_idea.html">compute_idea()</a></code>, puisse l’identifier.</p>
 </div>
 </div>
 </div>
-<div class="section level2">
-<h2 id="compute_idea">compute_idea()<a class="anchor" aria-label="anchor" href="#compute_idea"></a>
-</h2>
+<div class="section level3">
+<h3 id="compute_idea">compute_idea()<a class="anchor" aria-label="anchor" href="#compute_idea"></a>
+</h3>
 <p>C’est la seconde fonction du processus. On va partir des données précédemment récoltées pour calculer les indicateurs/composantes/dimensions/propriétés.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/compute_idea.html">compute_idea</a></span><span class="op">(</span><span class="va">IDEA_items</span><span class="op">)</span></code></pre></div>
@@ -371,17 +371,17 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/show_decision_rules.html">show_decision_rules</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Qui va exporter un fichier excel contenant les règles de décision dans le répertoire de travail (ou dans un répertoire spécifique indiqué).</p>
-<div class="section level3">
-<h3 id="fonctionnement-1">Fonctionnement<a class="anchor" aria-label="anchor" href="#fonctionnement-1"></a>
-</h3>
 <div class="section level4">
-<h4 id="contrôle-à-lentrée">Contrôle à l’entrée<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-%C3%A0-lentr%C3%A9e"></a>
+<h4 id="fonctionnement-1">Fonctionnement<a class="anchor" aria-label="anchor" href="#fonctionnement-1"></a>
 </h4>
+<div class="section level5">
+<h5 id="contrôle-à-lentrée">Contrôle à l’entrée<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-%C3%A0-lentr%C3%A9e"></a>
+</h5>
 <p>Seules les données d’entrées portant la classe “IDEA_items” sont acceptés par cette fonction.</p>
 </div>
-<div class="section level4">
-<h4 id="agrégation-par-les-dimensions">Agrégation par les dimensions<a class="anchor" aria-label="anchor" href="#agr%C3%A9gation-par-les-dimensions"></a>
-</h4>
+<div class="section level5">
+<h5 id="agrégation-par-les-dimensions">Agrégation par les dimensions<a class="anchor" aria-label="anchor" href="#agr%C3%A9gation-par-les-dimensions"></a>
+</h5>
 <p>Le calcul des indicateurs correspond dans la majorité des cas à la somme des items les constituants. Cependant, certains indicateurs présentent des exceptions :</p>
 <center>
 <table class="table">
@@ -494,9 +494,9 @@
 <li><p>Passer des composantes aux dimensions : Une simple somme des composantes.</p></li>
 </ul>
 </div>
-<div class="section level4">
-<h4 id="agrégation-par-les-propriétés">Agrégation par les propriétés<a class="anchor" aria-label="anchor" href="#agr%C3%A9gation-par-les-propri%C3%A9t%C3%A9s"></a>
-</h4>
+<div class="section level5">
+<h5 id="agrégation-par-les-propriétés">Agrégation par les propriétés<a class="anchor" aria-label="anchor" href="#agr%C3%A9gation-par-les-propri%C3%A9t%C3%A9s"></a>
+</h5>
 <p>Une fonction interne permet d’utiliser la table de catégorisation issue des règles de décisions afin d’attribuer une modalité qualitative à chaque indicateur à partir de son score déplafonné.</p>
 <p>Ensuite, Si MTD_14 vaut 0 (donc pas d’élevage), la modalité attribuée à A7 est automatiquement convertie à “NC”.</p>
 <p>Enfin, un très long code va calculer le résultat pour chacun des 46 noeuds d’agrégation selon la numérotation suivante :</p>
@@ -504,9 +504,9 @@
 <p>Ces calculs sont réalisés par des jointures filtrantes (<code>inner_join()</code>) entre les résultats des indicateurs et les tables de contingence. A chaque jointure, il ne reste donc plus qu’une ligne qui correspond à l’évaluation de l’exploitation.</p>
 <p>Enfin, on conserve les noeuds terminaux de chaque propriété ainsi qu’une table globale contenant l’ensemble des 99 éléments de la carte heuristique.</p>
 </div>
-<div class="section level4">
-<h4 id="sortie-1">Sortie<a class="anchor" aria-label="anchor" href="#sortie-1"></a>
-</h4>
+<div class="section level5">
+<h5 id="sortie-1">Sortie<a class="anchor" aria-label="anchor" href="#sortie-1"></a>
+</h5>
 <p>L’objet de sortie se voit attribué l’étiquette “IDEA_data” pour la suite et contient :</p>
 <ul>
 <li>metadata : Les métadonnées de l’exploitation, inchangées par rapport à la fonction précédente.</li>
@@ -516,9 +516,9 @@
 </div>
 </div>
 </div>
-<div class="section level2">
-<h2 id="old_idea">old_idea()<a class="anchor" aria-label="anchor" href="#old_idea"></a>
-</h2>
+<div class="section level3">
+<h3 id="old_idea">old_idea()<a class="anchor" aria-label="anchor" href="#old_idea"></a>
+</h3>
 <p>Cette fonction est une alternative aux deux fonctions précédentes (<code><a href="../reference/read_idea.html">read_idea()</a></code>+<code><a href="../reference/compute_idea.html">compute_idea()</a></code>) pour les calculateurs les plus anciens (&lt; 4.2.0). En effet, il s’avère trop difficile de retrouver les items de manière automatique pour ces anciennes versions. La fonction accepte donc le même format d’entrée que <code><a href="../reference/read_idea.html">read_idea()</a></code> et renvoie directement une sortie similaire à <code><a href="../reference/compute_idea.html">compute_idea()</a></code>. Le principal inconvénient étant de ne pas récupérer de données liées aux items et de manquer certaines métadonnées.</p>
 <p>En revanche, même cette fonction a ses limites et aucune garantie des résultats n’est proposée pour des calculateurs antérieurs au 01/01/2019.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -526,9 +526,9 @@
 <p>Les différentes étapes de cette fonction sont en tout point identiques aux fonctions précédentes, à l’exception d’une étape intermédiaire qui est supprimée (agrégation des items vers les indicateurs) et une recherche des valeurs d’indicateurs qui se fait dans chaque onglet relatif à chaque dimension plutôt que dans un onglet unique “Renvoi BDD” qui n’existait pas encore.</p>
 <p>Note : Pour l’identifiant de l’exploitation (MTD_01), l’algorithme récupèrera en priorité le NOM/Prénom de l’exploitant si il le trouve, sinon il se basera ici encore sur le nom de fichier, sans extension, limité à 10 signes.</p>
 </div>
-<div class="section level2">
-<h2 id="plot_idea">plot_idea()<a class="anchor" aria-label="anchor" href="#plot_idea"></a>
-</h2>
+<div class="section level3">
+<h3 id="plot_idea">plot_idea()<a class="anchor" aria-label="anchor" href="#plot_idea"></a>
+</h3>
 <p>Troisème fonction du processus, visant à générer :</p>
 <ul>
 <li><p>Des graphiques de trois types (dimensions, arbres éclairés, radars) à partir des données générées par les modules <code><a href="../reference/compute_idea.html">compute_idea()</a></code> ou <code><a href="../reference/old_idea.html">old_idea()</a></code></p></li>
@@ -545,42 +545,42 @@ Exemple de figures produites par IDEATools
 <p>Là ou la classe “<code>IDEA\_data</code>” est la classe classique produite par la sortie de <code><a href="../reference/compute_idea.html">compute_idea()</a></code> ou <code><a href="../reference/old_idea.html">old_idea()</a></code> , la classe “<code>IDEA\_group\_data</code>” ne peut être générée que par la fonction <code><a href="../reference/diag_idea.html">diag_idea()</a></code> dans le cadre d’une analyse de groupe, qui va appliquer <code>read_idea() puis compute_idea()</code> ou <code><a href="../reference/old_idea.html">old_idea()</a></code> sur chaque exploitation de manière itérative avant d’agrégrer les résultats dans un objet de classe “<code>IDEA\_group\_data</code>”.</p>
 <p>Dans le cas d’une analyse individuelle, l’utilisateur peut définir le type de graphiques qu’il veut produire via l’argument <code>choices</code>. <strong>Attention</strong>, l’ensemble des 3 types de graphiques possibles sont nécessaires pour l’option d’export ‘rapport’ dans la fonction suivante, <code><a href="../reference/write_idea.html">write_idea()</a></code>.</p>
 <p>Dans le cas d’une analyse de groupe, l’argument <code>choices</code> sera ignoré.</p>
-<div class="section level3">
-<h3 id="cas-dune-analyse-individuelle">Cas d’une analyse individuelle<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-individuelle"></a>
-</h3>
 <div class="section level4">
-<h4 id="contrôle">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le"></a>
-</h4>
-<p>Si la classe d’entrée est “<code>IDEA_data</code>”, alors il s’agit d’une analyse individuelle et les graphiques seront produits en fonction de ce que l’utilisateur a défini dans <code>choices</code>.</p>
-</div>
-<div class="section level4">
-<h4 id="dimensions">Dimensions<a class="anchor" aria-label="anchor" href="#dimensions"></a>
+<h4 id="cas-dune-analyse-individuelle">Cas d’une analyse individuelle<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-individuelle"></a>
 </h4>
 <div class="section level5">
-<h5 id="palette-graphique">Palette graphique<a class="anchor" aria-label="anchor" href="#palette-graphique"></a>
+<h5 id="contrôle">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le"></a>
 </h5>
+<p>Si la classe d’entrée est “<code>IDEA_data</code>”, alors il s’agit d’une analyse individuelle et les graphiques seront produits en fonction de ce que l’utilisateur a défini dans <code>choices</code>.</p>
+</div>
+<div class="section level5">
+<h5 id="dimensions">Dimensions<a class="anchor" aria-label="anchor" href="#dimensions"></a>
+</h5>
+<div class="section level6">
+<h6 id="palette-graphique">Palette graphique<a class="anchor" aria-label="anchor" href="#palette-graphique"></a>
+</h6>
 <p>Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte graphique IDEA4 et sont les suivants :</p>
 <p><img src="ideatools_advanced_fr_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
-<div class="section level5">
-<h5 id="tracé-des-graphiques">Tracé des graphiques<a class="anchor" aria-label="anchor" href="#trac%C3%A9-des-graphiques"></a>
-</h5>
+<div class="section level6">
+<h6 id="tracé-des-graphiques">Tracé des graphiques<a class="anchor" aria-label="anchor" href="#trac%C3%A9-des-graphiques"></a>
+</h6>
 <p>Les graphiques de l’approche par les dimensions sont pour la plupart des histogrammes générés via <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>. Rien de particulier à signaler à part des manipulation de facteurs pour que les barres soient bien ordonnées et une gestion de l’encodage de l’intitulé des dimensions. Dans le cadre de la production de ces graphiques, un thème ggplot2 dédié à la méthode a été créé : <code><a href="../reference/theme_idea.html">theme_idea()</a></code>.</p>
 <p>Pour le cas du diagramme polarisé des composantes, un premier fichier PDF contenant un radar des composantes est d’abord exporté dans un fichier temporaire. Puis, un second graphique ggplot ‘donut’ est généré, importe le radar PDF en son centre puis insère des pictogrammes stockés dans le dossier d’installation du package.</p>
 </div>
 </div>
-<div class="section level4">
-<h4 id="arbres-éclairés">Arbres éclairés<a class="anchor" aria-label="anchor" href="#arbres-%C3%A9clair%C3%A9s"></a>
-</h4>
 <div class="section level5">
-<h5 id="palette-graphique-1">Palette graphique<a class="anchor" aria-label="anchor" href="#palette-graphique-1"></a>
+<h5 id="arbres-éclairés">Arbres éclairés<a class="anchor" aria-label="anchor" href="#arbres-%C3%A9clair%C3%A9s"></a>
 </h5>
+<div class="section level6">
+<h6 id="palette-graphique-1">Palette graphique<a class="anchor" aria-label="anchor" href="#palette-graphique-1"></a>
+</h6>
 <p>Les codes hexadécimaux retenus pour ces graphiques sont issus de la charte graphique IDEA4 et sont les suivants, à partir de très défavorable jusqu’à très favorable en passant par la couleur “intermédiaire” :</p>
 <p><img src="ideatools_advanced_fr_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
-<div class="section level5">
-<h5 id="tracé-des-arbres">Tracé des arbres<a class="anchor" aria-label="anchor" href="#trac%C3%A9-des-arbres"></a>
-</h5>
+<div class="section level6">
+<h6 id="tracé-des-arbres">Tracé des arbres<a class="anchor" aria-label="anchor" href="#trac%C3%A9-des-arbres"></a>
+</h6>
 <p>L’algorithme de production des arbres éclairés est issu d’un travail de longue haleine impliquant le test de très nombreuses méthodes et packages R. Au final, la solution retenue a été de dessiner les modèles en “blanc” sur un logiciel de dessin vectoriel (Inkscape) au format svg. Le SVG est un langage de balisage (similaire au XML ou HTML) sur lequel il est assez facile d’appliquer des algorithmes de rechercher/remplacer. En effet, une balise de rectangle (correspondant à un noeud de l’arbre éclairé) s’écrit :</p>
 <pre><code>&lt;rect
        style="fill:#ffffff;fill-opacity:1;stroke:#001800;stroke-width:0.1"
@@ -598,39 +598,39 @@ Exemple de figures produites par IDEATools
 <p><strong>Attention</strong> : Pour les futures modifications des modèles, il est particulièrement important de ne pas modifier les “id” de chaque rectangle, au risque de ne pas assigner le bon indicateur à son rectangle.</p>
 </div>
 </div>
-<div class="section level4">
-<h4 id="radars">Radars<a class="anchor" aria-label="anchor" href="#radars"></a>
-</h4>
+<div class="section level5">
+<h5 id="radars">Radars<a class="anchor" aria-label="anchor" href="#radars"></a>
+</h5>
 <p>Ces graphiques sont produits avec <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a> et sont une version polarisée (<code>coord_polar()</code>) d’histogrammes des indicateurs regroupés par propriétés. On rajoute également une standardisation des scores d’indicateurs en les passant en pourcentage (ceci afin que les indicateurs soient tous sur la même échelle).</p>
 <p>En réalité, il ne s’agit pas de diagrammes radar mais d’histogrammes transformés dans des coordonnées polaires. Nous utilisons cependant la dénomination radar par facilité.</p>
 <p>Puisque les intitulés d’indicateurs sont bien trop longs pour être affichés sur le diagramme polarisé, un tableau associé au graphique est à chaque fois produit, donnant la correspondance entre code indicateur et intitulé de l’indicateur. Les lignes du tableau (ainsi que les histogrammes) sont aussi colorés en fonction de la dimension d’appartenance de l’indicateur. Enfin, les graphique et tableaux sont regroupés pour produire une figure unique pour chaque propriété.</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="cas-dune-analyse-de-groupe">Cas d’une analyse de groupe<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-de-groupe"></a>
-</h3>
-<p>C’est dans le corps de la fonction <code><a href="../reference/diag_idea.html">diag_idea()</a></code> que cette étiquette de groupe est rajoutée, en fonction du type d’analyse demandé par l’utilisateur.</p>
 <div class="section level4">
-<h4 id="contrôle-1">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-1"></a>
+<h4 id="cas-dune-analyse-de-groupe">Cas d’une analyse de groupe<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-de-groupe"></a>
 </h4>
+<p>C’est dans le corps de la fonction <code><a href="../reference/diag_idea.html">diag_idea()</a></code> que cette étiquette de groupe est rajoutée, en fonction du type d’analyse demandé par l’utilisateur.</p>
+<div class="section level5">
+<h5 id="contrôle-1">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-1"></a>
+</h5>
 <p>Si la classe d’entrée est “<code>IDEA_group_data</code>”, alors il s’agit d’une analyse de groupe. L’argument <code>choices</code> sera donc ignoré.</p>
 </div>
-<div class="section level4">
-<h4 id="graphiques-de-groupe">Graphiques de groupe<a class="anchor" aria-label="anchor" href="#graphiques-de-groupe"></a>
-</h4>
+<div class="section level5">
+<h5 id="graphiques-de-groupe">Graphiques de groupe<a class="anchor" aria-label="anchor" href="#graphiques-de-groupe"></a>
+</h5>
 <p>Pour les dimensions, les graphiques sont quasi-identiques aux graphiques de l’analyse individuelle, à la nuance près que les histogrammes sont remplacés par des boxplots. Nous rajoutons également une forme d’histogrammes empilés pour comparer les exploitations entre elles selon leurs trois dimensions.</p>
 <p>Concernant les propriétés, la seule visualisation actuellement jugée pertinente est une matrice (ou heatmap) de <strong>propriétés x exploitations</strong>, avec les cases colorées selon l’évaluation qualitative obtenue par l’exploitation pour une propriété donnée.</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="sortie-2">Sortie<a class="anchor" aria-label="anchor" href="#sortie-2"></a>
-</h3>
+<div class="section level4">
+<h4 id="sortie-2">Sortie<a class="anchor" aria-label="anchor" href="#sortie-2"></a>
+</h4>
 <p>L’objet de sortie sera une liste de graphiques, avec une des deux étiquettes <code>IDEA_plots</code> ou <code>IDEA_group_plots</code> selon le type d’entrée, accompagné d’un item “data” contenant les données originales insérées dans <code><a href="../reference/plot_idea.html">plot_idea()</a></code> qui sont nécessaires pour la fonction <code><a href="../reference/write_idea.html">write_idea()</a></code>.</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="write_idea">write_idea()<a class="anchor" aria-label="anchor" href="#write_idea"></a>
-</h2>
+<div class="section level3">
+<h3 id="write_idea">write_idea()<a class="anchor" aria-label="anchor" href="#write_idea"></a>
+</h3>
 <p>Quatrième et dernière fonction du processus, elle vise a exporter les résultats sous forme de graphiques bruts et/ou sous forme de rapports avec une large variété de formats possibles.</p>
 <p>Ici encore, l’objet d’entrée peut être de deux classes, “<code>IDEA_plots</code>” ou “<code>IDEA_group_plots</code>”, selon si nous sommes dans le cadre d’une analyse individuelle ou de groupe. Le comportement de la fonction sera différent selon la classe d’entrée.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -650,18 +650,18 @@ Exemple de figures produites par IDEATools
 <li>La résolution de sortie des graphiques (impacte notamment le poids des sorties)</li>
 <li>Si l’algorithme doit afficher sa progression dans la console.</li>
 </ul>
-<div class="section level3">
-<h3 id="cas-dune-analyse-individuelle-1">Cas d’une analyse individuelle<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-individuelle-1"></a>
-</h3>
 <div class="section level4">
-<h4 id="contrôle-2">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-2"></a>
+<h4 id="cas-dune-analyse-individuelle-1">Cas d’une analyse individuelle<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-individuelle-1"></a>
 </h4>
+<div class="section level5">
+<h5 id="contrôle-2">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-2"></a>
+</h5>
 <p>Si l’objet d’entrée est de classe “<code>IDEA_plots</code>”, alors le premier processus de traitement est enclenché, correspondant aux analyses individuelles.</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="sortie-locale">Sortie “locale”<a class="anchor" aria-label="anchor" href="#sortie-locale"></a>
-</h3>
+<div class="section level4">
+<h4 id="sortie-locale">Sortie “locale”<a class="anchor" aria-label="anchor" href="#sortie-locale"></a>
+</h4>
 <p>Si l’utilisateur choisit une sortie “locale”, alors différents algorithmes vont être produits en fonction de ce que l’utilisateur avait indiqué dans <code><a href="../reference/plot_idea.html">plot_idea()</a></code> concernant le choix des graphiques à produire.</p>
 <p>Dans le répertoire défini par l’utilisateur, un sous-dossier nommé selon la date du système sera d’abord créé. Ainsi, l’utilisateur pourra conserver ce dossier de sortie pour toutes ses sorties IDEATools s’il le souhaite.</p>
 <p>Les graphiques seront ensuite exportés dans un sous-dossier nommé selon l’argument “<code>prefix</code>” de la fonction, ceci afin de ne pas mélanger les résultats de différents diagnostics.</p>
@@ -678,9 +678,9 @@ Exemple de figures produites par IDEATools
 </ul>
 <p>Chaque fichier sera également préfixé avec <code>prefix</code>.</p>
 </div>
-<div class="section level3">
-<h3 id="sortie-rapport">Sortie “rapport”<a class="anchor" aria-label="anchor" href="#sortie-rapport"></a>
-</h3>
+<div class="section level4">
+<h4 id="sortie-rapport">Sortie “rapport”<a class="anchor" aria-label="anchor" href="#sortie-rapport"></a>
+</h4>
 <p>L’utilisateur peut ici choisir un <strong>ou plusieurs</strong> formats de sortie parmis pdf, docx, odt, pptx, xlsx, html.</p>
 <ul>
 <li><p>Si le format est pdf, docx, odt, pptx, les packages utilisés sont {rmarkdown}, {officer} et {officedown} et s’appuient sur des modèles stockés dans les fichiers internes du package.</p></li>
@@ -688,25 +688,25 @@ Exemple de figures produites par IDEATools
 <li><p>Si le format est xlsx, alors c’est {openxlsx} qui est utilisé pour produire les documents excel. La structure du document est construite par une fonction interne d’IDEATools non exportée, <code>excel_report()</code>.</p></li>
 </ul>
 </div>
-<div class="section level3">
-<h3 id="cas-dune-analyse-de-groupe-1">Cas d’une analyse de groupe<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-de-groupe-1"></a>
-</h3>
-<p>C’est dans le corps de la fonction <code><a href="../reference/diag_idea.html">diag_idea()</a></code> que cette étiquette de groupe est rajoutée, en fonction du type d’analyse demandé par l’utilisateur.</p>
 <div class="section level4">
-<h4 id="contrôle-3">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-3"></a>
+<h4 id="cas-dune-analyse-de-groupe-1">Cas d’une analyse de groupe<a class="anchor" aria-label="anchor" href="#cas-dune-analyse-de-groupe-1"></a>
 </h4>
+<p>C’est dans le corps de la fonction <code><a href="../reference/diag_idea.html">diag_idea()</a></code> que cette étiquette de groupe est rajoutée, en fonction du type d’analyse demandé par l’utilisateur.</p>
+<div class="section level5">
+<h5 id="contrôle-3">Contrôle<a class="anchor" aria-label="anchor" href="#contr%C3%B4le-3"></a>
+</h5>
 <p>Si l’objet d’entrée est de classe “<code>IDEA_group_plots</code>”, alors le second processus de traitement est enclenché, correspondant aux analyses de groupe. L’argument <code>prefix</code> est ignoré : les préfixes seront ici générés à partir du MTD_01.</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="sorties">Sorties<a class="anchor" aria-label="anchor" href="#sorties"></a>
-</h3>
+<div class="section level4">
+<h4 id="sorties">Sorties<a class="anchor" aria-label="anchor" href="#sorties"></a>
+</h4>
 <p>Les mécanismes de sorties seront ici les même que dans le cas d’une analyse individuelle, mais avec production de graphiques différents (Boxplots, Heatmap, etc.) et de rapports à la trame différente. Le dossier de sortie contiendra un sous-dossier nommé d’après la date du système, puis un sous dossier au format “Groupe_{nombre d’exploitations}”.</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="diag_idea">diag_idea()<a class="anchor" aria-label="anchor" href="#diag_idea"></a>
-</h2>
+<div class="section level3">
+<h3 id="diag_idea">diag_idea()<a class="anchor" aria-label="anchor" href="#diag_idea"></a>
+</h3>
 <p>Chacun des modules développé dans IDEATools est indépendant et fonctionnel, pouvant être utilisé dans des cadres spécifiques. L’objectif de <code><a href="../reference/diag_idea.html">diag_idea()</a></code> est d’assembler ces modules dans une fonction unique et facile d’utilisation.</p>
 <p>L’utilisateur peut y insérer un fichier, une liste de fichiers ou un répertoire de calculateurs excel ou fichiers json, puis spécifier son répertoire de sortie, le type d’analyse (individuel, multi-individuel, groupe), le type d’export (fichiers locaux en PNG, rapport) et paramétrer ces exports en termes de formats attendus.</p>
 <p>Les options sont cummulables. Si plusieurs formats de rapport sont par exemple précisés, tous les formats demandés seront produits. Il en va de même si l’analyse multi-individuelle et de groupe sont souhaitées en même temps. En revanche, il est impossible de demander une analyse de groupe sur un échantillon inférieur à 3 exploitations.</p>
@@ -721,26 +721,26 @@ Exemple de figures produites par IDEATools
           dpi <span class="op">=</span> <span class="fl">300</span>,
           quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>Selon le type d’analyse inséré, différentes procédures interne sont suivies.</p>
-<div class="section level3">
-<h3 id="analyses-individuelles">Analyses individuelles<a class="anchor" aria-label="anchor" href="#analyses-individuelles"></a>
-</h3>
+<div class="section level4">
+<h4 id="analyses-individuelles">Analyses individuelles<a class="anchor" aria-label="anchor" href="#analyses-individuelles"></a>
+</h4>
 <p>Si l’input est un fichier unique, alors un simple processus individuel sera utilisé :</p>
 <p><img src="img/pipeline_individuel.png" width="100%"></p>
 <p>Si l’<code>export_type</code> est <code>"report"</code> et/ou <code>local</code> , les résultats sont exportés dans <code>output_directory</code> , au sein d’un sous-répertoire nommé selon la date système (ainsi, l’utilisateur pourra conserver ce dossier de sortie pour toutes ses sorties IDEATools s’il le souhaite) puis dans un sous-repertoire nommé selon <code>prefix</code> .</p>
 <p>Si export_type est <code>NULL</code>, alors la dernière étape (<code><a href="../reference/write_idea.html">write_idea()</a></code>) sera omise et le résultat de <code><a href="../reference/plot_idea.html">plot_idea()</a></code> sera renvoyé.</p>
 </div>
-<div class="section level3">
-<h3 id="analyses-multi-individuelles">Analyses multi-individuelles<a class="anchor" aria-label="anchor" href="#analyses-multi-individuelles"></a>
-</h3>
+<div class="section level4">
+<h4 id="analyses-multi-individuelles">Analyses multi-individuelles<a class="anchor" aria-label="anchor" href="#analyses-multi-individuelles"></a>
+</h4>
 <p>Si l’input est une liste de fichiers et/ou un répertoire et que le type est “<code>single</code>”, alors le processus d’analyse individuelle sera répété itérativement sur chaque fichier d’entrée :</p>
 <p><img src="img/pipeline_multi_individuel.png" width="100%"></p>
 <p>Dans ce contexte d’analyse multi-individuelle, l’argument <code>prefix</code> sera ignoré et les préfixes seront définis à partir du champs <code>metadata$MTD_01</code> des données.</p>
 <p>Si l’<code>export_type</code> est <code>"report"</code> et/ou <code>local</code> , les résultats sont exportés dans <code>output_directory</code> , au sein d’un sous-répertoire nommé selon la date système, dans un sous répertoire au nom de chaque exploitation (selon <code>metadata$MTD_01</code>).</p>
 <p>Si export_type est <code>NULL</code>, alors la dernière étape (<code><a href="../reference/write_idea.html">write_idea()</a></code>) sera à chaque fois omise et les multiples sorties de <code><a href="../reference/plot_idea.html">plot_idea()</a></code> sont compilées dans une liste puis renvoyés à l’utilisateur.</p>
 </div>
-<div class="section level3">
-<h3 id="analyses-de-groupe">Analyses de groupe<a class="anchor" aria-label="anchor" href="#analyses-de-groupe"></a>
-</h3>
+<div class="section level4">
+<h4 id="analyses-de-groupe">Analyses de groupe<a class="anchor" aria-label="anchor" href="#analyses-de-groupe"></a>
+</h4>
 <p>Si l’input est une liste de fichiers et/ou un répertoire, et que le type est “<code>group</code>”, alors le processus d’import (<code>read_idea() puis compute_idea()</code> ou <code><a href="../reference/old_idea.html">old_idea()</a></code>) est répété itérativement sur chaque fichier d’entrée puis les résultats sont compilés dans un objet de classe “<code>IDEA_group_data</code>”.</p>
 <p>Cet objet est ensuite inséré dans le processus <code>plot_idea() puis write_idea()</code> qui adopteront un comportement différent, adapté à l’analyse de groupe.</p>
 <p><img src="img/pipeline_groupe.png" width="100%"></p>
@@ -770,7 +770,7 @@ Exemple de figures produites par IDEATools
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
