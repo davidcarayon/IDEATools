@@ -802,7 +802,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
       ggplot2::labs(x = "Exploitation", y = "Propri\u00e9t\u00e9", fill = "\uc9valuation") +
       theme_idea() +
-      ggplot2::theme(axis.title.y = ggplot2::element_blank())
+      ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = element_text(angle = 90,hjust = 1))
 
 
     freq_data <- heatmap_data %>%
