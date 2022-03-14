@@ -82,7 +82,7 @@ old_idea <- function(input) {
   ScaleComponent <- function(compo, value) {
     max <- reference_list$indic_dim %>%
       dplyr::filter(component_code == compo) %>%
-      dplyr::pull(max_compo) %>%
+      dplyr::pull(component_max) %>%
       unique()
     scaled_value <- ifelse(value > max, yes = max, no = value)
     if (scaled_value < 0) {
@@ -325,7 +325,6 @@ old_idea <- function(input) {
   # Custom function to simplify indicator names for joining
   simplify_indicator_name <- function(name) {
     list_indic <- reference_list$indic_dim %>%
-      dplyr::filter(level == "indicateur") %>%
       dplyr::pull(indic_code)
 
     indic <- ifelse(stringr::str_split(name, " ")[[1]][1] %in% list_indic,
@@ -344,7 +343,6 @@ old_idea <- function(input) {
   ## Node 1
 
   decision_rules <- decision_rules_total$node_1
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_1 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -355,19 +353,17 @@ old_idea <- function(input) {
   ## Node 2
 
   decision_rules <- decision_rules_total$node_2
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_2 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
     dplyr::distinct(indic, score_category) %>%
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_1) %>%
-    dplyr::inner_join(decision_rules, by = c("A14", "C5", "Diversit\u00e9 de l'organisation spatiale et temporelle"))
+    dplyr::inner_join(decision_rules, by = c("A14", "C5", "R1"))
 
   ## Node 3
 
   decision_rules <- decision_rules_total$node_3
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_3 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -378,19 +374,17 @@ old_idea <- function(input) {
   ## Node 4
 
   decision_rules <- decision_rules_total$node_4
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_4 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
     dplyr::distinct(indic, score_category) %>%
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_3) %>%
-    dplyr::inner_join(decision_rules, by = c("A2", "Diversit\u00e9 des activit\u00e9s"))
+    dplyr::inner_join(decision_rules, by = c("A2", "R3"))
 
   ## Node 5
 
   decision_rules <- decision_rules_total$node_5
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_5 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -401,19 +395,17 @@ old_idea <- function(input) {
   ## Node 6
 
   decision_rules <- decision_rules_total$node_6
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_6 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
     dplyr::distinct(indic, score_category) %>%
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_5) %>%
-    dplyr::inner_join(decision_rules, by = c("A15", "De l'outil de production"))
+    dplyr::inner_join(decision_rules, by = c("A15", "R5"))
 
   ## Node 7
 
   decision_rules <- decision_rules_total$node_7
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_7 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -421,12 +413,11 @@ old_idea <- function(input) {
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_4) %>%
     dplyr::bind_cols(node_6) %>%
-    dplyr::inner_join(decision_rules, by = c("B22", "En favorisant la diversit\u00e9", "En d\u00e9veloppant l'inertie et les capacit\u00e9s tampon"))
+    dplyr::inner_join(decision_rules, by = c("B22", "R4", "R6"))
 
   ## Node 8
 
   decision_rules <- decision_rules_total$node_8
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_8 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -437,30 +428,27 @@ old_idea <- function(input) {
   ## Node 9
 
   decision_rules <- decision_rules_total$node_9
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_9 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
     dplyr::distinct(indic, score_category) %>%
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_8) %>%
-    dplyr::inner_join(decision_rules, by = c("B16", "B18", "par l'insertion dans les r\u00e9seaux"))
+    dplyr::inner_join(decision_rules, by = c("B16", "B18", "R8"))
 
   ## Node 10
   decision_rules <- decision_rules_total$node_10
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_10 <- node_9 %>%
     dplyr::bind_cols(node_7) %>%
     dplyr::bind_cols(node_2) %>%
-    dplyr::inner_join(decision_rules, by = c("Augmenter la capacit\u00e9 d'adaptation", "R\u00e9duire la sensibilit\u00e9", "Limiter l'exposition aux al\u00e9as"))
+    dplyr::inner_join(decision_rules, by = c("R9", "R7", "R2"))
 
-  # Capacite productive et reproductive de biens et services ----------------
+  # Capacit\u00e9 productive et reproductive de biens et services ----------------
 
   ## Node 11
 
   decision_rules <- decision_rules_total$node_11
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_11 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -472,7 +460,6 @@ old_idea <- function(input) {
   ## Node 12
 
   decision_rules <- decision_rules_total$node_12
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_12 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -483,7 +470,6 @@ old_idea <- function(input) {
   ## Node 13
 
   decision_rules <- decision_rules_total$node_13
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_13 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -494,26 +480,23 @@ old_idea <- function(input) {
   ## Node 14
 
   decision_rules <- decision_rules_total$node_14
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_14 <- node_12 %>%
     dplyr::bind_cols(node_13) %>%
-    dplyr::inner_join(decision_rules, by = c("Travail", "Comp\u00e9tences et \u00e9quipements"))
+    dplyr::inner_join(decision_rules, by = c("CP2", "CP3"))
 
   ## Node 15
 
   decision_rules <- decision_rules_total$node_15
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_15 <- node_11 %>%
     dplyr::bind_cols(node_14) %>%
-    dplyr::inner_join(decision_rules, by = c("Naturelles", "Sociales et humaines"))
+    dplyr::inner_join(decision_rules, by = c("CP1", "CP4"))
 
 
   ## Node 16
 
   decision_rules <- decision_rules_total$node_16
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_16 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -524,16 +507,14 @@ old_idea <- function(input) {
   ## Node 17
 
   decision_rules <- decision_rules_total$node_17
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_17 <- node_16 %>%
     dplyr::bind_cols(node_15) %>%
-    dplyr::inner_join(decision_rules, by = c("D\u00e9velopper la capacit\u00e9 alimentaire", "Pr\u00e9server ou cr\u00e9er des ressources pour l'acte de production"))
+    dplyr::inner_join(decision_rules, by = c("CP6", "CP5"))
 
   ## Node 18
 
   decision_rules <- decision_rules_total$node_18
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_18 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -544,30 +525,27 @@ old_idea <- function(input) {
   ## Node 19
 
   decision_rules <- decision_rules_total$node_19
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_19 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
     dplyr::distinct(indic, score_category) %>%
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_18) %>%
-    dplyr::inner_join(decision_rules, by = c("C1", "C10", "Capacit\u00e9 de remboursement"))
+    dplyr::inner_join(decision_rules, by = c("C1", "C10", "CP8"))
 
   ## Node 20
 
   decision_rules <- decision_rules_total$node_20
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_20 <- node_17 %>%
     dplyr::bind_cols(node_19) %>%
-    dplyr::inner_join(decision_rules, by = c("Capacit\u00e9 \u00e0 produire dans le temps des biens et services remun\u00e9r\u00e9s", "Capacit\u00e9 \u00e0 d\u00e9gager un revenu dans le temps"))
+    dplyr::inner_join(decision_rules, by = c("CP7", "CP9"))
 
   # Autonomie ---------------------------------------------------------------
 
   ## Node 21
 
   decision_rules <- decision_rules_total$node_21
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_21 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -578,7 +556,6 @@ old_idea <- function(input) {
   ## Node 22
 
   decision_rules <- decision_rules_total$node_22
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_22 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -589,16 +566,14 @@ old_idea <- function(input) {
   ## Node 23
 
   decision_rules <- decision_rules_total$node_23
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_23 <- node_21 %>%
     dplyr::bind_cols(node_22) %>%
-    dplyr::inner_join(decision_rules, by = c("Libert\u00e9 de d\u00e9cision organisationnelle", "Libert\u00e9 de d\u00e9cision dans les relations commerciales"))
+    dplyr::inner_join(decision_rules, by = c("AU1", "AU2"))
 
   ## Node 24
 
   decision_rules <- decision_rules_total$node_24
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_24 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -609,7 +584,6 @@ old_idea <- function(input) {
   ## Node 25
 
   decision_rules <- decision_rules_total$node_25
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_25 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -620,19 +594,17 @@ old_idea <- function(input) {
   ## Node 26
 
   decision_rules <- decision_rules_total$node_26
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_26 <- node_23 %>%
     dplyr::bind_cols(node_24) %>%
     dplyr::bind_cols(node_25) %>%
-    dplyr::inner_join(decision_rules, by = c("Disposer d'une libert\u00e9 de d\u00e9cision dans ses choix de gouvernance et de production", "Disposer d'une autonomie financi\u00e8re", "Autonomie dans le processus productif"))
+    dplyr::inner_join(decision_rules, by = c("AU3", "AU4", "AU5"))
 
-  # Responsabilite Globale --------------------------------------------------
+  # Responsabilit\u00e9 Globale --------------------------------------------------
 
   ## Node 27
 
   decision_rules <- decision_rules_total$node_27
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_27 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -643,7 +615,6 @@ old_idea <- function(input) {
   ## Node 28
 
   decision_rules <- decision_rules_total$node_28
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_28 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -655,7 +626,6 @@ old_idea <- function(input) {
   ## Node 29
 
   decision_rules <- decision_rules_total$node_29
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_29 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -666,18 +636,16 @@ old_idea <- function(input) {
   ## Node 30
 
   decision_rules <- decision_rules_total$node_30
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_30 <- node_27 %>%
     dplyr::bind_cols(node_28) %>%
     dplyr::bind_cols(node_29) %>%
-    dplyr::inner_join(decision_rules, by = c("Partage et transparence des activit\u00e9s productives", "Ouverture et relation au monde non agricole", "S\u00e9curit\u00e9 alimentaire"))
+    dplyr::inner_join(decision_rules, by = c("RG1", "RG2", "RG3"))
 
 
   ## Node 31
 
   decision_rules <- decision_rules_total$node_31
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_31 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -689,7 +657,6 @@ old_idea <- function(input) {
   ## Node 32
 
   decision_rules <- decision_rules_total$node_32
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_32 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -700,16 +667,14 @@ old_idea <- function(input) {
   ## Node 33
 
   decision_rules <- decision_rules_total$node_33
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_33 <- node_32 %>%
     dplyr::bind_cols(node_31) %>%
-    dplyr::inner_join(decision_rules, by = c("Ressources \u00e9nerg\u00e9tiques et manufactur\u00e9es", "Ressources naturelles"))
+    dplyr::inner_join(decision_rules, by = c("RG6", "RG5"))
 
   ## Node 34
 
   decision_rules <- decision_rules_total$node_34
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_34 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -720,7 +685,6 @@ old_idea <- function(input) {
   ## Node 35
 
   decision_rules <- decision_rules_total$node_35
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_35 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -731,7 +695,6 @@ old_idea <- function(input) {
   ## Node 36
 
   decision_rules <- decision_rules_total$node_36
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_36 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -742,17 +705,15 @@ old_idea <- function(input) {
   ## Node 37
 
   decision_rules <- decision_rules_total$node_37
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_37 <- node_34 %>%
     dplyr::bind_cols(node_35) %>%
     dplyr::bind_cols(node_36) %>%
-    dplyr::inner_join(decision_rules, by = c("Conditions de travail de la main d'oeuvre", "Conditions de vie et de travail", "Bien \u00eatre de la vie animale"))
+    dplyr::inner_join(decision_rules,by = c("RG8", "RG9", "RG10"))
 
   ## Node 38
 
   decision_rules <- decision_rules_total$node_38
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_38 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -763,7 +724,6 @@ old_idea <- function(input) {
   ## Node 39
 
   decision_rules <- decision_rules_total$node_39
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_39 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -774,29 +734,26 @@ old_idea <- function(input) {
   ## Node 40
 
   decision_rules <- decision_rules_total$node_40
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_40 <- node_38 %>%
-    dplyr::bind_cols(node_39, by = "id_exploit") %>%
-    dplyr::inner_join(decision_rules, by = c("R\u00e9duire les \u00e9missions", "R\u00e9duire l'usage des produits polluants"))
+    dplyr::bind_cols(node_39) %>%
+    dplyr::inner_join(decision_rules, by = c("RG12", "RG13"))
 
   ## Node 41
 
   decision_rules <- decision_rules_total$node_41
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_41 <- node_30 %>%
     dplyr::bind_cols(node_33) %>%
     dplyr::bind_cols(node_37) %>%
     dplyr::bind_cols(node_40) %>%
-    dplyr::inner_join(decision_rules, by = c("Implications et engagements sociaux", "Partager \u00e9quitablement les ressources", "Contribuer \u00e0 la qualit\u00e9 de vie sur l'exploitation", "R\u00e9duire ses impacts sur la sant\u00e9 et les \u00e9cosyst\u00e8mes"))
+    dplyr::inner_join(decision_rules, by = c("RG4", "RG7", "RG11", "RG14"))
 
   # Ancrage territorial -----------------------------------------------------
 
   ## Node 42
 
   decision_rules <- decision_rules_total$node_42
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_42 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -807,7 +764,6 @@ old_idea <- function(input) {
   ## Node 43
 
   decision_rules <- decision_rules_total$node_43
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_43 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -819,7 +775,6 @@ old_idea <- function(input) {
   ## Node 44
 
   decision_rules <- decision_rules_total$node_44
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_44 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
@@ -831,24 +786,22 @@ old_idea <- function(input) {
   ## Node 45
 
   decision_rules <- decision_rules_total$node_45
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_45 <- prop_data %>%
     dplyr::filter(indic %in% names(decision_rules)) %>%
     dplyr::distinct(indic, score_category) %>%
     tidyr::spread(key = indic, value = score_category) %>%
     dplyr::bind_cols(node_44) %>%
-    dplyr::inner_join(decision_rules, by = c("B19", "B6", "Par le travail et l'emploi"))
+    dplyr::inner_join(decision_rules, by = c("B19", "B6", "AN3"))
 
   ## Node 46
 
   decision_rules <- decision_rules_total$node_46
-  names(decision_rules) <- purrr::map_chr(names(decision_rules), simplify_indicator_name)
 
   node_46 <- node_42 %>%
     dplyr::bind_cols(node_43) %>%
     dplyr::bind_cols(node_45) %>%
-    dplyr::inner_join(decision_rules, by = c("Valoriser la qualit\u00e9 territoriale", "Contribuer \u00e0 des d\u00e9marches d'\u00e9conomie circulaire", "S'inscrire dans des d\u00e9marches de territoire"))
+    dplyr::inner_join(decision_rules, by = c("AN1", "AN2", "AN4"))
 
 
   ## Final node
