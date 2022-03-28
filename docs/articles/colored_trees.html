@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.1.1</span>
       </span>
     </div>
 
@@ -58,7 +60,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-book"></span>
      
     Articles
@@ -90,13 +92,13 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/davidcarayon/IDEATools">
+  <a href="https://github.com/davidcarayon/IDEATools" class="external-link">
     <span class="fa fa-github"></span>
      
   </a>
 </li>
 <li>
-  <a href="https://methode-idea.org/">
+  <a href="https://methode-idea.org/" class="external-link">
     <span class="fa fa-info"></span>
      
   </a>
@@ -111,7 +113,7 @@
 
       
 
-      </header><script src="colored_trees_files/header-attrs-2.11/header-attrs.js"></script><script src="colored_trees_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>About the colored property trees</h1>
@@ -124,24 +126,24 @@
 
     
     
-<div id="new-version-starting-with-ideatools-3-0-0" class="section level2">
-<h2 class="hasAnchor">
-<a href="#new-version-starting-with-ideatools-3-0-0" class="anchor"></a>New version (starting with IDEATools 3.0.0)</h2>
+<div class="section level2">
+<h2 id="new-version-starting-with-ideatools-3-0-0">New version (starting with IDEATools 3.0.0)<a class="anchor" aria-label="anchor" href="#new-version-starting-with-ideatools-3-0-0"></a>
+</h2>
 <p>Instead of using SVG RAW code (which could be tricky when one needed to modify some elements), a new approach only using the {ggplot2} package (along with the {ggtext} extension) was developped.</p>
 <p><img src="img/ex_robustesse.png" width="100%"></p>
 <p>This approach is based on simple and reproducible ggplot syntax and based on a few reference dataframes containing coordinates for lines and boxes (nodes) which are stored in the package as internal data that can be exported on your computer by using :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/show_tree_structure.html">show_tree_structure</a></span><span class="op">(</span><span class="st">"my_directory"</span><span class="op">)</span></code></pre></div>
-<div id="how-can-i-modify-translate-the-colored-trees" class="section level3">
-<h3 class="hasAnchor">
-<a href="#how-can-i-modify-translate-the-colored-trees" class="anchor"></a>How can I modify / translate the colored trees ?</h3>
+<div class="section level3">
+<h3 id="how-can-i-modify-translate-the-colored-trees">How can I modify / translate the colored trees ?<a class="anchor" aria-label="anchor" href="#how-can-i-modify-translate-the-colored-trees"></a>
+</h3>
 <p>The node labels used in the source code which produces the colored trees are found in another internal object, <code>reference_list</code>, which is a list gathering several tibbles with reference info. By modifying the <code>name</code> attribute in <code>$indic_dim</code>, <code>$indic_prop</code> and <code>$properties_nodes</code>, you can translate the colored trees which will be produced.</p>
 <p>While this requires to modify IDEATools’s source code, the option to pass an external .xlsx file to replace the node labels is currently under developement.</p>
 </div>
 </div>
-<div id="previous-version" class="section level2">
-<h2 class="hasAnchor">
-<a href="#previous-version" class="anchor"></a>Previous version</h2>
+<div class="section level2">
+<h2 id="previous-version">Previous version<a class="anchor" aria-label="anchor" href="#previous-version"></a>
+</h2>
 <p>The algorithm for producing colored trees wa the result of a long work involving the testing of many methods and R packages. The first the solution chosen was to draw the models in “white” on a vectorial drawing software (Inkscape) in svg format. SVG is a markup language (similar to XML or HTML) with which it is fairly easy to apply search and replace algorithms. A rectangle tag (corresponding to a node of the illuminated tree) can be written :</p>
 <pre><code>&lt;rect
        style="fill:#ffffff;fill-opacity:1;stroke:#001800;stroke-width:0.1"
@@ -153,7 +155,7 @@
        inkscape:label="#rect2-16" /&gt;</code></pre>
 <p>So all we had to do was find the tag for each rectangle, assign each rectangle identifier to its corresponding indicator, then we can search-replace the argument “fill:#ffffff” by the appropriate color corresponding to the evaluation :</p>
 <p><img src="img/cap_canvas.png" width="100%"></p>
-<p>IDEATools then converted this modified SVG source code to a proper PNG/PDF image using the <a href="https://github.com/jeroen/rsvg#readme">rsvg</a> library.</p>
+<p>IDEATools then converted this modified SVG source code to a proper PNG/PDF image using the <a href="https://github.com/jeroen/rsvg" class="external-link">rsvg</a> library.</p>
 <p>The templates were stored as internal object R named “canvas”. It was a list containing in each element the complete SVG source code of each template.</p>
 </div>
   </div>
@@ -169,11 +171,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by David Carayon.</p>
+  <p></p>
+<p>Developed by David Carayon.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -181,6 +185,8 @@
 
   
 
+
+  
 
   </body>
 </html>

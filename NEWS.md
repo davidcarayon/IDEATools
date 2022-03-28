@@ -1,3 +1,7 @@
+# IDEATools 3.1.1
+
+* Added a new internal function, compile_diag()
+
 # IDEATools 3.1.0
 
 * Changed default font for PDF reports

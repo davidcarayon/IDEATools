@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.1.1</span>
       </span>
     </div>
 
@@ -58,7 +60,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-book"></span>
      
     Articles
@@ -90,13 +92,13 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/davidcarayon/IDEATools">
+  <a href="https://github.com/davidcarayon/IDEATools" class="external-link">
     <span class="fa fa-github"></span>
      
   </a>
 </li>
 <li>
-  <a href="https://methode-idea.org/">
+  <a href="https://methode-idea.org/" class="external-link">
     <span class="fa fa-info"></span>
      
   </a>
@@ -114,34 +116,33 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="ideatools-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#ideatools-" class="anchor"></a>IDEATools <img src="reference/figures/logo.png" align="right" height="139">
+<div class="section level1">
+<div class="page-header"><h1 id="ideatools-">IDEATools <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#ideatools-"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l’automatisation et le reporting de diagnostics IDEA.</p>
 </div>
-<div id="installation--prérequis" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation--pr%C3%A9requis" class="anchor"></a>Installation &amp; Prérequis</h1>
+<div class="section level1">
+<h1 id="installation--prérequis">Installation &amp; Prérequis<a class="anchor" aria-label="anchor" href="#installation--pr%C3%A9requis"></a>
+</h1>
 <p>En attendant sa publication officielle sur le CRAN, vous pouvez télécharger et utiliser la version en cours de développement depuis GitHub avec :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
-<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package <a href="https://remotes.r-lib.org">remotes</a>, puisque l’installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a></em></p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
+<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package <a href="https://remotes.r-lib.org" class="external-link">remotes</a>, puisque l’installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></em></p>
 <p>Une fois installé, vous pouvez charger le package avec :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></code></pre></div>
-<div id="prérequis-pour-la-production-de-rapports" class="section level2">
-<h2 class="hasAnchor">
-<a href="#pr%C3%A9requis-pour-la-production-de-rapports" class="anchor"></a>Prérequis pour la production de rapports</h2>
-<p>Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html">tinytex::install_tinytex()</a></code> pour installer une version minimale de LaTeX vous permettant d’éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n’avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).</p>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="prérequis-pour-la-production-de-rapports">Prérequis pour la production de rapports<a class="anchor" aria-label="anchor" href="#pr%C3%A9requis-pour-la-production-de-rapports"></a>
+</h2>
+<p>Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">tinytex::install_tinytex()</a></code> pour installer une version minimale de LaTeX vous permettant d’éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n’avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).</p>
 </div>
 </div>
-<div id="utilisation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#utilisation" class="anchor"></a>Utilisation</h1>
+<div class="section level1">
+<h1 id="utilisation">Utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
+</h1>
 <p>Au total, 5 fonctions ou “modules” ont été développés dans ce package, allant de l’import des données d’un calculateur à la production de graphiques puis à la productions de produits de reporting (PDF, Excel, etc.) :</p>
 <ul>
 <li>
@@ -181,82 +182,82 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
           <span class="va">output_directory</span>,
-          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,
-          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,
-          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,
-          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,
+          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,
+          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,
+          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,
+          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,
           prefix <span class="op">=</span> <span class="st">"EA"</span>,
           dpi <span class="op">=</span> <span class="fl">300</span>,
           quiet <span class="op">=</span> <span class="cn">FALSE</span>,
           append <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><em>Pour information, les utilisateurs les moins habitués à l’écosystème R peuvent utiliser les commandes suivantes (à condition d’utiliser RStudio) pour sélectionner les dossier/fichiers via une fenêtre en presse-bouton:</em></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html">selectDirectory</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span>
+<code class="sourceCode R"><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span>
 <span class="co"># OU</span>
-<span class="va">input</span><span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html">selectFile</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span>
+<span class="va">input</span><span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectFile</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span>
 
-<span class="va">output_directory</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html">selectDirectory</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="va">output_directory</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>On distingue 3 grands types de diagnostics :</p>
-<div id="les-analyses-individuelles" class="section level2">
-<h2 class="hasAnchor">
-<a href="#les-analyses-individuelles" class="anchor"></a>Les analyses individuelles</h2>
+<div class="section level2">
+<h2 id="les-analyses-individuelles">Les analyses individuelles<a class="anchor" aria-label="anchor" href="#les-analyses-individuelles"></a>
+</h2>
 <p>En premier lieu, l’utilisateur peut avoir besoin d’un diagnostic pour une seule ferme. Prennons ici l’exemple d’utilisateur qui souhaite récupérer ses résultats pour sa ferme, mais uniquement ses arbres éclairés. Le code sera alors :</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">diag_idea</span>(<span class="dt">input =</span> <span class="st">"chemin_calculateur"</span>,</span>
-<span id="cb5-2"><a href="#cb5-2"></a>          <span class="dt">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3"></a>          <span class="dt">type =</span> <span class="st">"single"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4"></a>          <span class="dt">export_type =</span> <span class="st">"local"</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>          <span class="dt">prefix =</span> <span class="st">"MaFerme"</span>,</span>
-<span id="cb5-6"><a href="#cb5-6"></a>          <span class="dt">plot_choices =</span> <span class="st">"trees"</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>          <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_calculateur"</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="st">"single"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">export_type =</span> <span class="st">"local"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">prefix =</span> <span class="st">"MaFerme"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot_choices =</span> <span class="st">"trees"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 </div>
-<div id="les-analyses-multi-individuelles" class="section level2">
-<h2 class="hasAnchor">
-<a href="#les-analyses-multi-individuelles" class="anchor"></a>Les analyses multi-individuelles</h2>
+<div class="section level2">
+<h2 id="les-analyses-multi-individuelles">Les analyses multi-individuelles<a class="anchor" aria-label="anchor" href="#les-analyses-multi-individuelles"></a>
+</h2>
 <p>Ensuite, certains utilisateurs ont besoin de traiter plusieurs calculateurs en même temps.</p>
 <p>Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais a juste besoin pour chaque exploitation d’un rapport au format word qu’il pourra commenter ainsi qu’une présentation powerpoint contenant toutes les figures et prête à projeter. Le code sera alors :</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">diag_idea</span>(<span class="dt">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
-<span id="cb6-2"><a href="#cb6-2"></a>          <span class="dt">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3"></a>          <span class="dt">type =</span> <span class="st">"single"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4"></a>          <span class="dt">export_type =</span> <span class="st">"report"</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>          <span class="dt">report_format =</span> <span class="kw">c</span>(<span class="st">"docx"</span>,<span class="st">"pptx"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6"></a>          <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="st">"single"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">export_type =</span> <span class="st">"report"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">report_format =</span> <span class="fu">c</span>(<span class="st">"docx"</span>,<span class="st">"pptx"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 </div>
-<div id="les-analyses-de-groupe" class="section level2">
-<h2 class="hasAnchor">
-<a href="#les-analyses-de-groupe" class="anchor"></a>Les analyses de groupe</h2>
+<div class="section level2">
+<h2 id="les-analyses-de-groupe">Les analyses de groupe<a class="anchor" aria-label="anchor" href="#les-analyses-de-groupe"></a>
+</h2>
 <p>Enfin, certains utilisateurs souhaitent traiter un ensemble de calculateurs en même temps et ont besoin d’avoir une vision globale sur le groupe.</p>
 <p>Dans cet exemple, l’utilisateur va donc demander à la fois des graphiques bruts, mais aussi des rapports prêts à être imprimés (PDF) ainsi qu’un support excel qu’il pourra re-traiter à sa guise pour son analyse de group. Le code sera alors :</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">diag_idea</span>(<span class="dt">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
-<span id="cb7-2"><a href="#cb7-2"></a>          <span class="dt">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3"></a>          <span class="dt">type =</span> <span class="st">"group"</span>,</span>
-<span id="cb7-4"><a href="#cb7-4"></a>          <span class="dt">export_type =</span> <span class="kw">c</span>(<span class="st">"report"</span>,<span class="st">"local"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5"></a>          <span class="dt">report_format =</span> <span class="kw">c</span>(<span class="st">"pdf"</span>,<span class="st">"xlsx"</span>)</span>
-<span id="cb7-6"><a href="#cb7-6"></a>          <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="st">"group"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">export_type =</span> <span class="fu">c</span>(<span class="st">"report"</span>,<span class="st">"local"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">report_format =</span> <span class="fu">c</span>(<span class="st">"pdf"</span>,<span class="st">"xlsx"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Notons qu’il peut demander, en plus de son analyse de groupe, des rapports individuels qu’il pourra donner à chaque exploitation (par exemple au format Libreoffice ODT) :</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">diag_idea</span>(<span class="dt">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
-<span id="cb8-2"><a href="#cb8-2"></a>          <span class="dt">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
-<span id="cb8-3"><a href="#cb8-3"></a>          <span class="dt">type =</span> <span class="kw">c</span>(<span class="st">"group"</span>,<span class="st">"single"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4"></a>          <span class="dt">export_type =</span> <span class="kw">c</span>(<span class="st">"report"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5"></a>          <span class="dt">report_format =</span> <span class="kw">c</span>(<span class="st">"odt"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6"></a>          <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"group"</span>,<span class="st">"single"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">export_type =</span> <span class="fu">c</span>(<span class="st">"report"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">report_format =</span> <span class="fu">c</span>(<span class="st">"odt"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p><strong>Note : Une analyse de groupe nécessite un nombre d’exploitations au moins égal à 3.</strong></p>
 </div>
 </div>
-<div id="contact" class="section level1">
-<h1 class="hasAnchor">
-<a href="#contact" class="anchor"></a>Contact</h1>
-<div data-align="center">
-<p>   <span class="emoji" data-emoji="e-mail">📧</span> <a href="mailto:david.carayon@inrae.fr">Email</a>   |   :speech_balloon: <a href="https://twitter.com/david_carayon">Twitter</a>   |   <span class="emoji" data-emoji="necktie">👔</span> <a href="https://www.linkedin.com/in/carayon-david/">LinkedIn</a></p>
+<div class="section level1">
+<h1 id="contact">Contact<a class="anchor" aria-label="anchor" href="#contact"></a>
+</h1>
+<div align="center">
+<p>   <span class="emoji" data-emoji="e-mail">📧</span> <a href="mailto:david.carayon@inrae.fr">Email</a>   |   <span class="emoji" data-emoji="speech_balloon">💬</span> <a href="https://twitter.com/david_carayon" class="external-link">Twitter</a>   |   <span class="emoji" data-emoji="necktie">👔</span> <a href="https://www.linkedin.com/in/carayon-david/" class="external-link">LinkedIn</a></p>
 <!--
 Quick Link
 -->
 </div>
 </div>
-<div id="références" class="section level1">
-<h1 class="hasAnchor">
-<a href="#r%C3%A9f%C3%A9rences" class="anchor"></a>Références</h1>
+<div class="section level1">
+<h1 id="références">Références<a class="anchor" aria-label="anchor" href="#r%C3%A9f%C3%A9rences"></a>
+</h1>
 <p>Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif pour le calcul, l’automatisation et l’exploitation de données IDEA4. R package version 2.0.</p>
-<p>Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M., Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V., Menet A., Redlingshofer B., 2019, Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel mobilisant dimensions et propriétés de la durabilité, Cahiers Agricultures, 28, 5, <a href="https://doi.org/10.1051/cagri/2019004" class="uri">https://doi.org/10.1051/cagri/2019004</a>.</p>
+<p>Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M., Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V., Menet A., Redlingshofer B., 2019, Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel mobilisant dimensions et propriétés de la durabilité, Cahiers Agricultures, 28, 5, <a href="https://doi.org/10.1051/cagri/2019004" class="external-link uri">https://doi.org/10.1051/cagri/2019004</a>.</p>
 <p>Zahm et al. (2019). “Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel combinant dimensions et propriétés de la durabilité” in Cahiers Agricultures, 8(5):1-10.</p>
 </div>
 
@@ -264,38 +265,50 @@ Quick Link
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>David Carayon <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-0217-2175" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle:experimental"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.0.2-orange.svg?style=flat-square" alt="packageversion"></a></li>
-<li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
-<li><a href="https://github.com/davidcarayon/IDEATools/actions"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="authors.html#citation">Citing IDEATools</a></li>
 </ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>David Carayon <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-0217-2175" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle:experimental"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.1.1-orange.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
+<li><a href="https://github.com/davidcarayon/IDEATools/actions" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by David Carayon.</p>
+  <p></p>
+<p>Developed by David Carayon.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -303,6 +316,8 @@ Quick Link
 
   
 
+
+  
 
   </body>
 </html>

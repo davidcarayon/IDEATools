@@ -46,6 +46,7 @@ reference:
   desc: "Other miscellaneous functions"
 - contents:
   - jsonify
+  - compile_diag
   - theme_idea
   - show_decision_rules
   - show_tree_structure

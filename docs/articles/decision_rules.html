@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.1.1</span>
       </span>
     </div>
 
@@ -58,7 +60,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-book"></span>
      
     Articles
@@ -90,13 +92,13 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/davidcarayon/IDEATools">
+  <a href="https://github.com/davidcarayon/IDEATools" class="external-link">
     <span class="fa fa-github"></span>
      
   </a>
 </li>
 <li>
-  <a href="https://methode-idea.org/">
+  <a href="https://methode-idea.org/" class="external-link">
     <span class="fa fa-info"></span>
      
   </a>
@@ -111,7 +113,7 @@
 
       
 
-      </header><script src="decision_rules_files/header-attrs-2.11/header-attrs.js"></script><script src="decision_rules_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>About decision rules</h1>
@@ -129,9 +131,9 @@
 <p>In IDEATools, the decision rules are stored in an internal object named <code>decision_rules_total</code>. This list can be easily exported in the directory of your choice as an excel file using the internal function :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/show_decision_rules.html">show_decision_rules</a></span><span class="op">(</span><span class="st">"my_directory"</span><span class="op">)</span></code></pre></div>
-<div id="decision-rules-for-the-dimensions-approach" class="section level2">
-<h2 class="hasAnchor">
-<a href="#decision-rules-for-the-dimensions-approach" class="anchor"></a>Decision rules for the Dimensions approach</h2>
+<div class="section level2">
+<h2 id="decision-rules-for-the-dimensions-approach">Decision rules for the Dimensions approach<a class="anchor" aria-label="anchor" href="#decision-rules-for-the-dimensions-approach"></a>
+</h2>
 <p>In the majority of cases, each indicator value can be obtained as the sum of all items related to this indicator. However, there are a few exceptions :</p>
 <table class="table">
 <thead><tr class="header">
@@ -233,10 +235,10 @@
 </tbody>
 </table>
 </div>
-<div id="decision-rules-for-the-properties-approach" class="section level2">
-<h2 class="hasAnchor">
-<a href="#decision-rules-for-the-properties-approach" class="anchor"></a>Decision rules for the Properties approach</h2>
-<p>For the properties approach, the decision rules are 46 data frames giving the evaluation for each node depending on the previous leaves and nodes, named with the pattern “node_xx”, based on this numeration of the heuristic tree (see <a href="https://doi.org/10.1051/cagri/2019004">Zahm et al., 2019</a>) :</p>
+<div class="section level2">
+<h2 id="decision-rules-for-the-properties-approach">Decision rules for the Properties approach<a class="anchor" aria-label="anchor" href="#decision-rules-for-the-properties-approach"></a>
+</h2>
+<p>For the properties approach, the decision rules are 46 data frames giving the evaluation for each node depending on the previous leaves and nodes, named with the pattern “node_xx”, based on this numeration of the heuristic tree (see <a href="https://doi.org/10.1051/cagri/2019004" class="external-link">Zahm et al., 2019</a>) :</p>
 <p><img src="img/heuristic_numbers.png" width="100%"></p>
 </div>
   </div>
@@ -252,11 +254,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by David Carayon.</p>
+  <p></p>
+<p>Developed by David Carayon.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -264,6 +268,8 @@
 
   
 
+
+  
 
   </body>
 </html>

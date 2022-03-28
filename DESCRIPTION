@@ -1,6 +1,6 @@
 Package: IDEATools
 Title: A Collection of Tools Dedicated to the IDEA4 Method
-Version: 3.1.0
+Version: 3.1.1
 Authors@R: 
     person(given = "David",
            family = "Carayon",
@@ -41,5 +41,4 @@ Depends:
     R (>= 2.10)
 VignetteBuilder: knitr
 Suggests: 
-    covr,
     scales

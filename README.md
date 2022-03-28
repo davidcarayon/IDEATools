@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.0.2-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.1.1-orange.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
@@ -56,15 +56,15 @@ allant de l’import des données d’un calculateur à la production de
 graphiques puis à la productions de produits de reporting (PDF, Excel,
 etc.) :
 
-  - `read_idea()` : Permet d’identifier la validité du fichier d’entrée
+-   `read_idea()` : Permet d’identifier la validité du fichier d’entrée
     et d’en extraire métadonnées et items.
-  - `compute_idea()` : Calcule les
+-   `compute_idea()` : Calcule les
     indicateurs/composantes/dimensions/propriétés à partir des items
-  - `old_idea()` : Alternative aux deux fonctions précédentes si le
+-   `old_idea()` : Alternative aux deux fonctions précédentes si le
     calculateur est trop ancien (vise les indicateurs plutôt que les
     items)
-  - `plot_idea()` : Produit les graphiques dimensions / propriétés
-  - `write_idea()` : Export des graphiques sous forme brute ou sous
+-   `plot_idea()` : Produit les graphiques dimensions / propriétés
+-   `write_idea()` : Export des graphiques sous forme brute ou sous
     forme de rapports aux formats variés.
 
 Afin de simplifier l’utilisation du package, une fonction globale
@@ -73,21 +73,21 @@ de l’utilisateur, les modules d’IDEATools vont être appelés
 séquentiellement afin de produire les résultats demandés. L’utilisateur
 peut notamment paramétrer :
 
-  - Le fichier/dossier d’entrée des données `input`
-  - Le dossier de sortie des résultats `output_directory`
-  - Le type d’analyse (individuelle ou de groupe) `type`
-  - Le type de sorties (rapport et/ou graphiques bruts) `export_type`
-  - Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
+-   Le fichier/dossier d’entrée des données `input`
+-   Le dossier de sortie des résultats `output_directory`
+-   Le type d’analyse (individuelle ou de groupe) `type`
+-   Le type de sorties (rapport et/ou graphiques bruts) `export_type`
+-   Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
     `plot_choices`
-  - Le format de sortie du rapport si désiré (au choix : pdf, docx, odt,
+-   Le format de sortie du rapport si désiré (au choix : pdf, docx, odt,
     pptx, xlsx) `report_format`
-  - Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
+-   Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
     ferme) dans le cas d’une analyse individuelle `prefix`
-  - La résolution de sortie des graphiques (impacte notamment le poids
+-   La résolution de sortie des graphiques (impacte notamment le poids
     des sorties) `dpi`
-  - Si l’algorithme doit afficher sa progression dans la console.
+-   Si l’algorithme doit afficher sa progression dans la console.
     `quiet`
-  - (*nouveau*) Dans le cas particulier ou un calculateur au format
+-   (*nouveau*) Dans le cas particulier ou un calculateur au format
     .xlsx est inséré et qu’un rapport individuel au format xlsx est
     demandé, `append` paramétré en TRUE permet de coller les onglets de
     résultats à la suite des onglets du calculateur initial, créant
@@ -198,11 +198,11 @@ moins égal à 3.**
 
 # Contact
 
-<div data-align="center">
+<div align="center">
 
    :e-mail:
-[Email](mailto:david.carayon@inrae.fr)   |   :speech\_balloon:
-[Twitter](https://twitter.com/david_carayon)   |   :necktie:
+[Email](mailto:david.carayon@inrae.fr)   \|   :speech_balloon:
+[Twitter](https://twitter.com/david_carayon)   \|   :necktie:
 [LinkedIn](https://www.linkedin.com/in/carayon-david/)
 
 <!--
