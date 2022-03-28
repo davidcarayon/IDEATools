@@ -328,6 +328,7 @@ compile_diag <- function(input_dir, perfecto_path) {
   } else {
 
     items <- item_df %>%
+      dplyr::arrange(item) %>%
       tidyr::pivot_wider(names_from = item, values_from = value)%>%
       dplyr::rowwise() %>%
       dplyr::mutate(id_number = as.numeric(stringr::str_split(id_exploit,"-")[[1]][2])) %>%
