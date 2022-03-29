@@ -328,7 +328,10 @@ compile_diag <- function(input_dir, perfecto_path) {
   } else {
 
     items <- item_df %>%
-      dplyr::arrange(item) %>%
+      dplyr::mutate(item_no = readr::parse_number(item),
+                    item_name = stringr::str_extract(item,"[a-zA-Z]+")) %>%
+      dplyr::arrange(item_name,item_no) %>%
+      dplyr::select(-item_name,-item_no) %>%
       tidyr::pivot_wider(names_from = item, values_from = value)%>%
       dplyr::rowwise() %>%
       dplyr::mutate(id_number = as.numeric(stringr::str_split(id_exploit,"-")[[1]][2])) %>%
