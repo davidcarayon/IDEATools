@@ -22,7 +22,7 @@ IDEAdata <- IDEA_plots$data
 outdir <- params$outdir
 prefix = params$prefix
 
-write_idea(IDEA_plots, output_directory = outdir, type = "local", prefix = prefix, quiet = TRUE)
+IDEATools::write_idea(IDEA_plots, output_directory = outdir, type = "local", prefix = prefix, quiet = TRUE)
 ```
 
 

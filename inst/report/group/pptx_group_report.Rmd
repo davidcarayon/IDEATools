@@ -29,7 +29,7 @@ IDEAdata <- IDEA_plots$data
 metadata <- IDEAdata$metadata
 n_farm <- nrow(metadata)
 
-write_idea(IDEA_plots,output_directory = outdir, type = "local", dpi = params$dpi, quiet = TRUE)
+IDEATools::write_idea(IDEA_plots,output_directory = outdir, type = "local", dpi = params$dpi, quiet = TRUE)
 ```
 
 ## Lecture de la durabilité : approche par les trois dimensions de la durabilité
