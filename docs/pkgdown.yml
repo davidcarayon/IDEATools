@@ -1,4 +1,4 @@
-pandoc: 2.14.0.3
+pandoc: 2.17.1.1
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
@@ -6,5 +6,5 @@ articles:
   decision_rules: decision_rules.html
   ideatools_advanced_fr: ideatools_advanced_fr.html
   utils: utils.html
-last_built: 2022-03-28T13:54Z
+last_built: 2022-05-09T09:38Z
 

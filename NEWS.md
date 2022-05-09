@@ -1,3 +1,12 @@
+# IDEATools 3.2.0
+
+* Update to jsonify() function to an R object output by default
+* New PDF reports with branded first pages
+* Update to README asking for the `Helvetica` font
+* Added facets to individual components graph
+* Update to DPI argument to make it relevant
+
+
 # IDEATools 3.1.1
 
 * Added a new internal function, compile_diag()

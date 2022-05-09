@@ -113,8 +113,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           dplyr::mutate(plotname = dplyr::recode(plotname, "plot_dimensions" = "Dimensions", "plot_components" = "Composantes", "plot_components_polarised" = "Composantes polaris\u00e9es", "plot_indic_st" = "Indicateurs Socio-Territoriaux", "plot_indic_ec" = "Indicateurs Economiques", "plot_indic_ae" = "Indicateurs Agro\u00e9cologiques")) %>%
           dplyr::mutate(prefix = prefix) %>%
           dplyr::mutate(
-            widths = c(9.11, 13.69, 8, 10.69, 10.69, 10.69),
-            heights = c(5.6, 10.5, 8, 12, 13.5, 9)
+            widths = c(9.11, 11, 8, 10.69, 10.69, 10.69),
+            heights = c(5.6, 11.5, 8, 12, 13.5, 9)
           ) %>%
           dplyr::mutate(folder = dimension_directory) %>%
           dplyr::mutate(path = file.path(dimension_directory, glue::glue("{prefix}_{plotname}"))) %>%
@@ -545,9 +545,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         # Defining params
         params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          dpi = dpi
+          data = IDEA_plots
         )
 
         output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")

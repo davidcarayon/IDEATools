@@ -5,11 +5,12 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.1.1-orange.svg?style=flat-square)](commits/master)
+[![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.2.0-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
+
 <!-- badges: end -->
 
 IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
@@ -41,13 +42,17 @@ library(IDEATools)
 
 ## Prérequis pour la production de rapports
 
-Pour la production de rapport PDF, une installation de LaTeX est
-requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la
-fonction `tinytex::install_tinytex()` pour installer une version
-minimale de LaTeX vous permettant d’éditer des rapports au format PDF en
-utilisant le package IDEATools. Une fois installé, vous n’avez plus
-besoin de vous soucier de LaTeX (opération à réaliser seulement lors de
-la première utilisation).
+-   Pour la production de rapport PDF, une installation de LaTeX est
+    requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser
+    la fonction `tinytex::install_tinytex()` pour installer une version
+    minimale de LaTeX vous permettant d’éditer des rapports au format
+    PDF en utilisant le package IDEATools. Une fois installé, vous
+    n’avez plus besoin de vous soucier de LaTeX (opération à réaliser
+    seulement lors de la première utilisation).
+
+-   Les rapports PDF utilisent (et nécessitent donc impérativement) la
+    police `Helvetica`. Il est donc important de l’avoir installée sur
+    votre machine.
 
 # Utilisation
 

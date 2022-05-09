@@ -2,6 +2,7 @@
 #'
 #' @param input the directory containing the xls/xlsx files to convert
 #' @param output the directory where the json files will be created
+#' @param write should the output be written in output or returned as an R object ?
 #'
 #' @return a list of json files exported to the output directory
 #'
@@ -13,7 +14,7 @@
 #' @importFrom stringr str_remove_all str_remove
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom tools file_path_sans_ext
-jsonify <- function(input, output) {
+jsonify <- function(input, output, write = FALSE) {
 
   # Collecte des calculateurs dans le dossier input ------------------------------------
   calcs <- list.files(input)
@@ -256,10 +257,18 @@ jsonify <- function(input, output) {
 
     file <- jsonlite::toJSON(output_data, pretty = TRUE,auto_unbox = TRUE)
 
-    ## Export du fichier
-    if(!dir.exists(output)) {dir.create(output)}
-    write(file, paste0(output,"/",tools::file_path_sans_ext(i),".json"))
-    cli::cli_alert_success("OK\n")
+
+    if(write){
+      ## Export du fichier
+      if(!dir.exists(output)) {dir.create(output)}
+      write(file, paste0(output,"/",tools::file_path_sans_ext(i),".json"))
+      cli::cli_alert_success("OK\n")
+    } else {
+
+      return(file)
+
+    }
+
 
   }
 

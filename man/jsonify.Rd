@@ -4,12 +4,14 @@
 \alias{jsonify}
 \title{Convert IDEA excel files to json}
 \usage{
-jsonify(input, output)
+jsonify(input, output, write = FALSE)
 }
 \arguments{
 \item{input}{the directory containing the xls/xlsx files to convert}
 
 \item{output}{the directory where the json files will be created}
+
+\item{write}{should the output be written in output or returned as an R object ?}
 }
 \value{
 a list of json files exported to the output directory

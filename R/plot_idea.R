@@ -118,6 +118,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
 
+      lbl_dim <- reference_list$indic_dim %>% dplyr::select(dim = dimension,dimension_code) %>% unique()
+
       ## Components dataset
       res_compo <- IDEA_data$dataset %>%
         dplyr::inner_join(reference_list$indic_dim, by = c("dimension_code","component_code")) %>%
@@ -128,7 +130,11 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         dplyr::mutate(component = factor(component, levels = rev(component))) %>%
         dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
                                                    dimension_code == "B" ~ vec_colors["B"],
-                                                   dimension_code == "C" ~ vec_colors["C"]))
+                                                   dimension_code == "C" ~ vec_colors["C"])) %>%
+        dplyr::inner_join(res_dim, by = c("dimension_code","dimension")) %>%
+        dplyr::inner_join(lbl_dim,  by = "dimension_code") %>%
+        dplyr::mutate(facet_label = paste0("Dimension ",dim," (",dimension_value,"/100)")) %>%
+        dplyr::mutate(facet_label = factor(facet_label, levels = unique(facet_label)))
 
       ## Plot for components
       plot_components <- ggplot2::ggplot(res_compo, ggplot2::aes(
@@ -143,11 +149,12 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
                           color = "black",
                           position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
+        ggplot2::facet_wrap(~facet_label, scales = "free", ncol = 1) +
         ggplot2::geom_label(ggplot2::aes(label = paste0(component_value, "/", component_max)), fill = "white", size = 5.5) +
         ggplot2::scale_fill_identity("Dimension", labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"), guide = "legend") +
         theme_idea(base_size = 16) +
         ggplot2::theme(axis.title = ggplot2::element_blank()) +
-        ggplot2::theme(panel.grid = ggplot2::element_blank()) +
+        ggplot2::theme(panel.grid = ggplot2::element_blank(), strip.text = ggplot2::element_text(size = 18)) +
         ggplot2::labs(fill = "Dimension", y = "Valeur de la composante / valeur max") +
         ggplot2::theme(legend.position = "bottom") +
         ggplot2::coord_flip()
@@ -265,7 +272,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ) +
         ggplot2::guides(fill = "none")
 
-        ggplot2::ggsave(temp_pdf,plot = donut, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
+      ggplot2::ggsave(temp_pdf,plot = donut, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
 
 
       ## Preparing surrounding donut
@@ -800,7 +807,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = result)) +
       ggplot2::geom_tile(color = "black") +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
-      ggplot2::labs(x = "Exploitation", y = "Propri\u00e9t\u00e9", fill = "\uc9valuation") +
+      ggplot2::labs(x = "Exploitations agricoles", y = "Propri\u00e9t\u00e9", fill = "\uc9valuation") +
       theme_idea() +
       ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = element_text(angle = 90,hjust = 1))
 
@@ -815,7 +822,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       dplyr::mutate(result = factor(result, levels = c("#CD0000","#FF6347","#33FF00","#008B00")))
 
 
-      freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = result)) +
+    freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = result)) +
       ggplot2::geom_col(position = "stack", color ="black") +
       ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5)) +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
@@ -864,7 +871,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::scale_fill_identity("Dimension", labels = c("Economique","Socio-Territoriale","Agro\u00e9cologique"), guide = guide_legend(reverse = TRUE)) +
       theme_idea() +
       ggplot2::ylim(0, 300) +
-      ggplot2::labs(x = "Exploitation", y = "Score", fill = "Dimension") +
+      ggplot2::labs(x = "Exploitations agricoles", y = "Score", fill = "Dimension") +
       ggplot2::coord_flip()
 
     # Boxplots ----------------------------------------------------------------

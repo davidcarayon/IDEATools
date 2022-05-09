@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -117,68 +117,113 @@
   <div class="contents col-md-9">
 
 <div class="section level1">
-<div class="page-header"><h1 id="ideatools-">IDEATools <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#ideatools-"></a>
+<div class="page-header"><h1 id="ideatools-">IDEATools
+<img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#ideatools-"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l’automatisation et le reporting de diagnostics IDEA.</p>
+<!-- badges: end -->
+<p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
+aux utilisateurs des outils pour le traitement, l’automatisation et le
+reporting de diagnostics IDEA.</p>
 </div>
 <div class="section level1">
 <h1 id="installation--prérequis">Installation &amp; Prérequis<a class="anchor" aria-label="anchor" href="#installation--pr%C3%A9requis"></a>
 </h1>
-<p>En attendant sa publication officielle sur le CRAN, vous pouvez télécharger et utiliser la version en cours de développement depuis GitHub avec :</p>
+<p>En attendant sa publication officielle sur le CRAN, vous pouvez
+télécharger et utiliser la version en cours de développement depuis
+GitHub avec :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
-<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package <a href="https://remotes.r-lib.org" class="external-link">remotes</a>, puisque l’installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></em></p>
+<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines
+Windows pour pouvoir installer le package <a href="https://remotes.r-lib.org" class="external-link">remotes</a>,
+puisque l’installation ici se fait depuis un dépôt de développement
+(Github) et non un dépôt officiel R. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></em></p>
 <p>Une fois installé, vous pouvez charger le package avec :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></code></pre></div>
 <div class="section level2">
 <h2 id="prérequis-pour-la-production-de-rapports">Prérequis pour la production de rapports<a class="anchor" aria-label="anchor" href="#pr%C3%A9requis-pour-la-production-de-rapports"></a>
 </h2>
-<p>Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">tinytex::install_tinytex()</a></code> pour installer une version minimale de LaTeX vous permettant d’éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n’avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).</p>
+<ul>
+<li><p>Pour la production de rapport PDF, une installation de LaTeX est
+requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la
+fonction <code><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">tinytex::install_tinytex()</a></code> pour installer une
+version minimale de LaTeX vous permettant d’éditer des rapports au
+format PDF en utilisant le package IDEATools. Une fois installé, vous
+n’avez plus besoin de vous soucier de LaTeX (opération à réaliser
+seulement lors de la première utilisation).</p></li>
+<li><p>Les rapports PDF utilisent (et nécessitent donc impérativement)
+la police <code>Helvetica</code>. Il est donc important de l’avoir
+installée sur votre machine.</p></li>
+</ul>
 </div>
 </div>
 <div class="section level1">
 <h1 id="utilisation">Utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
 </h1>
-<p>Au total, 5 fonctions ou “modules” ont été développés dans ce package, allant de l’import des données d’un calculateur à la production de graphiques puis à la productions de produits de reporting (PDF, Excel, etc.) :</p>
+<p>Au total, 5 fonctions ou “modules” ont été développés dans ce
+package, allant de l’import des données d’un calculateur à la production
+de graphiques puis à la productions de produits de reporting (PDF,
+Excel, etc.) :</p>
 <ul>
 <li>
-<code><a href="reference/read_idea.html">read_idea()</a></code> : Permet d’identifier la validité du fichier d’entrée et d’en extraire métadonnées et items.</li>
+<code><a href="reference/read_idea.html">read_idea()</a></code> : Permet d’identifier la validité du
+fichier d’entrée et d’en extraire métadonnées et items.</li>
 <li>
-<code><a href="reference/compute_idea.html">compute_idea()</a></code> : Calcule les indicateurs/composantes/dimensions/propriétés à partir des items</li>
+<code><a href="reference/compute_idea.html">compute_idea()</a></code> : Calcule les
+indicateurs/composantes/dimensions/propriétés à partir des items</li>
 <li>
-<code><a href="reference/old_idea.html">old_idea()</a></code> : Alternative aux deux fonctions précédentes si le calculateur est trop ancien (vise les indicateurs plutôt que les items)</li>
+<code><a href="reference/old_idea.html">old_idea()</a></code> : Alternative aux deux fonctions précédentes
+si le calculateur est trop ancien (vise les indicateurs plutôt que les
+items)</li>
 <li>
-<code><a href="reference/plot_idea.html">plot_idea()</a></code> : Produit les graphiques dimensions / propriétés</li>
+<code><a href="reference/plot_idea.html">plot_idea()</a></code> : Produit les graphiques dimensions /
+propriétés</li>
 <li>
-<code><a href="reference/write_idea.html">write_idea()</a></code> : Export des graphiques sous forme brute ou sous forme de rapports aux formats variés.</li>
+<code><a href="reference/write_idea.html">write_idea()</a></code> : Export des graphiques sous forme brute
+ou sous forme de rapports aux formats variés.</li>
 </ul>
-<p>Afin de simplifier l’utilisation du package, une fonction globale <code><a href="reference/diag_idea.html">diag_idea()</a></code> a été développée. Grâce à cette fonction, selon la saisie de l’utilisateur, les modules d’IDEATools vont être appelés séquentiellement afin de produire les résultats demandés. L’utilisateur peut notamment paramétrer :</p>
+<p>Afin de simplifier l’utilisation du package, une fonction globale
+<code><a href="reference/diag_idea.html">diag_idea()</a></code> a été développée. Grâce à cette fonction, selon
+la saisie de l’utilisateur, les modules d’IDEATools vont être appelés
+séquentiellement afin de produire les résultats demandés. L’utilisateur
+peut notamment paramétrer :</p>
 <ul>
 <li>Le fichier/dossier d’entrée des données <code>input</code>
 </li>
-<li>Le dossier de sortie des résultats <code>output_directory</code>
+<li>Le dossier de sortie des résultats
+<code>output_directory</code>
 </li>
 <li>Le type d’analyse (individuelle ou de groupe) <code>type</code>
 </li>
-<li>Le type de sorties (rapport et/ou graphiques bruts) <code>export_type</code>
+<li>Le type de sorties (rapport et/ou graphiques bruts)
+<code>export_type</code>
 </li>
-<li>Le types de graphiques qu’il souhaite (dans le cas d’un export brut) <code>plot_choices</code>
+<li>Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
+<code>plot_choices</code>
 </li>
-<li>Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx) <code>report_format</code>
+<li>Le format de sortie du rapport si désiré (au choix : pdf, docx, odt,
+pptx, xlsx) <code>report_format</code>
 </li>
-<li>Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la ferme) dans le cas d’une analyse individuelle <code>prefix</code>
+<li>Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
+ferme) dans le cas d’une analyse individuelle <code>prefix</code>
 </li>
-<li>La résolution de sortie des graphiques (impacte notamment le poids des sorties) <code>dpi</code>
+<li>La résolution de sortie des graphiques (impacte notamment le poids
+des sorties) <code>dpi</code>
 </li>
-<li>Si l’algorithme doit afficher sa progression dans la console. <code>quiet</code>
+<li>Si l’algorithme doit afficher sa progression dans la console.
+<code>quiet</code>
 </li>
-<li>(<em>nouveau</em>) Dans le cas particulier ou un calculateur au format .xlsx est inséré et qu’un rapport individuel au format xlsx est demandé, <code>append</code> paramétré en TRUE permet de coller les onglets de résultats à la suite des onglets du calculateur initial, créant ainsi un calculateur “tout en un” avec données + résultats.</li>
+<li>(<em>nouveau</em>) Dans le cas particulier ou un calculateur au
+format .xlsx est inséré et qu’un rapport individuel au format xlsx est
+demandé, <code>append</code> paramétré en TRUE permet de coller les
+onglets de résultats à la suite des onglets du calculateur initial,
+créant ainsi un calculateur “tout en un” avec données + résultats.</li>
 </ul>
-<p>Voici un appel complet à la fonction <code><a href="reference/diag_idea.html">diag_idea()</a></code> avec toutes les possibilités de paramétrage :</p>
+<p>Voici un appel complet à la fonction <code><a href="reference/diag_idea.html">diag_idea()</a></code> avec
+toutes les possibilités de paramétrage :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
           <span class="va">output_directory</span>,
@@ -190,7 +235,10 @@
           dpi <span class="op">=</span> <span class="fl">300</span>,
           quiet <span class="op">=</span> <span class="cn">FALSE</span>,
           append <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p><em>Pour information, les utilisateurs les moins habitués à l’écosystème R peuvent utiliser les commandes suivantes (à condition d’utiliser RStudio) pour sélectionner les dossier/fichiers via une fenêtre en presse-bouton:</em></p>
+<p><em>Pour information, les utilisateurs les moins habitués à
+l’écosystème R peuvent utiliser les commandes suivantes (à condition
+d’utiliser RStudio) pour sélectionner les dossier/fichiers via une
+fenêtre en presse-bouton:</em></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span>
 <span class="co"># OU</span>
@@ -201,7 +249,10 @@
 <div class="section level2">
 <h2 id="les-analyses-individuelles">Les analyses individuelles<a class="anchor" aria-label="anchor" href="#les-analyses-individuelles"></a>
 </h2>
-<p>En premier lieu, l’utilisateur peut avoir besoin d’un diagnostic pour une seule ferme. Prennons ici l’exemple d’utilisateur qui souhaite récupérer ses résultats pour sa ferme, mais uniquement ses arbres éclairés. Le code sera alors :</p>
+<p>En premier lieu, l’utilisateur peut avoir besoin d’un diagnostic pour
+une seule ferme. Prennons ici l’exemple d’utilisateur qui souhaite
+récupérer ses résultats pour sa ferme, mais uniquement ses arbres
+éclairés. Le code sera alors :</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_calculateur"</span>,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="st">"single"</span>,</span>
@@ -213,8 +264,12 @@
 <div class="section level2">
 <h2 id="les-analyses-multi-individuelles">Les analyses multi-individuelles<a class="anchor" aria-label="anchor" href="#les-analyses-multi-individuelles"></a>
 </h2>
-<p>Ensuite, certains utilisateurs ont besoin de traiter plusieurs calculateurs en même temps.</p>
-<p>Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais a juste besoin pour chaque exploitation d’un rapport au format word qu’il pourra commenter ainsi qu’une présentation powerpoint contenant toutes les figures et prête à projeter. Le code sera alors :</p>
+<p>Ensuite, certains utilisateurs ont besoin de traiter plusieurs
+calculateurs en même temps.</p>
+<p>Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”,
+mais a juste besoin pour chaque exploitation d’un rapport au format word
+qu’il pourra commenter ainsi qu’une présentation powerpoint contenant
+toutes les figures et prête à projeter. Le code sera alors :</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="st">"single"</span>,</span>
@@ -225,22 +280,30 @@
 <div class="section level2">
 <h2 id="les-analyses-de-groupe">Les analyses de groupe<a class="anchor" aria-label="anchor" href="#les-analyses-de-groupe"></a>
 </h2>
-<p>Enfin, certains utilisateurs souhaitent traiter un ensemble de calculateurs en même temps et ont besoin d’avoir une vision globale sur le groupe.</p>
-<p>Dans cet exemple, l’utilisateur va donc demander à la fois des graphiques bruts, mais aussi des rapports prêts à être imprimés (PDF) ainsi qu’un support excel qu’il pourra re-traiter à sa guise pour son analyse de group. Le code sera alors :</p>
+<p>Enfin, certains utilisateurs souhaitent traiter un ensemble de
+calculateurs en même temps et ont besoin d’avoir une vision globale sur
+le groupe.</p>
+<p>Dans cet exemple, l’utilisateur va donc demander à la fois des
+graphiques bruts, mais aussi des rapports prêts à être imprimés (PDF)
+ainsi qu’un support excel qu’il pourra re-traiter à sa guise pour son
+analyse de group. Le code sera alors :</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="st">"group"</span>,</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">export_type =</span> <span class="fu">c</span>(<span class="st">"report"</span>,<span class="st">"local"</span>)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">report_format =</span> <span class="fu">c</span>(<span class="st">"pdf"</span>,<span class="st">"xlsx"</span>)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<p>Notons qu’il peut demander, en plus de son analyse de groupe, des rapports individuels qu’il pourra donner à chaque exploitation (par exemple au format Libreoffice ODT) :</p>
+<p>Notons qu’il peut demander, en plus de son analyse de groupe, des
+rapports individuels qu’il pourra donner à chaque exploitation (par
+exemple au format Libreoffice ODT) :</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diag_idea</span>(<span class="at">input =</span> <span class="st">"chemin_vers_dossier"</span>,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">output_directory =</span> <span class="st">"mes_résultats"</span>,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"group"</span>,<span class="st">"single"</span>)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">export_type =</span> <span class="fu">c</span>(<span class="st">"report"</span>)</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">report_format =</span> <span class="fu">c</span>(<span class="st">"odt"</span>)</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<p><strong>Note : Une analyse de groupe nécessite un nombre d’exploitations au moins égal à 3.</strong></p>
+<p><strong>Note : Une analyse de groupe nécessite un nombre
+d’exploitations au moins égal à 3.</strong></p>
 </div>
 </div>
 <div class="section level1">
@@ -256,9 +319,18 @@ Quick Link
 <div class="section level1">
 <h1 id="références">Références<a class="anchor" aria-label="anchor" href="#r%C3%A9f%C3%A9rences"></a>
 </h1>
-<p>Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif pour le calcul, l’automatisation et l’exploitation de données IDEA4. R package version 2.0.</p>
-<p>Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M., Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V., Menet A., Redlingshofer B., 2019, Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel mobilisant dimensions et propriétés de la durabilité, Cahiers Agricultures, 28, 5, <a href="https://doi.org/10.1051/cagri/2019004" class="external-link uri">https://doi.org/10.1051/cagri/2019004</a>.</p>
-<p>Zahm et al. (2019). “Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel combinant dimensions et propriétés de la durabilité” in Cahiers Agricultures, 8(5):1-10.</p>
+<p>Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif
+pour le calcul, l’automatisation et l’exploitation de données IDEA4. R
+package version 2.0.</p>
+<p>Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M.,
+Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V.,
+Menet A., Redlingshofer B., 2019, Évaluer la durabilité des
+exploitations agricoles. La méthode IDEA v4, un cadre conceptuel
+mobilisant dimensions et propriétés de la durabilité, Cahiers
+Agricultures, 28, 5, <a href="https://doi.org/10.1051/cagri/2019004" class="external-link uri">https://doi.org/10.1051/cagri/2019004</a>.</p>
+<p>Zahm et al. (2019). “Évaluer la durabilité des exploitations
+agricoles. La méthode IDEA v4, un cadre conceptuel combinant dimensions
+et propriétés de la durabilité” in Cahiers Agricultures, 8(5):1-10.</p>
 </div>
 
   </div>
@@ -290,8 +362,8 @@ Quick Link
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle:experimental"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.1.1-orange.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-orange.svg" alt="Lifecycle:experimental"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.2.0-green.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://github.com/davidcarayon/IDEATools/actions" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
@@ -308,7 +380,8 @@ Quick Link
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>
