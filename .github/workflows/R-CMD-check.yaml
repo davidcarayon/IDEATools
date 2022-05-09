@@ -12,6 +12,8 @@ on:
 
 name: R-CMD-check
 
+
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -48,6 +50,11 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
+      - name: Install X11 dependencies on MacOS
+        if: runner.os == 'macOS'
+        run: |
+          brew --cask install xquartz
+
       - name: Restore R package cache
         if: runner.os != 'Windows'
         uses: actions/cache@v2
@@ -75,7 +82,7 @@ jobs:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: |
           options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
 
       - name: Upload check results
