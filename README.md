@@ -51,8 +51,8 @@ library(IDEATools)
     seulement lors de la première utilisation).
 
 -   Les rapports PDF utilisent (et nécessitent donc impérativement) la
-    police `Arial`. Il est donc important de l’avoir installée sur votre
-    machine.
+    police `Helvetica`. Il est donc important de l’avoir installée sur
+    votre machine.
 
 # Utilisation
 

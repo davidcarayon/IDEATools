@@ -2,12 +2,10 @@
 title: "RAPPORT DE DIAGNOSTIC INDIVIDUEL IDEA 4"
 output: 
   pdf_document:
-    latex_engine: xelatex
+    latex_engine: pdflatex
     includes: 
       before_body: templates/page_de_garde.tex
       in_header: templates/preamble.tex
-sansfont: Arial
-mainfont: Arial
 toc: true
 params:
   data: "data"
