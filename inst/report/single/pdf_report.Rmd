@@ -31,10 +31,10 @@ subtitle: `r paste0("Analyse du"," ",format(Sys.Date(),'%d/%m/%Y'))`
 date : "`r date`"
 ---
   
-  
 ```{r results = "asis"}
 cat(paste0("\\fancyfoot[L]{Diagnostic individuel IDEA 4}"))
 cat(paste0("\\fancyfoot[R]{",nom_files," | ",date,"}"))
+cat(paste0("\\fancyhead[]{}"))
 ```
 
 \newpage
@@ -104,8 +104,6 @@ print(IDEA_plots$dimensions$plot_indic_st)
 ```{r fig.cap= "Résultats pour les 11 indicateurs Economiques", fig.width = 10.69, fig.height = 11}
 print(IDEA_plots$dimensions$plot_indic_ec)
 ```
-
-\newpage
 
 # Lecture par les propriétés des systèmes agricoles durables
 
