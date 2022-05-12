@@ -46,10 +46,10 @@ jsonify <- function(input, output, write = FALSE) {
   }
 
   # Only extracting number from the OTEX
-  metadata$MTD_06 <- readr::parse_number(metadata$MTD_06)
+  metadata$MTD_06 <- readr::parse_number(as.character(metadata$MTD_06))
 
   # Only extracting number from the department
-  metadata$MTD_11 <- readr::parse_number(metadata$MTD_11)
+  metadata$MTD_11 <- readr::parse_number(as.character(metadata$MTD_11))
 
   # Making sure metadata is of right format and cleaned.
   metadata$MTD_00 <- as.character(metadata$MTD_00)
@@ -80,7 +80,8 @@ jsonify <- function(input, output, write = FALSE) {
       dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
 
     item_wide <- items %>%
-      tidyr::spread(key = item, value = value)
+      tidyr::spread(key = item, value = value) %>%
+      dplyr::mutate_all(as.numeric)
 
     # 429 to 430
     item_wide$A03_1 = max(item_wide$A03_1,-1)
