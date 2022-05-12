@@ -52,7 +52,7 @@ library(IDEATools)
 
 - Pour la production de rapport PDF, une installation de LaTeX est requise. Si vous n'avez jamais utilisé LaTeX, vous pouvez utiliser la fonction `tinytex::install_tinytex()` pour installer une version minimale de LaTeX vous permettant d'éditer des rapports au format PDF en utilisant le package IDEATools. Une fois installé, vous n'avez plus besoin de vous soucier de LaTeX (opération à réaliser seulement lors de la première utilisation).
 
-- Les rapports PDF utilisent (et nécessitent donc impérativement) la police `Helvetica`. Il est donc important de l'avoir installée sur votre machine.
+- Les rapports PDF utilisent (et nécessitent donc impérativement) la police `Arial`. Il est donc important de l'avoir installée sur votre machine.
 
 # Utilisation
 

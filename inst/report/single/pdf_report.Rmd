@@ -6,8 +6,8 @@ output:
     includes: 
       before_body: templates/page_de_garde.tex
       in_header: templates/preamble.tex
-sansfont: Helvetica
-mainfont: Helvetica
+sansfont: Arial
+mainfont: Arial
 toc: true
 params:
   data: "data"
