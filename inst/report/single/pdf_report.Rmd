@@ -73,7 +73,7 @@ print(IDEA_plots$dimensions$plot_dimensions)
 
 ## Résultats pour les 13 composantes
 
-```{r fig.cap= "Résultats pour les 13 composantes", fig.width = 14.5, fig.height=15}
+```{r fig.cap= "Résultats pour les 13 composantes", fig.width = 14.5, fig.height=14}
 print(IDEA_plots$dimensions$plot_components + ggplot2::theme(text = ggplot2::element_text(size = 25)))
 ```
 

@@ -31,6 +31,10 @@ subtitle: `r paste0("Analyse du"," ",format(Sys.Date(),'%d/%m/%Y'))`
 date : "`r paste(date, collapse = ", ")`"
 ---
 
+```{r results = "asis"}
+cat(paste0("\\fancyhead[]{}"))
+```
+
 \newpage
 
 # Lecture par les dimensions de la durabilité
