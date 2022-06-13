@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
       </span>
     </div>
 
@@ -112,28 +112,49 @@
     <h2>Arguments</h2>
     <dl><dt>input</dt>
 <dd><p>a character vector with path names to a single file, multiple files or even a directory with IDEA data. File extensions can either be <code>json</code> or <code>xls(x)</code></p></dd>
+
+
 <dt>output_directory</dt>
 <dd><p>the output directory for the rendered reports and/or plots. Defaults to "IDEATools_output"</p></dd>
+
+
 <dt>type</dt>
 <dd><p>the type of analysis to perform. Can be "single" for single farm-related results, "group" for group-related results, or even both c("single","report"), provided that the number of farms is at least 3.</p></dd>
+
+
 <dt>export_type</dt>
 <dd><p>the type of output to produce. Can be either "report" to produce compiled reports and/or "local" to write raw plots. If NULL, the algorithm will not produce any plots on machine and will return a list with the IDEA results.</p></dd>
+
+
 <dt>plot_choices</dt>
 <dd><p>the type of plots to be produced. Can be either "dimensions", "trees" or "radars" or a combination of these 3. Ignored if the export type is "report".</p></dd>
+
+
 <dt>report_format</dt>
 <dd><p>a string indicating the output format if <code>type = "report"</code>. Can be a single format (e.g <code>"pdf"</code>) or multiple formats (e.g. <code>c("pdf","xlsx")</code>). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"</p></dd>
+
+
 <dt>prefix</dt>
 <dd><p>a prefix which will be added to output files names. Typically, the name of the farm. Ignored if <code>length(input) &gt; 1</code> or in the case of a group analysis : the <code>metadata$MTD_01</code> field will be used to identify each farm.</p></dd>
+
+
 <dt>dpi</dt>
 <dd><p>ggplot output resolution.</p></dd>
+
+
 <dt>append</dt>
 <dd><p>In the case of a single excel report and if the input is an xlsx file, should the results be appended to the original file ?</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>A command to remove console printing.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Either reports and/or raw plots in <code>output_directory</code> or a named list with all the results.</p>
+    
+
+<p>Either reports and/or raw plots in <code>output_directory</code> or a named list with all the results.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -191,7 +212,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

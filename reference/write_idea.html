@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
       </span>
     </div>
 
@@ -111,26 +111,45 @@
     <h2>Arguments</h2>
     <dl><dt>IDEA_plots</dt>
 <dd><p>an IDEA_plots or IDEA_group_plots object from a <code><a href="plot_idea.html">plot_idea()</a></code> call.</p></dd>
+
+
 <dt>output_directory</dt>
 <dd><p>the desired output directory for the rendered reports and/or plots. Defaults to "IDEATools_output"</p></dd>
+
+
 <dt>type</dt>
 <dd><p>the type of output to produce. Can be either "report" to produce compiled reports or "local" to write raw plots as PNG files.</p></dd>
+
+
 <dt>prefix</dt>
 <dd><p>a prefix which will be added to output files names. Typically, the name of the farm. Ignored in the case of a group analysis : The <code>metadata$MTD_01</code> field will then be used to identify each farm.</p></dd>
+
+
 <dt>dpi</dt>
 <dd><p>ggplot output resolution.</p></dd>
+
+
 <dt>report_format</dt>
 <dd><p>a string indicating the output format if <code>type = "report"</code>. Can be a single format (e.g <code>"pdf"</code>) or multiple formats (e.g. <code>c("pdf","xlsx")</code>). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"</p></dd>
+
+
 <dt>append</dt>
 <dd><p>If the input is an xlsx format, should the individual output be appended to the original file ?</p></dd>
+
+
 <dt>input_file_append</dt>
 <dd><p>file path to an xslx IDEA data spreadsheet</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>A command to remove console printing.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Reports and/or raw plots in <code>output_directory</code>.</p>
+    
+
+<p>Reports and/or raw plots in <code>output_directory</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -180,7 +199,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
