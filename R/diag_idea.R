@@ -96,12 +96,12 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     }
 
     ## Try the first pipeline
-    test_version <- try(read_idea(input), silent = TRUE)
+    test_version <- try(read_idea(input), silent = FALSE)
 
     ## If the first pipeline fails, try the old_idea one
     if (any(class(test_version) == "try-error")) {
       if (!quiet) {
-        cli::cat_bullet("Note : Erreur dans la lecture du calculateur (Utilisez la fonction `read_idea()` pour plus d'informations). Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours.\n ", bullet = "warning", bullet_col = "orange", col = "orange")
+        cli::cat_bullet(paste0("Erreur dans l'exécution de la fonction `read_idea(",basename(input),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "), bullet = "warning", bullet_col = "orange", col = "orange")
       }
 
       ## Reading items (and estimating duration)
@@ -114,7 +114,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       duration <- round(difftime(end, start, units = "secs"))
 
       if (!quiet) {
-        cli::cat_bullet(paste0("Calculateur bien import\u00e9 et les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+        cli::cat_bullet(paste0("Calculateur bien import\u00e9 via `old_idea()` et les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
       }
     } else {
 
@@ -223,7 +223,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     for (i in files_iter) {
 
       ## Try the first pipeline
-      test_version <- try(read_idea(i), silent = TRUE)
+      test_version <- try(read_idea(i), silent = FALSE)
 
       ## Estimating duration
       start <- Sys.time()
@@ -231,7 +231,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          cli::cat_bullet("Note : Erreur dans la lecture du calculateur (Utilisez la fonction `read_idea()` pour plus d'informations). Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours.\n ", bullet = "warning", bullet_col = "orange", col = "orange")
+          cli::cat_bullet(paste0("Erreur dans l'exécution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "), bullet = "warning", bullet_col = "orange", col = "orange")
         }
 
         # Old alternative
@@ -338,7 +338,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          cli::cat_bullet("Note : Erreur dans la lecture du calculateur (Utilisez la fonction `read_idea()` pour plus d'informations). Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours.\n ", bullet = "warning", bullet_col = "orange", col = "orange")
+          cli::cat_bullet(paste0("Erreur dans l'exécution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "), bullet = "warning", bullet_col = "orange", col = "orange")
         }
 
         # Old alternative

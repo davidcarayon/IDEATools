@@ -1,3 +1,7 @@
+# IDEATools 3.2.1
+
+* Better error messages for `diag_idea()`
+
 # IDEATools 3.2.0
 
 * Update to jsonify() function to an R object output by default
