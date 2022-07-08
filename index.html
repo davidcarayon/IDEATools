@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/united/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -63,7 +63,7 @@
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-book"></span>
      
-    Articles
+    Documentation
      
     <span class="caret"></span>
   </a>
@@ -86,7 +86,7 @@
   <a href="news/index.html">
     <span class="fa fa-newspaper"></span>
      
-    News
+    Changelog
   </a>
 </li>
       </ul>
@@ -117,7 +117,7 @@
   <div class="contents col-md-9">
 
 <div class="section level1">
-<div class="page-header"><h1 id="ideatools-">IDEATools <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#ideatools-"></a>
+<div class="page-header"><h1 id="ideatools-">IDEATools <img src="reference/figures/logo.png" align="right" width="20%"><a class="anchor" aria-label="anchor" href="#ideatools-"></a>
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end --><p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l’automatisation et le reporting de diagnostics IDEA.</p>
@@ -127,12 +127,12 @@
 </h1>
 <p>En attendant sa publication officielle sur le CRAN, vous pouvez télécharger et utiliser la version en cours de développement depuis GitHub avec :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></span></code></pre></div>
 <p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package <a href="https://remotes.r-lib.org" class="external-link">remotes</a>, puisque l’installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></em></p>
 <p>Une fois installé, vous pouvez charger le package avec :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="prérequis-pour-la-production-de-rapports">Prérequis pour la production de rapports<a class="anchor" aria-label="anchor" href="#pr%C3%A9requis-pour-la-production-de-rapports"></a>
 </h2>
@@ -182,23 +182,23 @@
 </ul>
 <p>Voici un appel complet à la fonction <code><a href="reference/diag_idea.html">diag_idea()</a></code> avec toutes les possibilités de paramétrage :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
-          <span class="va">output_directory</span>,
-          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,
-          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,
-          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,
-          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,
-          prefix <span class="op">=</span> <span class="st">"EA"</span>,
-          dpi <span class="op">=</span> <span class="fl">300</span>,
-          quiet <span class="op">=</span> <span class="cn">FALSE</span>,
-          append <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,</span>
+<span>          <span class="va">output_directory</span>,</span>
+<span>          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,</span>
+<span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,</span>
+<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,</span>
+<span>          prefix <span class="op">=</span> <span class="st">"EA"</span>,</span>
+<span>          dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>          append <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><em>Pour information, les utilisateurs les moins habitués à l’écosystème R peuvent utiliser les commandes suivantes (à condition d’utiliser RStudio) pour sélectionner les dossier/fichiers via une fenêtre en presse-bouton:</em></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span>
-<span class="co"># OU</span>
-<span class="va">input</span><span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectFile</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span>
-
-<span class="va">output_directory</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu">selectDirectory</span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span></span>
+<span><span class="co"># OU</span></span>
+<span><span class="va">input</span><span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu">selectFile</span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span></span>
+<span></span>
+<span><span class="va">output_directory</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu">selectDirectory</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>On distingue 3 grands types de diagnostics :</p>
 <div class="section level2">
 <h2 id="les-analyses-individuelles">Les analyses individuelles<a class="anchor" aria-label="anchor" href="#les-analyses-individuelles"></a>
@@ -256,11 +256,15 @@ Quick Link
 </div>
 </div>
 <div class="section level1">
-<h1 id="références">Références<a class="anchor" aria-label="anchor" href="#r%C3%A9f%C3%A9rences"></a>
+<h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h1>
-<p>Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif pour le calcul, l’automatisation et l’exploitation de données IDEA4. R package version 2.0.</p>
-<p>Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M., Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V., Menet A., Redlingshofer B., 2019, Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel mobilisant dimensions et propriétés de la durabilité, Cahiers Agricultures, 28, 5, <a href="https://doi.org/10.1051/cagri/2019004" class="external-link uri">https://doi.org/10.1051/cagri/2019004</a>.</p>
-<p>Zahm et al. (2019). “Évaluer la durabilité des exploitations agricoles. La méthode IDEA v4, un cadre conceptuel combinant dimensions et propriétés de la durabilité” in Cahiers Agricultures, 8(5):1-10.</p>
+<p>Carayon D (2022). IDEATools: A Collection of Tools Dedicated to the IDEA4 Method. R package version 3.2.1.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="op">@</span>Manual{,</span>
+<span id="cb9-2"><a href="#cb9-2"></a>  title =<span class="st"> </span>{IDEATools<span class="op">:</span><span class="st"> </span>A Collection of Tools Dedicated to the IDEA4 Method},</span>
+<span id="cb9-3"><a href="#cb9-3"></a>  author =<span class="st"> </span>{David Carayon},</span>
+<span id="cb9-4"><a href="#cb9-4"></a>  year =<span class="st"> </span>{<span class="dv">2022</span>},</span>
+<span id="cb9-5"><a href="#cb9-5"></a>  note =<span class="st"> </span>{R package version <span class="dv">3</span>.<span class="fl">2.1</span>},</span>
+<span id="cb9-6"><a href="#cb9-6"></a>}</span></code></pre></div>
 </div>
 
   </div>
@@ -292,7 +296,7 @@ Quick Link
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-orange.svg" alt="Lifecycle:experimental"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-green.svg" alt="Lifecycle:stable"></a></li>
 <li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.2.1-green.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://github.com/davidcarayon/IDEATools/actions" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
@@ -310,7 +314,7 @@ Quick Link
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/united/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -63,7 +63,7 @@
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-book"></span>
      
-    Articles
+    Documentation
      
     <span class="caret"></span>
   </a>
@@ -86,7 +86,7 @@
   <a href="../news/index.html">
     <span class="fa fa-newspaper"></span>
      
-    News
+    Changelog
   </a>
 </li>
       </ul>
@@ -133,18 +133,17 @@
 <p><img src="img/ex_robustesse.png" width="100%"></p>
 <p>This approach is based on simple and reproducible ggplot syntax and based on a few reference dataframes containing coordinates for lines and boxes (nodes) which are stored in the package as internal data that can be exported on your computer by using :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/show_tree_structure.html">show_tree_structure</a></span><span class="op">(</span><span class="st">"my_directory"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/show_tree_structure.html">show_tree_structure</a></span><span class="op">(</span><span class="st">"my_directory"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="how-can-i-modify-translate-the-colored-trees">How can I modify / translate the colored trees ?<a class="anchor" aria-label="anchor" href="#how-can-i-modify-translate-the-colored-trees"></a>
 </h3>
 <p>The node labels used in the source code which produces the colored trees are found in another internal object, <code>reference_list</code>, which is a list gathering several tibbles with reference info. By modifying the <code>name</code> attribute in <code>$indic_dim</code>, <code>$indic_prop</code> and <code>$properties_nodes</code>, you can translate the colored trees which will be produced.</p>
-<p>While this requires to modify IDEATools’s source code, the option to pass an external .xlsx file to replace the node labels is currently under developement.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="previous-version">Previous version<a class="anchor" aria-label="anchor" href="#previous-version"></a>
 </h2>
-<p>The algorithm for producing colored trees wa the result of a long work involving the testing of many methods and R packages. The first the solution chosen was to draw the models in “white” on a vectorial drawing software (Inkscape) in svg format. SVG is a markup language (similar to XML or HTML) with which it is fairly easy to apply search and replace algorithms. A rectangle tag (corresponding to a node of the illuminated tree) can be written :</p>
+<p>The algorithm for producing colored trees was the result of a long work involving the testing of many methods and R packages. The first solution chosen was to draw the models in “white” on a vectorial drawing software (Inkscape) in svg format. SVG is a markup language (similar to XML or HTML) with which it is fairly easy to apply search and replace algorithms. A rectangle tag (corresponding to a node of the illuminated tree) can be written :</p>
 <pre><code>&lt;rect
        style="fill:#ffffff;fill-opacity:1;stroke:#001800;stroke-width:0.1"
        id="rect2-16"
@@ -177,7 +176,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>
