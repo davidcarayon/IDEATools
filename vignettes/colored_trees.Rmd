@@ -32,11 +32,9 @@ IDEATools:::show_tree_structure("my_directory")
 
 The node labels used in the source code which produces the colored trees are found in another internal object, `reference_list`, which is a list gathering several tibbles with reference info. By modifying the `name` attribute in `$indic_dim`, `$indic_prop` and `$properties_nodes`, you can translate the colored trees which will be produced. 
 
-While this requires to modify IDEATools's source code, the option to pass an external .xlsx file to replace the node labels is currently under developement.
-
 ## Previous version 
 
-The algorithm for producing colored trees wa the result of a long work involving the testing of many methods and R packages. The first the solution chosen was to draw the models in "white" on a vectorial drawing software (Inkscape) in svg format. SVG is a markup language (similar to XML or HTML) with which it is fairly easy to apply search and replace algorithms. A rectangle tag (corresponding to a node of the illuminated tree) can be written :
+The algorithm for producing colored trees was the result of a long work involving the testing of many methods and R packages. The first solution chosen was to draw the models in "white" on a vectorial drawing software (Inkscape) in svg format. SVG is a markup language (similar to XML or HTML) with which it is fairly easy to apply search and replace algorithms. A rectangle tag (corresponding to a node of the illuminated tree) can be written :
 
 
     <rect

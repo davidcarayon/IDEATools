@@ -1,6 +1,6 @@
 template:
   params:
-    bootswatch: flatly
+    bootswatch: united
 navbar:
   left:
     - icon: fa-home
@@ -9,7 +9,7 @@ navbar:
       text: "Fonctions"
       href: reference/index.html
     - icon: fa-book
-      text: "Articles"
+      text: "Documentation"
       menu:
       -  text: Présentation d'IDEATools
          href: articles/ideatools_advanced_fr.html
@@ -20,7 +20,7 @@ navbar:
       -  text: Utility functions
          href: articles/utils.html
     - icon: fa-newspaper
-      text: News
+      text: Changelog
       href: news/index.html
   right:
     - icon: fa-github

@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# IDEATools <img src='man/figures/logo.png' align="right" height="139" />
+# IDEATools <img src='man/figures/logo.png' align="right" width="20%" />
 
 <!-- badges: start -->
 
-[![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![packageversion](https://img.shields.io/badge/Package%20version-3.2.1-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
@@ -216,19 +216,14 @@ Quick Link
 
 </div>
 
-# Références
+# Citation
 
-Carayon, D., Girard, S., Zahm, F. (2020). IDEATools: Un applicatif pour
-le calcul, l’automatisation et l’exploitation de données IDEA4. R
-package version 2.0.
+Carayon D (2022). IDEATools: A Collection of Tools Dedicated to the
+IDEA4 Method. R package version 3.2.1.
 
-Zahm F., Alonso Ugaglia A., Boureau H., Del’homme B., Barbier J.M.,
-Gasselin P., Gafsi M., Girard S., Guichard L., Loyce C., Manneville V.,
-Menet A., Redlingshofer B., 2019, Évaluer la durabilité des
-exploitations agricoles. La méthode IDEA v4, un cadre conceptuel
-mobilisant dimensions et propriétés de la durabilité, Cahiers
-Agricultures, 28, 5, <https://doi.org/10.1051/cagri/2019004>.
-
-Zahm et al. (2019). “Évaluer la durabilité des exploitations agricoles.
-La méthode IDEA v4, un cadre conceptuel combinant dimensions et
-propriétés de la durabilité” in Cahiers Agricultures, 8(5):1-10.
+    @Manual{,
+      title = {IDEATools: A Collection of Tools Dedicated to the IDEA4 Method},
+      author = {David Carayon},
+      year = {2022},
+      note = {R package version 3.2.1},
+    }
