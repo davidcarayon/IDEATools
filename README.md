@@ -10,7 +10,7 @@
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
-[![DOI](https://zenodo.org/badge/191774507.svg)](https://zenodo.org/badge/latestdoi/191774507)
+[![DOI](https://zenodo.org/badge/251535041.svg)](https://zenodo.org/badge/latestdoi/251535041)
 
 <!-- badges: end -->
 
