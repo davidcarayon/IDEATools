@@ -31,9 +31,6 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/compile_diag.html</loc>
-  </url>
-  <url>
     <loc>/reference/compute_idea.html</loc>
   </url>
   <url>
@@ -46,16 +43,19 @@
     <loc>/reference/jsonify.html</loc>
   </url>
   <url>
-    <loc>/reference/old_idea.html</loc>
+    <loc>/reference/jsonify2.html</loc>
   </url>
   <url>
-    <loc>/reference/pipe.html</loc>
+    <loc>/reference/old_idea.html</loc>
   </url>
   <url>
     <loc>/reference/plot_idea.html</loc>
   </url>
   <url>
     <loc>/reference/read_idea.html</loc>
+  </url>
+  <url>
+    <loc>/reference/runGUI.html</loc>
   </url>
   <url>
     <loc>/reference/show_decision_rules.html</loc>

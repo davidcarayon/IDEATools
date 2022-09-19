@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.0</span>
       </span>
     </div>
 
@@ -120,13 +120,13 @@ The file extension can either be <code>json</code> or <code>xls(x)</code>. For t
     <h2>Details</h2>
     <p>This function is designed to import items and farm metadata from a single IDEA data file. Errors will be produced if the input file does not contain any "metadonnees" field in the case of a json file or any "Notice" sheet in the case of an excel file.</p>
 <p>The R code has been developed according to the newest versions of IDEA data collecting files (version numbers &gt;= 4.2.0)  and will produce an error if the version number is lower than 4.2.0 or can't be found in the 'Notice$K4' cell of the input in the case of excel input. There are no limitations for json input files as they were introduced after version number 4.2.0.</p>
-<p>For some older versions (from about 2019-01-01), you can replace the " <code>read_idea() %&gt;% compute_idea()</code> " pipeline by "<code><a href="old_idea.html">old_idea()</a></code>" which will focus on indicators rather than items.</p>
+<p>For some older versions (from about 2019-01-01), you can replace the " <code>read_idea() |&gt;  compute_idea()</code> " pipeline by "<code><a href="old_idea.html">old_idea()</a></code>" which will focus on indicators rather than items.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"idea_example.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"example_data/idea_example_1.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">read_idea</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
@@ -142,7 +142,7 @@ The file extension can either be <code>json</code> or <code>xls(x)</code>. For t
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

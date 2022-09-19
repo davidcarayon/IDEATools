@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.0</span>
       </span>
     </div>
 
@@ -159,16 +159,17 @@
     <div id="details">
     <h2>Details</h2>
     <p>This function is designed to provide the user a single function to use for a full IDEA4 diagnosis.</p>
-<p>If the input is a single file, then a simple "<code>read_idea() %&gt;% compute_idea() %&gt;% plot_idea() %&gt;% write_idea()</code>" or "<code>old_idea() %&gt;% plot_idea() %&gt;% write_idea()</code>" pipeline will be used. If export_type is NULL, then the output of <code><a href="plot_idea.html">plot_idea()</a></code> will be returned.</p>
+<p>If the input is a single file, then a simple "<code>read_idea() |&gt; compute_idea() |&gt; plot_idea() |&gt; write_idea()</code>" or "<code>old_idea() |&gt; plot_idea() |&gt; write_idea()</code>" pipeline will be used. If export_type is NULL, then the output of <code><a href="plot_idea.html">plot_idea()</a></code> will be returned.</p>
 <p>If the input is a list of files and/or a directory, and if type is "single", then the single analysis pipelines are iterated over each file. If export_type is NULL, then the multiple outputs of <code><a href="plot_idea.html">plot_idea()</a></code> are gathered in an unique list and returned.</p>
-<p>If the input is a list of files and/or a directory, and if type is "group", then the "import" (<code>read_idea() %&gt;% compute_idea()</code> or <code><a href="old_idea.html">old_idea()</a></code>) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the <code>plot_idea() %&gt;% write_idea()</code> pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of <code><a href="plot_idea.html">plot_idea()</a></code> will be returned.</p>
+<p>If the input is a list of files and/or a directory, and if type is "group", then the "import" (<code>read_idea() |&gt; compute_idea()</code> or <code><a href="old_idea.html">old_idea()</a></code>) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the <code>plot_idea() |&gt; write_idea()</code> pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of <code><a href="plot_idea.html">plot_idea()</a></code> will be returned.</p>
 <p>Note that group analysis requires a number of unique farms greater or equal to 3.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IDEATools</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"idea_example.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"example_data/idea_example_1.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">group_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"example_data"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Find your temporary directory</span></span></span>
@@ -186,13 +187,12 @@
 <span class="r-in"><span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Run a full individual diagnosis with report export as pdf</span></span></span>
+<span class="r-in"><span><span class="co"># Run a group diagnosis with report export as pdf</span></span></span>
 <span class="r-in"><span><span class="fu">diag_idea</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  input <span class="op">=</span> <span class="va">path</span>,</span></span>
+<span class="r-in"><span>  input <span class="op">=</span> <span class="va">group_path</span>,</span></span>
 <span class="r-in"><span>  output_directory <span class="op">=</span> <span class="va">tempdir</span>,</span></span>
-<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"single"</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"group"</span>,</span></span>
 <span class="r-in"><span>  export_type <span class="op">=</span> <span class="st">"report"</span>,</span></span>
-<span class="r-in"><span>  prefix <span class="op">=</span> <span class="st">"Exploitation_A"</span>,</span></span>
 <span class="r-in"><span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span></span>
 <span class="r-in"><span>  report_format <span class="op">=</span> <span class="st">"pdf"</span>,</span></span>
 <span class="r-in"><span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span></span>
@@ -212,7 +212,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

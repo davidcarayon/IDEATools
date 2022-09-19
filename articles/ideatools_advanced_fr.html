@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.0</span>
       </span>
     </div>
 
@@ -133,6 +133,11 @@
 <p>IDEATools 1.0 puis 1.1 ont été développés au cours de l’année 2020 pour répondre à des besoins (urgents) de sorties graphiques pour la méthode IDEA4, notamment en ce qui concerne l’approche par les propriétés. Cette première version du package était donc fonctionnelle mais largement perfectible et n’était pas assez documentée. Dans une optique de recherche reproductible et afin d’être mieux préparé aux adaptations / évolutions de la méthode, IDEATools a subi d’assez lourdes modifications pour aujourd’hui être proposé dans sa version 2.0.</p>
 <p>IDEATools 2.0 propose un processus automatisé de diagnostic composé de différents modules (<code><a href="../reference/read_idea.html">read_idea()</a></code>, <code><a href="../reference/compute_idea.html">compute_idea()</a></code>, <code><a href="../reference/old_idea.html">old_idea()</a></code>, <code><a href="../reference/plot_idea.html">plot_idea()</a></code>, <code><a href="../reference/write_idea.html">write_idea()</a></code>) tous regroupés dans une fonction globale, <code><a href="../reference/diag_idea.html">diag_idea()</a></code>. La présente vignette présente le fonctionnement général de chacun de ces modules et la logique générale développée dans IDEATools.</p>
 <p>IDEATools 3.0 a apporté une refonte complète du système de production des arbres éclairés et la correction de nombreux bugs.</p>
+</div>
+<div class="section level2">
+<h2 id="ideatools-3-3-0">IDEATools 3.3.0<a class="anchor" aria-label="anchor" href="#ideatools-3-3-0"></a>
+</h2>
+<p>Cette version apporte quelques évolutions majeures dans le code du package ainsi que ses fonctionnalités. Elle apporte notamment une interface graphique utilisateur très basique et accessible d’un simple <code><a href="../reference/runGUI.html">runGUI()</a></code> pour simplifier l’utilisation du package pour des utilisateurs ayant installé R uniquement pour utiliser le package. Dans un but de publier un jour le package sur le CRAN, d’importants efforts ont été menés sur la réduction du nombre de dépendances (retrait des pipes magrittr au profit du pipe de R 4.1.0, retrait des messages un peu stylisés en console, retrait de map au profit des apply, passage en Suggest de nombreux packages bonus, etc).</p>
 </div>
 <div class="section level2">
 <h2 id="ideatools-3-0">IDEATools 3.0<a class="anchor" aria-label="anchor" href="#ideatools-3-0"></a>
@@ -770,7 +775,7 @@ Exemple de figures produites par IDEATools
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
