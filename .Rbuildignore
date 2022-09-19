@@ -12,3 +12,4 @@
 ^\.gitlab-ci\.yml$
 ^README\.md$
 ^NEWS\.md$
+^cran\-comments\.md
