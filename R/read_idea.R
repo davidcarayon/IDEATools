@@ -16,9 +16,8 @@
 #'
 #' The R code has been developed according to the newest versions of IDEA data collecting files (version numbers >= 4.2.0)  and will produce an error if the version number is lower than 4.2.0 or can't be found in the 'Notice$K4' cell of the input in the case of excel input. There are no limitations for json input files as they were introduced after version number 4.2.0.
 #'
-#' For some older versions (from about 2019-01-01), you can replace the " \code{read_idea() %>% compute_idea()} " pipeline by "\code{old_idea()}" which will focus on indicators rather than items.
+#' For some older versions (from about 2019-01-01), you can replace the " \code{read_idea() |>  compute_idea()} " pipeline by "\code{old_idea()}" which will focus on indicators rather than items.
 #'
-#' @importFrom magrittr %>%
 #' @importFrom dplyr select bind_rows mutate filter group_by row_number ungroup case_when
 #' @importFrom janitor clean_names
 #' @importFrom jsonlite fromJSON
@@ -30,7 +29,7 @@
 #' @importFrom stats na.omit
 #' @examples
 #' library(IDEATools)
-#' path <- system.file("idea_example.json", package = "IDEATools")
+#' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 #' my_data <- read_idea(path)
 read_idea <- function(input) {
 
@@ -77,7 +76,7 @@ read_idea <- function(input) {
 
   ## Excel files
   if (filetype %in% c("xls", "xlsx")) {
-    version_number <- readxl::read_excel(input, sheet = "Notice", range = "K4") %>% names()
+    version_number <- readxl::read_excel(input, sheet = "Notice", range = "K4") |>  names()
     if (length(version_number) == 0) (version_number <- "old")
   }
 
@@ -154,17 +153,16 @@ read_idea <- function(input) {
 
     }
 
-
   }
 
   ## excel files
   if (filetype %in% c("xls", "xlsx")) {
 
     ## Reading metadata from "Renvoi BDD"
-    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22") %>%
-      dplyr::select(c(1, 4)) %>%
-      tidyr::drop_na(Code) %>%
-      tidyr::pivot_wider(names_from = Code, values_from = Valeur) %>%
+    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22") |>
+      dplyr::select(c(1, 4)) |>
+      tidyr::drop_na(Code) |>
+      tidyr::pivot_wider(names_from = Code, values_from = Valeur) |>
       as.list()
 
     ## In the rare case where the version number wasn't transfered to the "Renvoi BDD" sheet, extract it in
@@ -238,10 +236,10 @@ read_idea <- function(input) {
 
   # Finding items -----------------------------------------------------------
   if (filetype == "json") {
-    items <- dplyr::bind_rows(json_file$items) %>%
-      tidyr::pivot_longer(tidyr::everything(), names_to = "item") %>%
-      dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) %>% # Convert A01 to A1
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) %>%
+    items <- dplyr::bind_rows(json_file$items) |>
+      tidyr::pivot_longer(tidyr::everything(), names_to = "item") |>
+      dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) |>  # Convert A01 to A1
+      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) |>
       tidyr::drop_na(item)
 
     ## Error if not complete
@@ -260,10 +258,10 @@ read_idea <- function(input) {
     end_row <- ifelse(version_number < 433, yes = 144, no = 145)
     range = paste0("A",start_row,":E",end_row)
 
-    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range)) %>%
-      dplyr::select(item = Code, value = `A Exporter`) %>%
-      dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) %>% # Convert A01 to A1
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) %>%
+    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range)) |>
+      dplyr::select(item = Code, value = `A Exporter`) |>
+      dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) |>  # Convert A01 to A1
+      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) |>
       tidyr::drop_na(item)
 
     ## Error if not complete
@@ -286,4 +284,5 @@ read_idea <- function(input) {
   class(output) <- c(class(output), "IDEA_items")
 
   return(output)
+
 }

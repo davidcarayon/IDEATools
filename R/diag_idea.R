@@ -17,11 +17,11 @@
 #'
 #' @details This function is designed to provide the user a single function to use for a full IDEA4 diagnosis.
 #'
-#' If the input is a single file, then a simple "\code{read_idea() %>% compute_idea() %>% plot_idea() %>% write_idea()}" or "\code{old_idea() %>% plot_idea() %>% write_idea()}" pipeline will be used. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
+#' If the input is a single file, then a simple "\code{read_idea() |> compute_idea() |> plot_idea() |> write_idea()}" or "\code{old_idea() |> plot_idea() |> write_idea()}" pipeline will be used. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
 #'
 #' If the input is a list of files and/or a directory, and if type is "single", then the single analysis pipelines are iterated over each file. If export_type is NULL, then the multiple outputs of \code{plot_idea()} are gathered in an unique list and returned.
 #'
-#' If the input is a list of files and/or a directory, and if type is "group", then the "import" (\code{read_idea() %>% compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() %>% write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
+#' If the input is a list of files and/or a directory, and if type is "group", then the "import" (\code{read_idea() |> compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() |> write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
 #'
 #' Note that group analysis requires a number of unique farms greater or equal to 3.
 #'
@@ -29,7 +29,8 @@
 #'
 #' @examples
 #' library(IDEATools)
-#' path <- system.file("idea_example.json", package = "IDEATools")
+#' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
+#' group_path <- system.file("example_data", package = "IDEATools")
 #' \dontrun{
 #'
 #' # Find your temporary directory
@@ -47,13 +48,12 @@
 #'   quiet = FALSE
 #' )
 #'
-#' # Run a full individual diagnosis with report export as pdf
+#' # Run a group diagnosis with report export as pdf
 #' diag_idea(
-#'   input = path,
+#'   input = group_path,
 #'   output_directory = tempdir,
-#'   type = "single",
+#'   type = "group",
 #'   export_type = "report",
-#'   prefix = "Exploitation_A",
 #'   dpi = 300,
 #'   report_format = "pdf",
 #'   quiet = FALSE
@@ -81,18 +81,18 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Printing starting info
     if (!quiet) {
-      cli::cli_h1("D\u00e9but du diagnostic individuel IDEA4")
+      message("D\u00e9but du diagnostic individuel IDEA4")
       if (any(export_type == "local")) {
-        cli::cat_bullet(paste0("Nombre de types de graphiques demand\u00e9s : ", length(plot_choices)), bullet = "info", bullet_col = "blue")
+        message(paste0("Nombre de types de graphiques demand\u00e9s : ", length(plot_choices)))
       }
       if (any(export_type == "report")) {
-        cli::cat_bullet(paste0("Nombre de rapports demand\u00e9s : ", length(report_format)), bullet = "info", bullet_col = "blue")
+        message(paste0("Nombre de rapports demand\u00e9s : ", length(report_format)))
       }
     }
 
     # Print state
     if (!quiet) {
-      cli::cli_h2("Import du calculateur")
+      message("Import du calculateur")
     }
 
     ## Try the first pipeline
@@ -101,7 +101,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     ## If the first pipeline fails, try the old_idea one
     if (any(class(test_version) == "try-error")) {
       if (!quiet) {
-        cli::cat_bullet(paste0("Erreur dans l'exécution de la fonction `read_idea(",basename(input),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "), bullet = "warning", bullet_col = "orange", col = "orange")
+        message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(",basename(input),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
       }
 
       ## Reading items (and estimating duration)
@@ -114,7 +114,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       duration <- round(difftime(end, start, units = "secs"))
 
       if (!quiet) {
-        cli::cat_bullet(paste0("Calculateur bien import\u00e9 via `old_idea()` et les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+        message(paste0("Calculateur bien import\u00e9 via `old_idea()` et les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"))
       }
     } else {
 
@@ -128,12 +128,12 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
       # Confirm success
       if (!quiet) {
-        cli::cat_bullet(paste0("Calculateur bien import\u00e9 (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+        message(paste0("Calculateur bien import\u00e9 (", duration, "s)\n"))
       }
 
       # Printing state
       if (!quiet) {
-        cli::cli_h2("Calcul des indicateurs IDEA4")
+        message("Calcul des indicateurs IDEA4")
       }
 
       ## computing scores (and estimating duration)
@@ -145,13 +145,13 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
       # Confirm success
       if (!quiet) {
-        cli::cat_bullet(paste0("Les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+        message(paste0("Les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"))
       }
     }
 
     # Printing state
     if (!quiet) {
-      cli::cli_h2("Trac\u00e9 des graphiques")
+      message("Trac\u00e9 des graphiques")
     }
 
     ## Drawing plots (and estimating duration)
@@ -163,7 +163,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Confirm success
     if (!quiet) {
-      cli::cat_bullet(paste0("Les graphiques ont \u00e9t\u00e9 construits sans erreur (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+      message(paste0("Les graphiques ont \u00e9t\u00e9 construits sans erreur (", duration, "s)\n"))
     }
 
     ## If export is NULL, then return a list with the results, Otherwise run write_idea
@@ -171,7 +171,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       if (!quiet) {
         global_end <- Sys.time()
         global_duration <- round(difftime(global_end, global_start, units = "mins"), 1)
-        cli::cli_h1(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
+        message(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
       }
 
       return(IDEA_plots)
@@ -199,13 +199,13 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Printing starting info
     if (!quiet) {
-      cli::cli_h1("D\u00e9but du diagnostic IDEA4 multi-individuel")
-      cli::cat_bullet(paste0("Nombre d'exploitations : ", length(files_iter)), bullet = "info", bullet_col = "blue")
+      message("D\u00e9but du diagnostic IDEA4 multi-individuel")
+      message(paste0("Nombre d'exploitations : ", length(files_iter)))
       if (!any(export_type == "report")) {
-        cli::cat_bullet(paste0("Nombre de types de graphiques demand\u00e9s : ", length(plot_choices)), bullet = "info", bullet_col = "blue")
+        message(paste0("Nombre de types de graphiques demand\u00e9s : ", length(plot_choices)))
       }
       if (any(export_type == "report")) {
-        cli::cat_bullet(paste0("Nombre de formats de rapports demand\u00e9s : ", length(report_format)), bullet = "info", bullet_col = "blue")
+        message(paste0("Nombre de formats de rapports demand\u00e9s : ", length(report_format)))
       }
     }
 
@@ -214,10 +214,10 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     # Printing state
     if (!quiet) {
-      cli::cli_h2("D\u00e9but du traitement s\u00e9quentiel des calculateurs")
+      message("D\u00e9but du traitement s\u00e9quentiel des calculateurs")
     }
 
-    cli::cat_bullet("Traitement du premier calculateur...\n", bullet = "info", bullet_col = "blue")
+    message("Traitement du premier calculateur...\n")
 
     ## Starting a for loop for each file
     for (i in files_iter) {
@@ -231,7 +231,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          cli::cat_bullet(paste0("Erreur dans l'exécution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "), bullet = "warning", bullet_col = "orange", col = "orange")
+          message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
         }
 
         # Old alternative
@@ -262,7 +262,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
       ## Confirm success
       if (!quiet) {
-        cli::cat_bullet(paste0("Calculateur '", basename(i), "' trait\u00e9 (", duration, " min)\n"), bullet = "tick", bullet_col = "green")
+        message(paste0("Calculateur '", basename(i), "' trait\u00e9 (", duration, " min)\n"))
       }
     }
 
@@ -271,7 +271,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       if (!quiet) {
         global_end <- Sys.time()
         global_duration <- round(difftime(global_end, global_start, units = "mins"), 1)
-        cli::cli_h1(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
+        message(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
       }
 
       return(return_list)
@@ -304,16 +304,16 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Printing starting info
     if (!quiet) {
-      cli::cli_h1("D\u00e9but du diagnostic IDEA4 de groupe")
-      cli::cat_bullet(paste0("Nombre d'exploitations : ", length(files_iter)), bullet = "info", bullet_col = "blue")
+      message("D\u00e9but du diagnostic IDEA4 de groupe")
+      message(paste0("Nombre d'exploitations : ", length(files_iter)))
       if (any(export_type == "report")) {
-        cli::cat_bullet(paste0("Nombre de formats de rapports demand\u00e9s : ", length(report_format)), bullet = "info", bullet_col = "blue")
+        message(paste0("Nombre de formats de rapports demand\u00e9s : ", length(report_format)))
       }
     }
 
     # Printing state
     if (!quiet) {
-      cli::cli_h2("D\u00e9but du traitement s\u00e9quentiel des calculateurs")
+      message("D\u00e9but du traitement s\u00e9quentiel des calculateurs")
     }
 
     # Initialize empty group list
@@ -338,7 +338,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          cli::cat_bullet(paste0("Erreur dans l'exécution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "), bullet = "warning", bullet_col = "orange", col = "orange")
+          message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
         }
 
         # Old alternative
@@ -352,7 +352,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
       ## Adding farm id
       IDEA_data$dataset$farm_id <- IDEA_data$metadata$MTD_01
-      IDEA_data$nodes <- purrr::map(IDEA_data$nodes, ~ dplyr::mutate(., farm_id = IDEA_data$metadata$MTD_01))
+      IDEA_data$nodes <- lapply(IDEA_data$nodes, function(x) dplyr::mutate(x, farm_id = IDEA_data$metadata$MTD_01))
 
       ## Creating the group list
       group_list$dataset <- dplyr::bind_rows(group_list$dataset, IDEA_data$dataset)
@@ -365,7 +365,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
       ## Confirm success
       if (!quiet) {
-        cli::cat_bullet(paste0("Calculateur '", basename(i), "' trait\u00e9 (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+        message(paste0("Calculateur '", basename(i), "' trait\u00e9 (", duration, "s)\n"))
       }
     }
 
@@ -373,21 +373,22 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## printing state
     if (!quiet) {
-      cli::cli_h2("Agr\u00e9gation des r\u00e9sultats")
+      message("Agr\u00e9gation des r\u00e9sultats")
     }
 
     # Estimating duration
     start <- Sys.time()
 
 
+    #TO-DO : replace
     # Aggregating results for properties
     group_list$nodes <- list(
-      "Robustesse" = purrr::map(group_list$nodes, "Robustesse") %>% dplyr::bind_rows(),
-      "Capacite" =  purrr::map(group_list$nodes, "Capacite") %>% dplyr::bind_rows(),
-      "Autonomie" =  purrr::map(group_list$nodes, "Autonomie") %>% dplyr::bind_rows(),
-      "Responsabilite" = purrr::map(group_list$nodes, "Responsabilite") %>% dplyr::bind_rows(),
-      "Ancrage" =  purrr::map(group_list$nodes, "Ancrage") %>% dplyr::bind_rows(),
-      "Global" =  purrr::map(group_list$nodes, "Global") %>% dplyr::bind_rows()
+      "Robustesse" = lapply(group_list$nodes, FUN = dplyr::nth, 1) |> dplyr::bind_rows(),
+      "Capacite" =  lapply(group_list$nodes, FUN = dplyr::nth, 2) |> dplyr::bind_rows(),
+      "Autonomie" =  lapply(group_list$nodes, FUN = dplyr::nth, 3) |> dplyr::bind_rows(),
+      "Responsabilite" = lapply(group_list$nodes, FUN = dplyr::nth, 4) |> dplyr::bind_rows(),
+      "Ancrage" =  lapply(group_list$nodes, FUN = dplyr::nth, 5) |> dplyr::bind_rows(),
+      "Global" =  lapply(group_list$nodes, FUN = dplyr::nth, 6) |> dplyr::bind_rows()
     )
 
     ## Applying a special class to the list for plot_idea to understand it's a group analysis
@@ -402,7 +403,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Confirm success
     if (!quiet) {
-      cli::cat_bullet(paste0("R\u00e9sultats agr\u00e9g\u00e9s (", duration, "s)\n"), bullet = "tick", bullet_col = "green")
+      message(paste0("R\u00e9sultats agr\u00e9g\u00e9s (", duration, "s)\n"))
     }
 
     ## If export is NULL, then return a list with the results, Otherwise run write_idea
@@ -410,7 +411,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       if (!quiet) {
         global_end <- Sys.time()
         global_duration <- round(difftime(global_end, global_start, units = "mins"), 1)
-        cli::cli_h1(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
+        message(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
       }
 
       return(IDEA_group_plots)
@@ -429,7 +430,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Final printing
     if (!quiet) {
-      cli::cli_h1(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
+      message(paste0("Fin du diagnostic IDEA4 (", global_duration, " min)"))
     }
   }
 }

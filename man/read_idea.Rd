@@ -25,10 +25,10 @@ This function is designed to import items and farm metadata from a single IDEA d
 
 The R code has been developed according to the newest versions of IDEA data collecting files (version numbers >= 4.2.0)  and will produce an error if the version number is lower than 4.2.0 or can't be found in the 'Notice$K4' cell of the input in the case of excel input. There are no limitations for json input files as they were introduced after version number 4.2.0.
 
-For some older versions (from about 2019-01-01), you can replace the " \code{read_idea() \%>\% compute_idea()} " pipeline by "\code{old_idea()}" which will focus on indicators rather than items.
+For some older versions (from about 2019-01-01), you can replace the " \code{read_idea() |>  compute_idea()} " pipeline by "\code{old_idea()}" which will focus on indicators rather than items.
 }
 \examples{
 library(IDEATools)
-path <- system.file("idea_example.json", package = "IDEATools")
+path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
 }

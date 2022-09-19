@@ -42,9 +42,9 @@ cat(paste0("\\fancyhead[]{}"))
 # Principales caractéristiques structurelles
 
 ```{r}
-tibble::tibble(metadata_code = names(IDEA_data$metadata), value = unlist(IDEA_data$metadata)) %>% 
-  dplyr::inner_join(IDEATools:::reference_list$metadata, by = "metadata_code") %>% 
-  dplyr::select(`Caractéristique` = metadata_name, Valeur = value) %>% 
+tibble::tibble(metadata_code = names(IDEA_data$metadata), value = unlist(IDEA_data$metadata)) |> 
+  dplyr::inner_join(IDEATools:::reference_list$metadata, by = "metadata_code") |> 
+  dplyr::select(`Caractéristique` = metadata_name, Valeur = value) |> 
   knitr::kable()
 ```
 

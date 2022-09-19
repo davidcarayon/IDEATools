@@ -47,17 +47,18 @@ This is a wrapper function designed to compute a complete IDEA4 diagnosis with a
 \details{
 This function is designed to provide the user a single function to use for a full IDEA4 diagnosis.
 
-If the input is a single file, then a simple "\code{read_idea() \%>\% compute_idea() \%>\% plot_idea() \%>\% write_idea()}" or "\code{old_idea() \%>\% plot_idea() \%>\% write_idea()}" pipeline will be used. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
+If the input is a single file, then a simple "\code{read_idea() |> compute_idea() |> plot_idea() |> write_idea()}" or "\code{old_idea() |> plot_idea() |> write_idea()}" pipeline will be used. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
 
 If the input is a list of files and/or a directory, and if type is "single", then the single analysis pipelines are iterated over each file. If export_type is NULL, then the multiple outputs of \code{plot_idea()} are gathered in an unique list and returned.
 
-If the input is a list of files and/or a directory, and if type is "group", then the "import" (\code{read_idea() \%>\% compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() \%>\% write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
+If the input is a list of files and/or a directory, and if type is "group", then the "import" (\code{read_idea() |> compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() |> write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
 
 Note that group analysis requires a number of unique farms greater or equal to 3.
 }
 \examples{
 library(IDEATools)
-path <- system.file("idea_example.json", package = "IDEATools")
+path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
+group_path <- system.file("example_data", package = "IDEATools")
 \dontrun{
 
 # Find your temporary directory
@@ -75,13 +76,12 @@ diag_idea(
   quiet = FALSE
 )
 
-# Run a full individual diagnosis with report export as pdf
+# Run a group diagnosis with report export as pdf
 diag_idea(
-  input = path,
+  input = group_path,
   output_directory = tempdir,
-  type = "single",
+  type = "group",
   export_type = "report",
-  prefix = "Exploitation_A",
   dpi = 300,
   report_format = "pdf",
   quiet = FALSE

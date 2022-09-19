@@ -46,6 +46,9 @@
     <loc>/reference/jsonify.html</loc>
   </url>
   <url>
+    <loc>/reference/jsonify2.html</loc>
+  </url>
+  <url>
     <loc>/reference/old_idea.html</loc>
   </url>
   <url>
@@ -56,6 +59,9 @@
   </url>
   <url>
     <loc>/reference/read_idea.html</loc>
+  </url>
+  <url>
+    <loc>/reference/runGUI.html</loc>
   </url>
   <url>
     <loc>/reference/show_canvas.html</loc>

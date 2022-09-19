@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.2.1-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.3.0-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
@@ -55,7 +55,33 @@ library(IDEATools)
     police `Helvetica`. Il est donc important de l’avoir installée sur
     votre machine.
 
-# Utilisation
+# Utilisation simplifiée
+
+Une interface graphique utilisateur (GUI) est proposée pour les plus
+néophytes et permet l’utilisation d’IDEATools en presse-bouton. Il
+suffit simplement d’utiliser la fonction :
+
+``` r
+runGUI()
+```
+
+Une interface va alors s’ouvrir et proposer 3 différents modules :
+
+-   Analyses individuelles (1 seul calculateur)
+-   Analyses de groupe (\>= 3 calculateurs, maintenir MAJ pour
+    sélectionner plusieurs calculateurs)
+-   Un module intitulé `jsonify()` qui permet de convertir un
+    calculateur excel IDEA en un fichier JSON, notamment utilisé par le
+    WEBIDEA, dans le cas où la macro excel du calculateur ne
+    fonctionnerait pas.
+
+![](man/figures/cap_app.png)
+
+Pour des analyses plus poussées, pour automatiser par exemple plusieurs
+diagnostics individuels (i.e. du multi-individuel), les sections
+ci-dessous détaillent l’utilisation plus classique du package.
+
+# Utilisation classique
 
 Au total, 5 fonctions ou “modules” ont été développés dans ce package,
 allant de l’import des données d’un calculateur à la production de
@@ -139,11 +165,11 @@ récupérer ses résultats pour sa ferme, mais uniquement ses arbres
 
 ``` r
 diag_idea(input = "chemin_calculateur",
-          output_directory = "mes_résultats",
+          output_directory = "mes_resultats",
           type = "single",
-          export_type = "local"
+          export_type = "local",
           prefix = "MaFerme",
-          plot_choices = "trees"
+          plot_choices = "trees",
           quiet = FALSE)
 ```
 
@@ -159,10 +185,10 @@ toutes les figures et prête à projeter. Le code sera alors :
 
 ``` r
 diag_idea(input = "chemin_vers_dossier",
-          output_directory = "mes_résultats",
+          output_directory = "mes_resultats",
           type = "single",
-          export_type = "report"
-          report_format = c("docx","pptx")
+          export_type = "report",
+          report_format = c("docx","pptx"),
           quiet = FALSE)
 ```
 
@@ -179,10 +205,10 @@ analyse de group. Le code sera alors :
 
 ``` r
 diag_idea(input = "chemin_vers_dossier",
-          output_directory = "mes_résultats",
+          output_directory = "mes_resultats",
           type = "group",
-          export_type = c("report","local")
-          report_format = c("pdf","xlsx")
+          export_type = c("report","local"),
+          report_format = c("pdf","xlsx"),
           quiet = FALSE)
 ```
 
@@ -192,10 +218,10 @@ exemple au format Libreoffice ODT) :
 
 ``` r
 diag_idea(input = "chemin_vers_dossier",
-          output_directory = "mes_résultats",
-          type = c("group","single")
-          export_type = c("report")
-          report_format = c("odt")
+          output_directory = "mes_resultats",
+          type = c("group","single"),
+          export_type = c("report"),
+          report_format = c("odt"),
           quiet = FALSE)
 ```
 
@@ -220,11 +246,11 @@ Quick Link
 # Citation
 
 Carayon D (2022). IDEATools: A Collection of Tools Dedicated to the
-IDEA4 Method. R package version 3.2.1.
+IDEA4 Method. R package version 3.3.0.
 
     @Manual{,
       title = {IDEATools: A Collection of Tools Dedicated to the IDEA4 Method},
       author = {David Carayon},
       year = {2022},
-      note = {R package version 3.2.1},
+      note = {R package version 3.3.0},
     }

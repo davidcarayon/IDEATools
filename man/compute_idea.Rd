@@ -32,7 +32,7 @@ Further information about decision rules can be found in this vignette :
 }
 \examples{
 library(IDEATools)
-path <- system.file("idea_example.json", package = "IDEATools")
+path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
 computed_data <- compute_idea(my_data)
 }

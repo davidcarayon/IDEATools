@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.0</span>
       </span>
     </div>
 
@@ -89,6 +89,17 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="3.3.0" id="ideatools-330">IDEATools 3.3.0<a class="anchor" aria-label="anchor" href="#ideatools-330"></a></h2>
+<ul><li>New <code><a href="../reference/runGUI.html">runGUI()</a></code> function that loads a basic shiny app to use the package functions</li>
+<li>Switching from magrittr pipes to base ones (forces R &gt; 4.1.0)</li>
+<li>Removed cli console printing to remove dependence</li>
+<li>Moved some packages to Suggest and check their presence with <code><a href="https://rlang.r-lib.org/reference/is_installed.html" class="external-link">rlang::check_installed()</a></code>
+</li>
+<li>Switched from <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code> to <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code> and <code><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply()</a></code> to reduce dependencies</li>
+<li>New JSON examples to illustrate group analysis</li>
+<li>Size reduction of PDF covers</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="3.2.1" id="ideatools-321">IDEATools 3.2.1<a class="anchor" aria-label="anchor" href="#ideatools-321"></a></h2>
 <ul><li>Better error messages for <code><a href="../reference/diag_idea.html">diag_idea()</a></code>
 </li>
@@ -124,55 +135,40 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="3.0.0" id="ideatools-300">IDEATools 3.0.0<a class="anchor" aria-label="anchor" href="#ideatools-300"></a></h2>
 <ul><li>New major version</li>
-<li>New method used for colored trees which are now based on {ggplot2}
-syntax and internal reference tables for the lines and nodes
-coordinates. This removes the {rsvg} dependency but adds a dependency to
-{ggtext}.</li>
-<li>Changed the internal “reference” concept, from “reference_table” to
-“reference_list”</li>
-<li>Updated the pdf reports by reintroducing LaTeX and removing the
-{pagedown} dependency</li>
-<li>Updated the pdf, xlsx, docx and odt reports with the new colored
-trees</li>
+<li>New method used for colored trees which are now based on {ggplot2} syntax and internal reference tables for the lines and nodes coordinates. This removes the {rsvg} dependency but adds a dependency to {ggtext}.</li>
+<li>Changed the internal “reference” concept, from “reference_table” to “reference_list”</li>
+<li>Updated the pdf reports by reintroducing LaTeX and removing the {pagedown} dependency</li>
+<li>Updated the pdf, xlsx, docx and odt reports with the new colored trees</li>
 <li>Removed the html and pptx outputs</li>
-<li>Created new vignette about utilities such as
-<code><a href="../reference/jsonify.html">jsonify()</a></code>
+<li>Created new vignette about utilities such as <code><a href="../reference/jsonify.html">jsonify()</a></code>
 </li>
-<li>removed the internal “canvas” object, linked to old SVG approach for
-colored trees</li>
+<li>removed the internal “canvas” object, linked to old SVG approach for colored trees</li>
 <li>Fixed 4.3.3 excel IDEA calculator compatibility</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.8" id="ideatools-208">IDEATools 2.0.8<a class="anchor" aria-label="anchor" href="#ideatools-208"></a></h2>
-<ul><li>Added new compatibility with the 4.3.3 version of the IDEA
-calculator spreadcheet (json/xls/xlsx)</li>
+<ul><li>Added new compatibility with the 4.3.3 version of the IDEA calculator spreadcheet (json/xls/xlsx)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.7" id="ideatools-207">IDEATools 2.0.7<a class="anchor" aria-label="anchor" href="#ideatools-207"></a></h2>
-<ul><li>Changed the error message occuring when <code><a href="../reference/read_idea.html">read_idea()</a></code>
-fails in <code><a href="../reference/diag_idea.html">diag_idea()</a></code>
+<ul><li>Changed the error message occuring when <code><a href="../reference/read_idea.html">read_idea()</a></code> fails in <code><a href="../reference/diag_idea.html">diag_idea()</a></code>
 </li>
-<li>added a better and easier to maintain check for NA’s in the output
-of <code><a href="../reference/read_idea.html">read_idea()</a></code>
+<li>added a better and easier to maintain check for NA’s in the output of <code><a href="../reference/read_idea.html">read_idea()</a></code>
 </li>
 <li>New categorisation rules for indicators</li>
 <li>New computation rules for items</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.6" id="ideatools-206">IDEATools 2.0.6<a class="anchor" aria-label="anchor" href="#ideatools-206"></a></h2>
-<ul><li>Bug fixes and modifying <code><a href="../reference/plot_idea.html">plot_idea()</a></code> as the unofficial
-hack <code>&lt;ggplot_object&gt; + ggsave()</code> does not work
-anymore.</li>
+<ul><li>Bug fixes and modifying <code><a href="../reference/plot_idea.html">plot_idea()</a></code> as the unofficial hack <code>&lt;ggplot_object&gt; + ggsave()</code> does not work anymore.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.5" id="ideatools-205">IDEATools 2.0.5<a class="anchor" aria-label="anchor" href="#ideatools-205"></a></h2>
-<ul><li>Added new compatibility with the 4.3.1 version of the IDEA
-calculator spreadcheet (json/xls/xlsx)</li>
+<ul><li>Added new compatibility with the 4.3.1 version of the IDEA calculator spreadcheet (json/xls/xlsx)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.4" id="ideatools-204">IDEATools 2.0.4<a class="anchor" aria-label="anchor" href="#ideatools-204"></a></h2>
-<ul><li>Added new compatibility with the 4.3.0 version of the IDEA
-calculator spreadcheet (json/xls/xlsx)</li>
+<ul><li>Added new compatibility with the 4.3.0 version of the IDEA calculator spreadcheet (json/xls/xlsx)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.3" id="ideatools-203">IDEATools 2.0.3<a class="anchor" aria-label="anchor" href="#ideatools-203"></a></h2>
@@ -180,11 +176,8 @@ calculator spreadcheet (json/xls/xlsx)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.2" id="ideatools-202">IDEATools 2.0.2<a class="anchor" aria-label="anchor" href="#ideatools-202"></a></h2>
-<ul><li>Fixed a bug causing A7 to not be considered as “NC” in the
-properties approach (due to mis-reading of MTD_14)</li>
-<li>Fixed a bug causing new excel files to be considered as “old”
-because of MTD_15 which generated an error when divided by 100 while
-being imported as a character.</li>
+<ul><li>Fixed a bug causing A7 to not be considered as “NC” in the properties approach (due to mis-reading of MTD_14)</li>
+<li>Fixed a bug causing new excel files to be considered as “old” because of MTD_15 which generated an error when divided by 100 while being imported as a character.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0.1" id="ideatools-201">IDEATools 2.0.1<a class="anchor" aria-label="anchor" href="#ideatools-201"></a></h2>
@@ -199,19 +192,12 @@ being imported as a character.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1" id="ideatools-11">IDEATools 1.1<a class="anchor" aria-label="anchor" href="#ideatools-11"></a></h2>
-<ul><li>Added a <code>NEWS.md</code> file to track changes to the
-package.</li>
-<li>Added a two new functions for PDF reporting :
-<code>MakeReport()</code> and <code>MakeGroupReport</code>
+<ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
+<li>Added a two new functions for PDF reporting : <code>MakeReport()</code> and <code>MakeGroupReport</code>
 </li>
-<li>Added a two new functions for Excel reporting :
-<code>MakeExcel()</code> and <code>MakeGroupExcel</code> which adds a
-new dependency to <a href="https://ycphs.github.io/openxlsx/index.html" class="external-link">openxlsx</a>
+<li>Added a two new functions for Excel reporting : <code>MakeExcel()</code> and <code>MakeGroupExcel</code> which adds a new dependency to <a href="https://ycphs.github.io/openxlsx/index.html" class="external-link">openxlsx</a>
 </li>
-<li>Added a new wrapper function, <code>DiagIDEA()</code> that allows
-users to complete a full IDEA diagnostic with only one line of code.
-<em>NOTE : This function does not yet implement the new excel and pdf
-reporting functions.</em>
+<li>Added a new wrapper function, <code>DiagIDEA()</code> that allows users to complete a full IDEA diagnostic with only one line of code. <em>NOTE : This function does not yet implement the new excel and pdf reporting functions.</em>
 </li>
 <li>Added a new pkgdown site</li>
 </ul></div>
@@ -229,8 +215,7 @@ reporting functions.</em>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

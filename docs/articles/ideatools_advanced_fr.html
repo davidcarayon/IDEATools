@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.0</span>
       </span>
     </div>
 
@@ -151,6 +151,20 @@ logique générale développée dans IDEATools.</p>
 des arbres éclairés et la correction de nombreux bugs.</p>
 </div>
 <div class="section level2">
+<h2 id="ideatools-3-3-0">IDEATools 3.3.0<a class="anchor" aria-label="anchor" href="#ideatools-3-3-0"></a>
+</h2>
+<p>Cette version apporte quelques évolutions majeures dans le code du
+package ainsi que ses fonctionnalités. Elle apporte notamment une
+interface graphique utilisateur très basique et accessible d’un simple
+<code><a href="../reference/runGUI.html">runGUI()</a></code> pour simplifier l’utilisation du package pour des
+utilisateurs ayant installé R uniquement pour utiliser le package. Dans
+un but de publier un jour le package sur le CRAN, d’importants efforts
+ont été menés sur la réduction du nombre de dépendances (retrait des
+pipes magrittr au profit du pipe de R 4.1.0, retrait des messages un peu
+stylisés en console, retrait de map au profit des apply, passage en
+Suggest de nombreux packages bonus, etc).</p>
+</div>
+<div class="section level2">
 <h2 id="ideatools-3-0">IDEATools 3.0<a class="anchor" aria-label="anchor" href="#ideatools-3-0"></a>
 </h2>
 <p>La 3e version majeure d’IDEATools n’apporte pas de différence
@@ -183,8 +197,8 @@ IDEATools nécessite l’installation d’un premier package, {remotes}, qui
 lui permettra d’installer IDEATools depuis un dépôt “non officiel”
 Github.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="dépendances-r">Dépendances R<a class="anchor" aria-label="anchor" href="#d%C3%A9pendances-r"></a>
 </h4>
@@ -236,7 +250,7 @@ production de certains rapports automatiques :</p>
 </ul>
 <p>Il suffit de les installer à l’aide de :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"officedown"</span>,<span class="st">"openxlsx"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="autres-dépendances">Autres dépendances<a class="anchor" aria-label="anchor" href="#autres-d%C3%A9pendances"></a>
@@ -257,7 +271,7 @@ seulement lors de la première utilisation).</p>
 d’identifier la validité du fichier d’entrée et d’en extraire
 métadonnées et items.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/read_idea.html">read_idea</a></span><span class="op">(</span><span class="st">"chemin_calculateur"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/read_idea.html">read_idea</a></span><span class="op">(</span><span class="st">"chemin_calculateur"</span><span class="op">)</span></span></code></pre></div>
 <p>Après plusieurs itérations du développement de cette fonction, Il
 s’avère trop difficile de retrouver les items de manière automatique
 pour des versions &lt; 4.2.0. Si la version est trop ancienne,
@@ -470,7 +484,7 @@ suivante, <code><a href="../reference/compute_idea.html">compute_idea()</a></cod
 précédemment récoltées pour calculer les
 indicateurs/composantes/dimensions/propriétés.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/compute_idea.html">compute_idea</a></span><span class="op">(</span><span class="va">IDEA_items</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/compute_idea.html">compute_idea</a></span><span class="op">(</span><span class="va">IDEA_items</span><span class="op">)</span></span></code></pre></div>
 <p>La fonction s’appuie principalement sur des <strong>règles de
 décisions</strong> qui sont stockées dans une liste interne au package,
 <code>decision_rules_total</code>, qui contient :</p>
@@ -485,7 +499,7 @@ décisions sont en fait codées dans le corps de la fonction).</li>
 <p>Le fichier contenant les règles de décisions peut être consulté via
 :</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/show_decision_rules.html">show_decision_rules</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/show_decision_rules.html">show_decision_rules</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Qui va exporter un fichier excel contenant les règles de décision
 dans le répertoire de travail (ou dans un répertoire spécifique
 indiqué).</p>
@@ -612,7 +626,7 @@ présentent des exceptions :</p>
 </center>
 <p>Ces règles sont compilées dans une des vignettes du package :</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"decision_rules"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"decision_rules"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></code></pre></div>
 <p>Trois fonctions internes sont ensuite utilisées pour :</p>
 <ul>
 <li><p>Plafonner les indicateurs : Si la valeur déplafonnée est
@@ -681,7 +695,7 @@ métadonnées.</p>
 résultats n’est proposée pour des calculateurs antérieurs au
 01/01/2019.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/old_idea.html">old_idea</a></span><span class="op">(</span><span class="st">"chemin_ancien_calculateur"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/old_idea.html">old_idea</a></span><span class="op">(</span><span class="st">"chemin_ancien_calculateur"</span><span class="op">)</span></span></code></pre></div>
 <p>Les différentes étapes de cette fonction sont en tout point
 identiques aux fonctions précédentes, à l’exception d’une étape
 intermédiaire qui est supprimée (agrégation des items vers les
@@ -705,7 +719,7 @@ radars) à partir des données générées par les modules
 le cas d’une analyse de groupe.</p></li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_idea.html">plot_idea</a></span><span class="op">(</span><span class="va">IDEA_data</span>, choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimension"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_idea.html">plot_idea</a></span><span class="op">(</span><span class="va">IDEA_data</span>, choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimension"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="img/cap_graphs.png" alt="Exemple de figures produites par IDEATools" width="100%"><p class="caption">
 Exemple de figures produites par IDEATools
@@ -805,7 +819,7 @@ R nommé “<code>canvas</code>”. Il s’agit d’une liste contenant le code
 source SVG de chaque modèle. Ces modèles blancs sont exportables /
 consultables via :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">IDEATools</span><span class="fu">::</span><span class="fu">show_canvas</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">IDEATools</span><span class="fu">::</span><span class="fu">show_canvas</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>L’objet renvoyé par la fonction contient une liste similaire à
 “<code>canvas</code>”, mais avec le blanc remplacé par les bonnes
 couleurs. Les fonctions dans <code><a href="../reference/write_idea.html">write_idea()</a></code> sont ensuite
@@ -884,13 +898,13 @@ avec une large variété de formats possibles.</p>
 nous sommes dans le cadre d’une analyse individuelle ou de groupe. Le
 comportement de la fonction sera différent selon la classe d’entrée.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/write_idea.html">write_idea</a></span><span class="op">(</span><span class="va">IDEA_plots</span>,
-           output_directory <span class="op">=</span> <span class="st">"IDEATools_output"</span>,
-           type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"local"</span>, <span class="st">"report"</span><span class="op">)</span>,
-           prefix <span class="op">=</span> <span class="st">"EA"</span>,
-           dpi <span class="op">=</span> <span class="fl">300</span>,
-           report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>, <span class="st">"html"</span>, <span class="st">"docx"</span>, <span class="st">"odt"</span>, <span class="st">"pptx"</span>, <span class="st">"xlsx"</span><span class="op">)</span>,
-           quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_idea.html">write_idea</a></span><span class="op">(</span><span class="va">IDEA_plots</span>,</span>
+<span>           output_directory <span class="op">=</span> <span class="st">"IDEATools_output"</span>,</span>
+<span>           type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"local"</span>, <span class="st">"report"</span><span class="op">)</span>,</span>
+<span>           prefix <span class="op">=</span> <span class="st">"EA"</span>,</span>
+<span>           dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>           report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>, <span class="st">"html"</span>, <span class="st">"docx"</span>, <span class="st">"odt"</span>, <span class="st">"pptx"</span>, <span class="st">"xlsx"</span><span class="op">)</span>,</span>
+<span>           quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>L’utilisateur peut ici paramétrer :</p>
 <ul>
 <li>Le dossier de sortie des résultats</li>
@@ -1006,15 +1020,15 @@ va de même si l’analyse multi-individuelle et de groupe sont souhaitées
 en même temps. En revanche, il est impossible de demander une analyse de
 groupe sur un échantillon inférieur à 3 exploitations.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,
-          <span class="va">output_directory</span>,
-          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,
-          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,
-          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,
-          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"html"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"pptx"</span>,<span class="st">"xlsx"</span><span class="op">)</span>,
-          prefix <span class="op">=</span> <span class="st">"EA"</span>,
-          dpi <span class="op">=</span> <span class="fl">300</span>,
-          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,</span>
+<span>          <span class="va">output_directory</span>,</span>
+<span>          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,</span>
+<span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,</span>
+<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"html"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"pptx"</span>,<span class="st">"xlsx"</span><span class="op">)</span>,</span>
+<span>          prefix <span class="op">=</span> <span class="st">"EA"</span>,</span>
+<span>          dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Selon le type d’analyse inséré, différentes procédures interne sont
 suivies.</p>
 <div class="section level4">
@@ -1102,8 +1116,7 @@ d’accès) est strictement inférieur à 3.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

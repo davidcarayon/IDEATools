@@ -28,12 +28,13 @@ navbar:
     - icon: fa-info
       href: https://methode-idea.org/
 reference:
-- title: "Main module"
+- title: "Main modules"
   desc: >
-    This is the main function to run a full
+    This is the main functions to run a full
     IDEA4 diagnosis
 - contents:
   - diag_idea
+  - runGUI
 - title: "Core modules"
   desc: "Functions used under the hood by diag_idea"
 - contents:
@@ -46,7 +47,7 @@ reference:
   desc: "Other miscellaneous functions"
 - contents:
   - jsonify
-  - compile_diag
+  - jsonify2
   - theme_idea
   - show_decision_rules
   - show_tree_structure

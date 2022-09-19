@@ -24,6 +24,10 @@ IDEATools 2.0 propose un processus automatisé de diagnostic composé de différ
 
 IDEATools 3.0 a apporté une refonte complète du système de production des arbres éclairés et la correction de nombreux bugs.
 
+# IDEATools 3.3.0
+
+Cette version apporte quelques évolutions majeures dans le code du package ainsi que ses fonctionnalités. Elle apporte notamment une interface graphique utilisateur très basique et accessible d'un simple `runGUI()` pour simplifier l'utilisation du package pour des utilisateurs ayant installé R uniquement pour utiliser le package. Dans un but de publier un jour le package sur le CRAN, d'importants efforts ont été menés sur la réduction du nombre de dépendances (retrait des pipes magrittr au profit du pipe de R 4.1.0, retrait des messages un peu stylisés en console, retrait de map au profit des apply, passage en Suggest de nombreux packages bonus, etc).
+
 # IDEATools 3.0
 
 La 3e version majeure d'IDEATools n'apporte pas de différence significative sur le processus global de traitement développé pour la version 2, excepté la correction de quelques bugs et la compatibilité avec les dernières versions du calculateur. 

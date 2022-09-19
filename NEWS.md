@@ -1,3 +1,12 @@
+# IDEATools 3.3.0
+* New `runGUI()` function that loads a basic shiny app to use the package functions
+* Switching from magrittr pipes to base ones (forces R > 4.1.0)
+* Removed cli console printing to remove dependence
+* Moved some packages to Suggest and check their presence with `rlang::check_installed()`
+* Switched from `purrr::map()` to `lapply()` and `mapply()` to reduce dependencies
+* New JSON examples to illustrate group analysis
+* Size reduction of PDF covers
+
 # IDEATools 3.2.1
 
 * Better error messages for `diag_idea()`
@@ -9,7 +18,6 @@
 * Update to README asking for the `Helvetica` font
 * Added facets to individual components graph
 * Update to DPI argument to make it relevant
-
 
 # IDEATools 3.1.1
 

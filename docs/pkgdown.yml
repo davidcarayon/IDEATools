@@ -1,10 +1,10 @@
 pandoc: '2.18'
-pkgdown: 2.0.2
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   colored_trees: colored_trees.html
   decision_rules: decision_rules.html
   ideatools_advanced_fr: ideatools_advanced_fr.html
   utils: utils.html
-last_built: 2022-07-08T13:21Z
+last_built: 2022-09-19T12:32Z
 
