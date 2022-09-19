@@ -51,7 +51,7 @@ scales::show_col(c(
 
 ## Pré-requis
 
-Le package R {IDEATools} nécessite en premier lieu l'installation de [R](https://cran.r-project.org/) puis de [Rstudio](https://rstudio.com/products/rstudio/download/).
+Le package R {IDEATools} nécessite en premier lieu l'installation de [R](https://cran.r-project.org/) puis de [Rstudio](https://www.rstudio.com/products/rstudio/download/).
 
 En attendant son acceptation sur les dépôts officiels du CRAN, IDEATools nécessite l'installation d'un premier package, {remotes}, qui lui permettra d'installer IDEATools depuis un dépôt "non officiel" Github.
 

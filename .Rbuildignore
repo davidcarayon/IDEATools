@@ -10,3 +10,5 @@
 ^codecov\.yml$
 ^pkgdown$
 ^\.gitlab-ci\.yml$
+^README\.md$
+^NEWS\.md$
