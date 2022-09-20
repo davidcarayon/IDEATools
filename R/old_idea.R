@@ -100,8 +100,14 @@ old_idea <- function(input) {
   }
 
   ## Converts the unscaled indicator values to qualitative categories according to the DEXi model
-  Score2Category <- function(TDEF, DEF, INT, FAV, score) {
-    vals <- c(TDEF, DEF, INT, FAV) |> stats::na.omit()
+  Score2Category <- function(data) {
+    score <- data$unscaled_value
+    TDEF <- data$TDEF
+    DEF <- data$DEF
+    INT <- data$INT
+    FAV <- data$FAV
+
+    vals <-  stats::na.omit(c(TDEF, DEF, INT, FAV))
 
     if (length(vals) == 4) {
       res <- dplyr::case_when(

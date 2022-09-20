@@ -6,4 +6,3 @@ There was 1 NOTE:
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘David Carayon <david.carayon@inrae.fr>’
 
-Which can be ignored if I understood well.
