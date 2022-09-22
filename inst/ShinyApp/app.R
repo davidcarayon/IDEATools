@@ -127,7 +127,7 @@ server <- function(input, output, session) {
           fs <- list.files(file_name_short, recursive = TRUE, full.names = TRUE)
 
           # Export du zip
-          zip(zipfile = file, files = fs)
+          zip::zip(zipfile = file, files = fs)
           setwd(current_dir)
 
 
@@ -196,7 +196,7 @@ server <- function(input, output, session) {
           fs <- list.files(paste0("Groupe_",length(input$dir_input$datapath)), recursive = TRUE, full.names = TRUE)
 
           # Export du zip
-          zip(zipfile = file, files = fs)
+          zip::zip(zipfile = file, files = fs)
           setwd(current_dir)
 
 
