@@ -304,12 +304,13 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         output_file <- paste0("Rapport_individuel_", prefix, ".pdf")
 
-        # Render in new env
+        # Render in new env, in knitting dir to avoid full paths
         suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
+                                           output_file = output_file,
                                            params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
+                                           envir = new.env(parent = globalenv()), quiet = TRUE))
+
+        file.copy(file.path(dirname(report_path),output_file), file.path(output_directory,output_file))
 
         end <- Sys.time()
         duration <- round(difftime(end, start, units = "secs"))
