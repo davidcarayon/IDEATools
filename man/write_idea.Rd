@@ -55,13 +55,12 @@ If the \code{report_format} argument is set to either "docx", "odt" or "pptx", t
 Please note that an error will be produced if the input object does not contain all three "dimensions","trees" and "radars" entries in the case of an individual analysis and if \code{type = "report"}.
 }
 \examples{
+\dontrun{
 library(IDEATools)
 path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
 computed_data <- compute_idea(my_data)
 idea_plots <- plot_idea(computed_data)
-\dontrun{
-
 # Find your temporary directory
 tempdir <- tempdir()
 

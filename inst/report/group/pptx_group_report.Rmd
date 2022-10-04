@@ -40,7 +40,7 @@ IDEATools::write_idea(IDEA_plots,output_directory = outdir, type = "local", dpi 
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_dimensions.png"))
 ```
 
-###  Résultats individuels globaux pour les trois dimensions
+### Résultats individuels globaux pour les trois dimensions
 
 ```{r fig.cap = "Figure 2 : Visualisation des notes obtenues par chaque exploitation pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=13}
 knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Histogramme_dimensions.png"))

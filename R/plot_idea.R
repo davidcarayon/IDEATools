@@ -428,14 +428,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
               ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5","inch"), height = ggplot2::unit("2","inch"))+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
-              ggplot2::scale_fill_manual("\uc9valuation", values = c(
-                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
-                "D\u00e9favorable" = "#FF6347",
-                "Interm\u00e9diaire" = "#FCD400",
-                "Favorable" = "#33FF00",
-                "Tr\u00e8s favorable" = "#008B00",
-                "Non concern\u00e9" = "#BEBEBE"
-              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
               ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 40), legend.title = ggplot2::element_text(size = 45, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
 
@@ -457,14 +450,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
               ggtext::geom_textbox(data = bonus_prop, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"))+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 12, "small" = 8.5), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
-              ggplot2::scale_fill_manual("\uc9valuation", values = c(
-                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
-                "D\u00e9favorable" = "#FF6347",
-                "Interm\u00e9diaire" = "#FCD400",
-                "Favorable" = "#33FF00",
-                "Tr\u00e8s favorable" = "#008B00",
-                "Non concern\u00e9" = "#BEBEBE"
-              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
               ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
 
@@ -484,14 +470,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
               ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"))+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
-              ggplot2::scale_fill_manual("\uc9valuation", values = c(
-                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
-                "D\u00e9favorable" = "#FF6347",
-                "Interm\u00e9diaire" = "#FCD400",
-                "Favorable" = "#33FF00",
-                "Tr\u00e8s favorable" = "#008B00",
-                "Non concern\u00e9" = "#BEBEBE"
-              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
               ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 33, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
 
@@ -511,14 +490,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
               ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"))+
               ggplot2::scale_size_manual(values = c("very very big" = 18, "very big" = 15, "big" = 12.5, "small" = 10), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
-              ggplot2::scale_fill_manual("\uc9valuation", values = c(
-                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
-                "D\u00e9favorable" = "#FF6347",
-                "Interm\u00e9diaire" = "#FCD400",
-                "Favorable" = "#33FF00",
-                "Tr\u00e8s favorable" = "#008B00",
-                "Non concern\u00e9" = "#BEBEBE"
-              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
               ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 50), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
 
@@ -538,14 +510,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
               ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2","inch"))+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
-              ggplot2::scale_fill_manual("\uc9valuation", values = c(
-                "Tr\u00e8s d\u00e9favorable" = "#CD0000",
-                "D\u00e9favorable" = "#FF6347",
-                "Interm\u00e9diaire" = "#FCD400",
-                "Favorable" = "#33FF00",
-                "Tr\u00e8s favorable" = "#008B00",
-                "Non concern\u00e9" = "#BEBEBE"
-              ), guide = ggplot2::guide_legend(ncol = 6)) +
+              ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
               ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 40, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
 
@@ -593,14 +558,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             ggtext::geom_textbox(ggplot2::aes(x = 25, y = 280), label = "Exploitation agricole", fill = "white", size = 25, text.color = "black", halign = 0.5, valign = 0.5, width = ggplot2::unit("10","inch"), height = ggplot2::unit("3","inch"))+
             ggplot2::scale_size_manual(values = c("very very big" = 20, "very big" = 15, "big" = 15, "small" = 12), guide = "none") +
             ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
-            ggplot2::scale_fill_manual("\uc9valuation", values = c(
-              "Tr\u00e8s d\u00e9favorable" = "#CD0000",
-              "D\u00e9favorable" = "#FF6347",
-              "Interm\u00e9diaire" = "#FCD400",
-              "Favorable" = "#33FF00",
-              "Tr\u00e8s favorable" = "#008B00",
-              "Non concern\u00e9" = "#BEBEBE"
-            ), guide = ggplot2::guide_legend(ncol = 6)) +
+            ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
             ggplot2::theme_void() +
             ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 50, face = "bold"), legend.key.width = ggplot2::unit(20,"mm"), legend.direction = "horizontal", legend.key = ggplot2::element_rect(color = "black",size = 4))
 
