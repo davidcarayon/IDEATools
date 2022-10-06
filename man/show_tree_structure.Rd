@@ -9,6 +9,9 @@ show_tree_structure(directory = getwd())
 \arguments{
 \item{directory}{the directory where to output the reference tables}
 }
+\value{
+Exports an excel file in the desired directory
+}
 \description{
 Show the reference table used for building colored trees
 }

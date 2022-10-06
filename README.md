@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.3.0-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.3.1-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
@@ -111,7 +111,7 @@ peut notamment paramétrer :
 -   Le type de sorties (rapport et/ou graphiques bruts) `export_type`
 -   Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
     `plot_choices`
--   Le format de sortie du rapport si désiré (au choix : pdf, docx, odt,
+-   Le format de sortie du rapport si désiré (au choix : pdf, docx,
     pptx, xlsx) `report_format`
 -   Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
     ferme) dans le cas d’une analyse individuelle `prefix`
@@ -134,7 +134,7 @@ diag_idea(input,
           type = c("single","group"),
           export_type = c("report","local",NULL),
           plot_choices = c("dimensions","trees","radars"),
-          report_format = c("pdf","docx","odt","xlsx","pptx"),
+          report_format = c("pdf","docx","xlsx","pptx"),
           prefix = "EA",
           dpi = 300,
           quiet = FALSE,
@@ -214,14 +214,14 @@ diag_idea(input = "chemin_vers_dossier",
 
 Notons qu’il peut demander, en plus de son analyse de groupe, des
 rapports individuels qu’il pourra donner à chaque exploitation (par
-exemple au format Libreoffice ODT) :
+exemple au format Microsoft Word) :
 
 ``` r
 diag_idea(input = "chemin_vers_dossier",
           output_directory = "mes_resultats",
           type = c("group","single"),
           export_type = c("report"),
-          report_format = c("odt"),
+          report_format = c("docx"),
           quiet = FALSE)
 ```
 

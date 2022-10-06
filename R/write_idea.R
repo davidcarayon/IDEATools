@@ -6,7 +6,7 @@
 #' @param output_directory the desired output directory for the rendered reports and/or plots. Defaults to "IDEATools_output"
 #' @param type the type of output to produce. Can be either "report" to produce compiled reports or "local" to write raw plots as PNG files.
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored in the case of a group analysis : The \code{metadata$MTD_01} field will then be used to identify each farm.
-#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"
+#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "pptx" and "xlsx"
 #' @param dpi ggplot output resolution.
 #' @param append If the input is an xlsx format, should the individual output be appended to the original file ?
 #' @param input_file_append file path to an xslx IDEA data spreadsheet
@@ -20,7 +20,7 @@
 #'
 #' In the case of a group analysis, another subdirectory is created with a name like "Groupe_{number_of_farms}" so that analyses are not mixed up. The user can again choose if output should be raw plots or pre-compiled reports.
 #'
-#' If the \code{report_format} argument is set to either "docx", "odt" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "html" and "pdf" output, the {pagedown} package will be used to produce a clean paged HTML report using CSS files stored in this package, which can be converted to PDF using chrome print. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
+#' If the \code{report_format} argument is set to either "docx" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "pdf" output, LaTeX will be called with the {rmarkdown} package. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
 #'
 #' Please note that an error will be produced if the input object does not contain all three "dimensions","trees" and "radars" entries in the case of an individual analysis and if \code{type = "report"}.
 #'
@@ -36,7 +36,6 @@
 #' @importFrom rlang check_installed
 #'
 #' @examples
-#' \dontrun{
 #' library(IDEATools)
 #' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 #' my_data <- read_idea(path)
@@ -45,6 +44,7 @@
 #' # Find your temporary directory
 #' tempdir <- tempdir()
 #'
+#' \donttest{
 #' # Export as raw plots to your tempdir.
 #' write_idea(idea_plots,
 #'   output_directory = tempdir, type = "local",
@@ -355,40 +355,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         }
       }
 
-      ### ODT reports
-      if (any(report_format == "odt")) {
-        if (!quiet) {
-          message("Production du rapport LibreOffice Writer...")
-        }
-
-        start <- Sys.time()
-
-        report_path <- file.path(knitting_dir, "report","single", "odt_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          prefix = prefix
-        )
-
-        output_file <- paste0("Rapport_individuel_", prefix, ".odt")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
-        }
-      }
-
       ### PPTX reports
       if (any(report_format == "pptx")) {
         if (!quiet) {
@@ -462,7 +428,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
   # Group analysis ----------------------------------------------------------
 
-
   if (any(class(IDEA_plots) == "IDEA_group_plots")) {
 
     ## Number of farms
@@ -475,255 +440,366 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
       dir.create(output_directory, recursive = TRUE)
     }
 
+    if (any(class(IDEA_plots) == "IDEA_group_plots_ref")) {
 
-    # If type is "local" --------------------------------------------------------
 
-    if (any(type == "local")) {
-      if (!quiet) {
-        message(paste0("Production des graphiques de groupe..."))
+      ## Check format
+      if (any(type == "report") & any(report_format %in% c("pptx","docx"))) {
+        stop("Reference output can only be a pdf or xlsx report")
       }
 
-      ### Group graphs
+      if (any(type == "local")) {
+        if (!quiet) {
+          message(paste0("Production des graphiques de groupe..."))
+        }
 
-      start <- Sys.time()
+        ### Group graphs
 
-      ## Creating directory for groups
-      group_directory <- file.path(output_directory, "Graphiques")
+        start <- Sys.time()
 
-      if (!dir.exists(group_directory)) {
-        dir.create(group_directory, recursive = TRUE)
+        ## Creating directory for groups
+        group_directory <- file.path(output_directory, "Graphiques")
+
+        if (!dir.exists(group_directory)) {
+          dir.create(group_directory, recursive = TRUE)
+        }
+
+        ## Creating a table with all paths for ggsave
+        tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
+          dplyr::filter(plotname != "data") |>
+          dplyr::filter(!plotname %in% c("heatmap","dimensions_histogram")) |>
+          dplyr::mutate(plotname = dplyr::recode(plotname,"freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) |>
+          dplyr::mutate(
+            widths = c(10, 7.95, 11.3, 11.9, 11.9, 11.9),
+            heights = c(5, 6.91, 8.94, 12.5, 14, 11)
+          ) |>
+          dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) |>
+          dplyr::mutate(path = file.path(group_directory, plotname)) |>
+          dplyr::mutate(png_path = glue::glue("{path}.png")) |>
+          dplyr::mutate(dpi = dpi)
+
+        ## Custom function to iterate (faster than for loop)
+        export_metaplot <- function(plotname, plot, widths, heights, png_path, dpi) {
+          ggplot2::ggsave(plot, filename = png_path, width = widths, height = heights, dpi = dpi)
+        }
+
+        # Iterating
+        for(i in 1:nrow(tab_res)) {
+
+          tab <- tab_res |> dplyr::slice(i)
+          ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
+
+        }
       }
 
-      ## Creating a table with all paths for ggsave
-      tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
-        dplyr::filter(plotname != "data") |>
-        dplyr::mutate(plotname = dplyr::recode(plotname, "heatmap" = "Matrice_propri\u00e9t\u00e9s","freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_histogram" = "Histogramme_dimensions", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) |>
-        dplyr::mutate(
-          widths = c(10.4,10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
-          heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
-        ) |>
-        dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) |>
-        dplyr::mutate(path = file.path(group_directory, plotname)) |>
-        dplyr::mutate(png_path = glue::glue("{path}.png")) |>
-        dplyr::mutate(dpi = dpi)
 
-      ## Custom function to iterate (faster than for loop)
-      export_metaplot <- function(plotname, plot, widths, heights, png_path, dpi) {
-        ggplot2::ggsave(plot, filename = png_path, width = widths, height = heights, dpi = dpi)
+      if (any(type == "report")) {
+
+        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr"), reason = "to produce reports`")
+
+        ## Creating output directory
+        if (!dir.exists(output_directory)) {
+          dir.create(output_directory, recursive = TRUE)
+        }
+
+        # Defining a knitting dir in tempdir in case the user doesn't have all permissions in working directory
+        knitting_dir <- file.path(tempdir(), "IDEATools_reports")
+        if (!dir.exists(knitting_dir)) (dir.create(knitting_dir))
+        file.copy(system.file("report/", package = "IDEATools"), knitting_dir, recursive = TRUE)
+
+        if (!quiet) {
+          message(paste0("Production des ", length(report_format), " rapports demand\u00e9s"))
+        }
+
+        ### PDF reports
+        if (any(report_format == "pdf")) {
+          if (!quiet) {
+            message("Production du rapport PDF...")
+          }
+
+
+          start <- Sys.time()
+
+          # Using the HTML report, converted to PDF
+          report_path <- file.path(knitting_dir, "report","group", "pdf_group_report_ref.Rmd")
+
+          # Defining params
+          params <- list(
+            data = IDEA_plots
+          )
+
+          output_file <- paste0("Rapport_groupe_ref_", n_farm, ".pdf")
+
+          # Render in new env, in knitting dir to avoid full paths
+          suppressWarnings(rmarkdown::render(report_path,
+                                             output_file = output_file,
+                                             params = params,
+                                             envir = new.env(parent = globalenv()), quiet = TRUE))
+
+          file.copy(file.path(dirname(report_path),output_file), file.path(output_directory,output_file))
+
+          end <- Sys.time()
+          duration <- round(difftime(end, start, units = "secs"))
+
+          if (!quiet) {
+            message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
+          }
+        }
+
+        ### XLSX reports
+        if (any(report_format == "xlsx")) {
+          if (!quiet) {
+            message("Production du rapport Microsoft Excel...")
+          }
+
+          if(!requireNamespace("openxlsx", quietly = TRUE)){stop("Package {openxlsx} is required for XLSX reports. Please use `install.packages('openxlsx')`")}
+
+          start <- Sys.time()
+
+          output_file <- paste0("Rapport_groupe_ref_", n_farm, ".xlsx")
+
+          # Using custom function instead of Rmd
+          excel_group_report_reference(
+            IDEAdata = IDEA_plots,
+            output_dir = output_directory,
+            output_file = output_file,
+            outdir = file.path(knitting_dir, "tmp"),
+            dpi = dpi
+          )
+
+          end <- Sys.time()
+          duration <- round(difftime(end, start, units = "secs"))
+
+          if (!quiet) {
+            message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
+          }
+        }
+
+
       }
 
-      # Iterating
-      for(i in 1:nrow(tab_res)) {
+      # End of ref pipeline
+    } else {
 
-        tab <- tab_res |> dplyr::slice(i)
-        ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
+      ## Normal pipeline
 
+      # If type is "local" --------------------------------------------------------
+
+      if (any(type == "local")) {
+        if (!quiet) {
+          message(paste0("Production des graphiques de groupe..."))
+        }
+
+        ### Group graphs
+
+        start <- Sys.time()
+
+        ## Creating directory for groups
+        group_directory <- file.path(output_directory, "Graphiques")
+
+        if (!dir.exists(group_directory)) {
+          dir.create(group_directory, recursive = TRUE)
+        }
+
+        ## Creating a table with all paths for ggsave
+        tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
+          dplyr::filter(plotname != "data") |>
+          dplyr::mutate(plotname = dplyr::recode(plotname, "heatmap" = "Matrice_propri\u00e9t\u00e9s","freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_histogram" = "Histogramme_dimensions", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) |>
+          dplyr::mutate(
+            widths = c(10.4,10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
+            heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
+          ) |>
+          dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) |>
+          dplyr::mutate(path = file.path(group_directory, plotname)) |>
+          dplyr::mutate(png_path = glue::glue("{path}.png")) |>
+          dplyr::mutate(dpi = dpi)
+
+        ## Custom function to iterate (faster than for loop)
+        export_metaplot <- function(plotname, plot, widths, heights, png_path, dpi) {
+          ggplot2::ggsave(plot, filename = png_path, width = widths, height = heights, dpi = dpi)
+        }
+
+        # Iterating
+        for(i in 1:nrow(tab_res)) {
+
+          tab <- tab_res |> dplyr::slice(i)
+          ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
+
+        }
+
+
+        end <- Sys.time()
+        duration <- round(difftime(end, start, units = "secs"))
+
+        if (!quiet) {
+          message(paste0("Les figures ont bien \u00e9t\u00e9 export\u00e9es dans le r\u00e9pertoire '", file.path(group_directory), "' (", duration, "s)\n"))
+        }
       }
 
 
-      end <- Sys.time()
-      duration <- round(difftime(end, start, units = "secs"))
+      # If export is "report" -----------------------------------------------------
 
-      if (!quiet) {
-        message(paste0("Les figures ont bien \u00e9t\u00e9 export\u00e9es dans le r\u00e9pertoire '", file.path(group_directory), "' (", duration, "s)\n"))
+      if (any(type == "report")) {
+
+        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr"), reason = "to produce reports`")
+
+        ## Creating output directory
+        if (!dir.exists(output_directory)) {
+          dir.create(output_directory, recursive = TRUE)
+        }
+
+        # Defining a knitting dir in tempdir in case the user doesn't have all permissions in working directory
+        knitting_dir <- file.path(tempdir(), "IDEATools_reports")
+        if (!dir.exists(knitting_dir)) (dir.create(knitting_dir))
+        file.copy(system.file("report/", package = "IDEATools"), knitting_dir, recursive = TRUE)
+
+        if (!quiet) {
+          message(paste0("Production des ", length(report_format), " rapports demand\u00e9s"))
+        }
+
+
+        ### PDF reports
+        if (any(report_format == "pdf")) {
+          if (!quiet) {
+            message("Production du rapport PDF...")
+          }
+
+
+          start <- Sys.time()
+
+          # Using the HTML report, converted to PDF
+          report_path <- file.path(knitting_dir, "report","group", "pdf_group_report.Rmd")
+
+          # Defining params
+          params <- list(
+            data = IDEA_plots
+          )
+
+          output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
+
+          # Render in new env, in knitting dir to avoid full paths
+          suppressWarnings(rmarkdown::render(report_path,
+                                             output_file = output_file,
+                                             params = params,
+                                             envir = new.env(parent = globalenv()), quiet = TRUE))
+
+          file.copy(file.path(dirname(report_path),output_file), file.path(output_directory,output_file))
+
+          # Actualise for printing
+          output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
+
+          end <- Sys.time()
+          duration <- round(difftime(end, start, units = "secs"))
+
+          if (!quiet) {
+            message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
+          }
+        }
+
+
+        ### DOCX reports
+        if (any(report_format == "docx")) {
+          if (!quiet) {
+            message("Production du rapport Microsoft Word...")
+          }
+
+          if(!requireNamespace("officedown", quietly = TRUE)){stop("Package {officedown} is required for DOCX reports. Please use `install.packages('officedown')`")}
+
+          start <- Sys.time()
+
+          report_path <- file.path(knitting_dir, "report","group", "docx_group_report.Rmd")
+
+          # Defining params
+          params <- list(
+            data = IDEA_plots,
+            outdir = "tmp",
+            dpi = dpi
+          )
+
+          output_file <- paste0("Rapport_groupe_", n_farm, ".docx")
+
+          # Render in new env
+          suppressWarnings(rmarkdown::render(report_path,
+                                             output_file = output_file, output_dir = output_directory,
+                                             params = params,
+                                             envir = new.env(parent = globalenv()), quiet = TRUE
+          ))
+
+          end <- Sys.time()
+          duration <- round(difftime(end, start, units = "secs"))
+
+          if (!quiet) {
+            message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
+          }
+        }
+
+        ### PPTX reports
+        if (any(report_format == "pptx")) {
+          if (!quiet) {
+            message("Production de la pr\u00e9sentation Microsoft Powerpoint...")
+          }
+
+          start <- Sys.time()
+
+          report_path <- file.path(knitting_dir, "report","group", "pptx_group_report.Rmd")
+
+          # Defining params
+          params <- list(
+            data = IDEA_plots,
+            outdir = "tmp",
+            dpi = dpi
+          )
+
+          output_file <- paste0("Rapport_groupe_", n_farm, ".pptx")
+
+          # Render in new env
+          suppressWarnings(rmarkdown::render(report_path,
+                                             output_file = output_file, output_dir = output_directory,
+                                             params = params,
+                                             envir = new.env(parent = globalenv()), quiet = TRUE
+          ))
+
+          end <- Sys.time()
+          duration <- round(difftime(end, start, units = "secs"))
+
+          if (!quiet) {
+            message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
+          }
+        }
+
+        ### XLSX reports
+        if (any(report_format == "xlsx")) {
+          if (!quiet) {
+            message("Production du rapport Microsoft Excel...")
+          }
+
+          if(!requireNamespace("openxlsx", quietly = TRUE)){stop("Package {openxlsx} is required for XLSX reports. Please use `install.packages('openxlsx')`")}
+
+          start <- Sys.time()
+
+          output_file <- paste0("Rapport_groupe_", n_farm, ".xlsx")
+
+          # Using custom function instead of Rmd
+          excel_group_report(
+            IDEAdata = IDEA_plots,
+            output_dir = output_directory,
+            output_file = output_file,
+            outdir = file.path(knitting_dir, "tmp"),
+            dpi = dpi
+          )
+
+          end <- Sys.time()
+          duration <- round(difftime(end, start, units = "secs"))
+
+          if (!quiet) {
+            message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
+          }
+        }
       }
+
     }
 
 
-    # If export is "report" -----------------------------------------------------
 
-    if (any(type == "report")) {
-
-      rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr"), reason = "to produce reports`")
-
-      ## Creating output directory
-      if (!dir.exists(output_directory)) {
-        dir.create(output_directory, recursive = TRUE)
-      }
-
-      # Defining a knitting dir in tempdir in case the user doesn't have all permissions in working directory
-      knitting_dir <- file.path(tempdir(), "IDEATools_reports")
-      if (!dir.exists(knitting_dir)) (dir.create(knitting_dir))
-      file.copy(system.file("report/", package = "IDEATools"), knitting_dir, recursive = TRUE)
-
-      if (!quiet) {
-        message(paste0("Production des ", length(report_format), " rapports demand\u00e9s"))
-      }
-
-
-      ### PDF reports
-      if (any(report_format == "pdf")) {
-        if (!quiet) {
-          message("Production du rapport PDF...")
-        }
-
-
-        start <- Sys.time()
-
-        # Using the HTML report, converted to PDF
-        report_path <- file.path(knitting_dir, "report","group", "pdf_group_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots
-        )
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        # Actualise for printing
-        output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
-        }
-      }
-
-
-      ### ODT reports
-      if (any(report_format == "odt")) {
-        if (!quiet) {
-          message("Production du rapport LibreOffice Writer...")
-        }
-
-        start <- Sys.time()
-
-        report_path <- file.path(knitting_dir, "report","group", "odt_group_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".odt")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
-        }
-      }
-
-
-      ### DOCX reports
-      if (any(report_format == "docx")) {
-        if (!quiet) {
-          message("Production du rapport Microsoft Word...")
-        }
-
-        if(!requireNamespace("officedown", quietly = TRUE)){stop("Package {officedown} is required for DOCX reports. Please use `install.packages('officedown')`")}
-
-        start <- Sys.time()
-
-        report_path <- file.path(knitting_dir, "report","group", "docx_group_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".docx")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
-        }
-      }
-
-      ### PPTX reports
-      if (any(report_format == "pptx")) {
-        if (!quiet) {
-          message("Production de la pr\u00e9sentation Microsoft Powerpoint...")
-        }
-
-        start <- Sys.time()
-
-        report_path <- file.path(knitting_dir, "report","group", "pptx_group_report.Rmd")
-
-        # Defining params
-        params <- list(
-          data = IDEA_plots,
-          outdir = "tmp",
-          dpi = dpi
-        )
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".pptx")
-
-        # Render in new env
-        suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
-        ))
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
-        }
-      }
-
-
-
-      ### XLSX reports
-      if (any(report_format == "xlsx")) {
-        if (!quiet) {
-          message("Production du rapport Microsoft Excel...")
-        }
-
-        if(!requireNamespace("openxlsx", quietly = TRUE)){stop("Package {openxlsx} is required for XLSX reports. Please use `install.packages('openxlsx')`")}
-
-        start <- Sys.time()
-
-        output_file <- paste0("Rapport_groupe_", n_farm, ".xlsx")
-
-        # Using custom function instead of Rmd
-        excel_group_report(
-          IDEAdata = IDEA_plots,
-          output_dir = output_directory,
-          output_file = output_file,
-          outdir = file.path(knitting_dir, "tmp"),
-          dpi = dpi
-        )
-
-        end <- Sys.time()
-        duration <- round(difftime(end, start, units = "secs"))
-
-        if (!quiet) {
-          message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
-        }
-      }
-    }
   }
 }

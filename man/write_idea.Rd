@@ -27,7 +27,7 @@ write_idea(
 
 \item{dpi}{ggplot output resolution.}
 
-\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"}
+\item{report_format}{a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "pptx" and "xlsx"}
 
 \item{append}{If the input is an xlsx format, should the individual output be appended to the original file ?}
 
@@ -50,12 +50,11 @@ In the case of an individual analysis, another subdirectory is created with \cod
 
 In the case of a group analysis, another subdirectory is created with a name like "Groupe_{number_of_farms}" so that analyses are not mixed up. The user can again choose if output should be raw plots or pre-compiled reports.
 
-If the \code{report_format} argument is set to either "docx", "odt" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "html" and "pdf" output, the {pagedown} package will be used to produce a clean paged HTML report using CSS files stored in this package, which can be converted to PDF using chrome print. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
+If the \code{report_format} argument is set to either "docx" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "pdf" output, LaTeX will be called with the {rmarkdown} package. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
 
 Please note that an error will be produced if the input object does not contain all three "dimensions","trees" and "radars" entries in the case of an individual analysis and if \code{type = "report"}.
 }
 \examples{
-\dontrun{
 library(IDEATools)
 path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
@@ -64,6 +63,7 @@ idea_plots <- plot_idea(computed_data)
 # Find your temporary directory
 tempdir <- tempdir()
 
+\donttest{
 # Export as raw plots to your tempdir.
 write_idea(idea_plots,
   output_directory = tempdir, type = "local",

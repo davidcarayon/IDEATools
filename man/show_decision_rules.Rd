@@ -9,6 +9,9 @@ show_decision_rules(directory = getwd())
 \arguments{
 \item{directory}{the directory where to output the decision rules}
 }
+\value{
+Exports an excel file in the desired directory
+}
 \description{
 Show decision rules
 }

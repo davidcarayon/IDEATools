@@ -4,10 +4,10 @@
 #'
 #' @param input a character vector with path names to a single file, multiple files or even a directory with IDEA data. File extensions can either be \code{json} or \code{xls(x)}
 #' @param output_directory the output directory for the rendered reports and/or plots. Defaults to "IDEATools_output"
-#' @param type the type of analysis to perform. Can be "single" for single farm-related results, "group" for group-related results, or even both c("single","report"), provided that the number of farms is at least 3.
+#' @param type the type of analysis to perform. Can be "single" for single farm-related results, "group" for group-related results, "group_reference" for anonymous group-related results, or a combination of the latter, provided that the number of farms is at least 3. Note that "group_reference" is a special option designed to work with an online platform using this package (WEBIDEA)
 #' @param export_type the type of output to produce. Can be either "report" to produce compiled reports and/or "local" to write raw plots. If NULL, the algorithm will not produce any plots on machine and will return a list with the IDEA results.
 #' @param plot_choices the type of plots to be produced. Can be either "dimensions", "trees" or "radars" or a combination of these 3. Ignored if the export type is "report".
-#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "odt", "pptx" and "xlsx"
+#' @param report_format a string indicating the output format if \code{type = "report"}. Can be a single format (e.g \code{"pdf"}) or multiple formats (e.g. \code{c("pdf","xlsx")}). Possible formats are "pdf", "docx", "pptx" and "xlsx"
 #' @param prefix a prefix which will be added to output files names. Typically, the name of the farm. Ignored if \code{length(input) > 1} or in the case of a group analysis : the \code{metadata$MTD_01} field will be used to identify each farm.
 #' @param dpi ggplot output resolution.
 #' @param append In the case of a single excel report and if the input is an xlsx file, should the results be appended to the original file ?
@@ -21,7 +21,7 @@
 #'
 #' If the input is a list of files and/or a directory, and if type is "single", then the single analysis pipelines are iterated over each file. If export_type is NULL, then the multiple outputs of \code{plot_idea()} are gathered in an unique list and returned.
 #'
-#' If the input is a list of files and/or a directory, and if type is "group", then the "import" (\code{read_idea() |> compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() |> write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
+#' If the input is a list of files and/or a directory, and if type is "group*", then the "import" (\code{read_idea() |> compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() |> write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
 #'
 #' Note that group analysis requires a number of unique farms greater or equal to 3.
 #'
@@ -31,32 +31,21 @@
 #' library(IDEATools)
 #' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 #' group_path <- system.file("example_data", package = "IDEATools")
-#' \dontrun{
 #'
-#' # Find your temporary directory
+#' # Find your temporary directory (the output will be there)
 #' tempdir <- tempdir()
 #'
-#' # Run a full individual diagnosis with local export, without radars
+#' \donttest{
+#' # Run a full individual diagnosis with local export, with only trees
 #' diag_idea(
 #'   input = path,
 #'   output_directory = tempdir,
 #'   type = "single",
 #'   export_type = "local",
 #'   prefix = "Exploitation_A",
-#'   dpi = 300,
-#'   plot_choices = c("dimensions", "trees"),
-#'   quiet = FALSE
-#' )
-#'
-#' # Run a group diagnosis with report export as pdf
-#' diag_idea(
-#'   input = group_path,
-#'   output_directory = tempdir,
-#'   type = "group",
-#'   export_type = "report",
-#'   dpi = 300,
-#'   report_format = "pdf",
-#'   quiet = FALSE
+#'   dpi = 80,
+#'   plot_choices = "trees",
+#'   quiet = TRUE
 #' )
 #' }
 diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "pdf", prefix = NULL, dpi = 320, append = FALSE, quiet = FALSE) {
@@ -283,11 +272,11 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
   # Group analysis ----------------------------------------------------------
 
   ## Error if the input is a single file
-  if (any(type == "group") & input_type == "file") {
+  if (any(type %in%  c("group","group_reference")) & input_type == "file") {
     stop("Group analysis is not possible with only one file.")
   }
 
-  if ((any(type == "group") & input_type == "list_files") | (any(type == "group") & input_type == "directory")) {
+  if ((any(type %in%  c("group","group_reference")) & input_type == "list_files") | (any(type %in%  c("group","group_reference")) & input_type == "directory")) {
 
     ## Creating the iterating vector according to the input
     if (input_type == "list_files") {
@@ -380,7 +369,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     start <- Sys.time()
 
 
-    #TO-DO : replace
     # Aggregating results for properties
     group_list$nodes <- list(
       "Robustesse" = lapply(group_list$nodes, FUN = dplyr::nth, 1) |> dplyr::bind_rows(),
@@ -396,6 +384,12 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Plotting
     IDEA_group_plots <- plot_idea(group_list)
+
+    ## Special class if the output is "reference"
+    if(type == "group_reference") {
+      class(IDEA_group_plots) <- c(class(IDEA_group_plots), "IDEA_group_plots_ref")
+    }
+
 
     ## Estimating duration
     end <- Sys.time()

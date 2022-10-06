@@ -21,7 +21,7 @@
 #' library(IDEATools)
 #'
 #' ## Importing from an old file
-#' \dontrun{
+#' \donttest{
 #' input <- "path_to_your_old_file.xlsx"
 #' computed_data <- old_idea(input)
 #' }
@@ -204,8 +204,6 @@ old_idea <- function(input) {
   }
 
   # Making sure metadata is of right format and cleaned.
-  # Temporarily removing warnings because of NA's converted to numerics/characters.
-  options(warn = -1)
   metadata$MTD_00 <- as.character(metadata$MTD_00)
   metadata$MTD_01 <- as.character(metadata$MTD_01)
   metadata$MTD_02 <- round(as.numeric(metadata$MTD_02), 1)
@@ -223,7 +221,6 @@ old_idea <- function(input) {
   metadata$MTD_14 <- as.character(metadata$MTD_14)
   metadata$MTD_15 <- round(as.numeric(metadata$MTD_15), 1)
   metadata$MTD_16 <- as.character(metadata$MTD_16)
-  options(warn = 0) # Restoring warnings
 
   # Reading indicators ------------------------------------------------------
 

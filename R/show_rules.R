@@ -4,7 +4,7 @@
 
 #' Show decision rules
 #' @param directory the directory where to output the decision rules
-#'
+#' @return Exports an excel file in the desired directory
 #' @export
 show_decision_rules <- function(directory = getwd()) {
 
@@ -17,6 +17,7 @@ show_decision_rules <- function(directory = getwd()) {
 
 #' Show the reference table used for building colored trees
 #' @param directory the directory where to output the reference tables
+#' @return Exports an excel file in the desired directory
 #'
 #' @export
 show_tree_structure <- function(directory = getwd()) {

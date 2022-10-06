@@ -2,6 +2,7 @@
 #'
 #' This function loads a graphical user interface (GUI) to use IDEATools.
 #' @export
+#' @return Loads a shiny application
 #' @examples
 #' library(IDEATools)
 #' \dontrun{

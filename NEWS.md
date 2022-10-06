@@ -1,3 +1,10 @@
+# IDEATools 3.3.1
+* Documentation fix for CRAN
+* Removed the ODT output to gain some space
+* New function for group reference excel reports
+* New PDF template for group reference
+* Changes to `diag_idea()` with a new "group_reference" type
+
 # IDEATools 3.3.0
 * New `runGUI()` function that loads a basic shiny app to use the package functions
 * Switching from magrittr pipes to base ones (forces R > 4.1.0)

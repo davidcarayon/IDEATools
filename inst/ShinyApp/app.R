@@ -121,14 +121,14 @@ server <- function(input, output, session) {
           shiny::incProgress(8/10)
 
           ## Définition du chemin des fichiers à archiver
-          current_dir <- getwd()
+          oldwd <- getwd()
           setwd(file.path(outdir, Sys.Date()))
 
           fs <- list.files(file_name_short, recursive = TRUE, full.names = TRUE)
 
           # Export du zip
           zip::zip(zipfile = file, files = fs)
-          setwd(current_dir)
+          setwd(oldwd)
 
 
         } else {

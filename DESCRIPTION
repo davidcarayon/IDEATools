@@ -1,13 +1,13 @@
 Package: IDEATools
 Title: A Collection of Tools Dedicated to the IDEA4 Method
-Version: 3.3.0
+Version: 3.3.1
 Authors@R: 
     person(given = "David",
            family = "Carayon",
            role = c("aut", "cre"),
            email = "david.carayon@inrae.fr",
            comment = c(ORCID = "0000-0003-0217-2175"))
-Description: Collection of tools to automate the processing of data collected as part of IDEA 4 diagnostics. Starting from the original data collecting files this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. 
+Description: Collection of tools to automate the processing of data collected though the IDEA4 method (see Zahm et al. (2018) <https://doi.org/10.1051/cagri/2019004)>. Starting from the original data collecting files this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. 
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

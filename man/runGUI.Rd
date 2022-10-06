@@ -6,6 +6,9 @@
 \usage{
 runGUI()
 }
+\value{
+Loads a shiny application
+}
 \description{
 This function loads a graphical user interface (GUI) to use IDEATools.
 }
