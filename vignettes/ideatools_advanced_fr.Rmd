@@ -36,7 +36,7 @@ Cette version apporte principalement une évolution au niveau du traitement de l
 
 La palette de couleurs utilisée a également été revue pour accentuer les contrastes et améliorer la lisibilité pour des utilisateurs avec problèmes de distinction des couleurs :
 
-```{r echo = FALSE}
+```{r colors, echo = FALSE}
 scales::show_col(c(
   "tres defavorable" = "#CD0000",
   "defavorable" = "#FF6347",

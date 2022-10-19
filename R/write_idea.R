@@ -47,14 +47,19 @@
 #' \donttest{
 #' # Export as raw plots to your tempdir.
 #' write_idea(idea_plots,
-#'   output_directory = tempdir, type = "local",
-#'   prefix = "myFarm", dpi = 300
+#'   output_directory = tempdir,
+#'   type = "local",
+#'   prefix = "myFarm",
+#'   dpi = 50
 #' )
 #'
 #' # Export as xlsx reports to your tempdir.
 #' write_idea(idea_plots,
-#'   output_directory = tempdir, prefix = "myFarm",
-#'   type = "report", dpi = 300, report_format = c("pdf", "xlsx")
+#'   output_directory = tempdir,
+#'   prefix = "myFarm",
+#'   type = "report",
+#'   report_format = "xlsx",
+#'   dpi = 50
 #' )
 #' }
 write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", append = FALSE, input_file_append = NULL, quiet = FALSE) {
@@ -273,7 +278,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
     if (any(type == "report")) {
 
-      rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr"), reason = "to produce reports`")
+      rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr","gt"), reason = "to produce reports`")
 
       # Reports requires all 3 types of plots
       if (length(names(IDEA_plots)) < 4) (stop("Reporting functions requires that all three kind of plots are drawn in previous `plots_idea()` call"))
@@ -495,7 +500,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
       if (any(type == "report")) {
 
-        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr"), reason = "to produce reports`")
+        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr","gt"), reason = "to produce reports`")
 
         ## Creating output directory
         if (!dir.exists(output_directory)) {
@@ -641,7 +646,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
       if (any(type == "report")) {
 
-        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr"), reason = "to produce reports`")
+        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr","gt"), reason = "to produce reports`")
 
         ## Creating output directory
         if (!dir.exists(output_directory)) {

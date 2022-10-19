@@ -43,17 +43,17 @@ library(IDEATools)
 
 ## Prérequis pour la production de rapports
 
--   Pour la production de rapport PDF, une installation de LaTeX est
-    requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser
-    la fonction `tinytex::install_tinytex()` pour installer une version
-    minimale de LaTeX vous permettant d’éditer des rapports au format
-    PDF en utilisant le package IDEATools. Une fois installé, vous
-    n’avez plus besoin de vous soucier de LaTeX (opération à réaliser
-    seulement lors de la première utilisation).
+- Pour la production de rapport PDF, une installation de LaTeX est
+  requise. Si vous n’avez jamais utilisé LaTeX, vous pouvez utiliser la
+  fonction `tinytex::install_tinytex()` pour installer une version
+  minimale de LaTeX vous permettant d’éditer des rapports au format PDF
+  en utilisant le package IDEATools. Une fois installé, vous n’avez plus
+  besoin de vous soucier de LaTeX (opération à réaliser seulement lors
+  de la première utilisation).
 
--   Les rapports PDF utilisent (et nécessitent donc impérativement) la
-    police `Helvetica`. Il est donc important de l’avoir installée sur
-    votre machine.
+- Les rapports PDF utilisent (et nécessitent donc impérativement) la
+  police `Helvetica`. Il est donc important de l’avoir installée sur
+  votre machine.
 
 # Utilisation simplifiée
 
@@ -67,13 +67,12 @@ runGUI()
 
 Une interface va alors s’ouvrir et proposer 3 différents modules :
 
--   Analyses individuelles (1 seul calculateur)
--   Analyses de groupe (\>= 3 calculateurs, maintenir MAJ pour
-    sélectionner plusieurs calculateurs)
--   Un module intitulé `jsonify()` qui permet de convertir un
-    calculateur excel IDEA en un fichier JSON, notamment utilisé par le
-    WEBIDEA, dans le cas où la macro excel du calculateur ne
-    fonctionnerait pas.
+- Analyses individuelles (1 seul calculateur)
+- Analyses de groupe (\>= 3 calculateurs, maintenir MAJ pour
+  sélectionner plusieurs calculateurs)
+- Un module intitulé `jsonify()` qui permet de convertir un calculateur
+  excel IDEA en un fichier JSON, notamment utilisé par le WEBIDEA, dans
+  le cas où la macro excel du calculateur ne fonctionnerait pas.
 
 ![](man/figures/cap_app.png)
 
@@ -88,16 +87,16 @@ allant de l’import des données d’un calculateur à la production de
 graphiques puis à la productions de produits de reporting (PDF, Excel,
 etc.) :
 
--   `read_idea()` : Permet d’identifier la validité du fichier d’entrée
-    et d’en extraire métadonnées et items.
--   `compute_idea()` : Calcule les
-    indicateurs/composantes/dimensions/propriétés à partir des items
--   `old_idea()` : Alternative aux deux fonctions précédentes si le
-    calculateur est trop ancien (vise les indicateurs plutôt que les
-    items)
--   `plot_idea()` : Produit les graphiques dimensions / propriétés
--   `write_idea()` : Export des graphiques sous forme brute ou sous
-    forme de rapports aux formats variés.
+- `read_idea()` : Permet d’identifier la validité du fichier d’entrée et
+  d’en extraire métadonnées et items.
+- `compute_idea()` : Calcule les
+  indicateurs/composantes/dimensions/propriétés à partir des items
+- `old_idea()` : Alternative aux deux fonctions précédentes si le
+  calculateur est trop ancien (vise les indicateurs plutôt que les
+  items)
+- `plot_idea()` : Produit les graphiques dimensions / propriétés
+- `write_idea()` : Export des graphiques sous forme brute ou sous forme
+  de rapports aux formats variés.
 
 Afin de simplifier l’utilisation du package, une fonction globale
 `diag_idea()` a été développée. Grâce à cette fonction, selon la saisie
@@ -105,25 +104,24 @@ de l’utilisateur, les modules d’IDEATools vont être appelés
 séquentiellement afin de produire les résultats demandés. L’utilisateur
 peut notamment paramétrer :
 
--   Le fichier/dossier d’entrée des données `input`
--   Le dossier de sortie des résultats `output_directory`
--   Le type d’analyse (individuelle ou de groupe) `type`
--   Le type de sorties (rapport et/ou graphiques bruts) `export_type`
--   Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
-    `plot_choices`
--   Le format de sortie du rapport si désiré (au choix : pdf, docx,
-    pptx, xlsx) `report_format`
--   Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la
-    ferme) dans le cas d’une analyse individuelle `prefix`
--   La résolution de sortie des graphiques (impacte notamment le poids
-    des sorties) `dpi`
--   Si l’algorithme doit afficher sa progression dans la console.
-    `quiet`
--   (*nouveau*) Dans le cas particulier ou un calculateur au format
-    .xlsx est inséré et qu’un rapport individuel au format xlsx est
-    demandé, `append` paramétré en TRUE permet de coller les onglets de
-    résultats à la suite des onglets du calculateur initial, créant
-    ainsi un calculateur “tout en un” avec données + résultats.
+- Le fichier/dossier d’entrée des données `input`
+- Le dossier de sortie des résultats `output_directory`
+- Le type d’analyse (individuelle ou de groupe) `type`
+- Le type de sorties (rapport et/ou graphiques bruts) `export_type`
+- Le types de graphiques qu’il souhaite (dans le cas d’un export brut)
+  `plot_choices`
+- Le format de sortie du rapport si désiré (au choix : pdf, docx, pptx,
+  xlsx) `report_format`
+- Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la ferme)
+  dans le cas d’une analyse individuelle `prefix`
+- La résolution de sortie des graphiques (impacte notamment le poids des
+  sorties) `dpi`
+- Si l’algorithme doit afficher sa progression dans la console. `quiet`
+- (*nouveau*) Dans le cas particulier ou un calculateur au format .xlsx
+  est inséré et qu’un rapport individuel au format xlsx est demandé,
+  `append` paramétré en TRUE permet de coller les onglets de résultats à
+  la suite des onglets du calculateur initial, créant ainsi un
+  calculateur “tout en un” avec données + résultats.
 
 Voici un appel complet à la fonction `diag_idea()` avec toutes les
 possibilités de paramétrage :

@@ -30,7 +30,7 @@ Note : For the farm id metadata, the full First/Last name will be used if found.
 library(IDEATools)
 
 ## Importing from an old file
-\donttest{
+\dontrun{
 input <- "path_to_your_old_file.xlsx"
 computed_data <- old_idea(input)
 }

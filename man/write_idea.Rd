@@ -66,14 +66,19 @@ tempdir <- tempdir()
 \donttest{
 # Export as raw plots to your tempdir.
 write_idea(idea_plots,
-  output_directory = tempdir, type = "local",
-  prefix = "myFarm", dpi = 300
+  output_directory = tempdir,
+  type = "local",
+  prefix = "myFarm",
+  dpi = 50
 )
 
 # Export as xlsx reports to your tempdir.
 write_idea(idea_plots,
-  output_directory = tempdir, prefix = "myFarm",
-  type = "report", dpi = 300, report_format = c("pdf", "xlsx")
+  output_directory = tempdir,
+  prefix = "myFarm",
+  type = "report",
+  report_format = "xlsx",
+  dpi = 50
 )
 }
 }

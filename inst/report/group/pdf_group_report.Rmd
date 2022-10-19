@@ -37,6 +37,91 @@ cat(paste0("\\fancyhead[]{}"))
 
 \newpage
 
+# Principales caractéristiques structurelles
+
+Nombre d'exploitations : **`r n_farm`**
+
+```{r}
+metadata |>
+  dplyr::mutate(MTD_02 = round(MTD_02, 1)) |>
+  dplyr::mutate(MTD_15 = round(MTD_15, 1)) |>
+  dplyr::mutate(MTD_03 = round(MTD_03, 1)) |>
+  dplyr::mutate(MTD_08 = round(MTD_08, 0)) |>
+  dplyr::mutate(MTD_09 = round(MTD_09, 0)) |>
+  dplyr::mutate(MTD_10 = round(MTD_10, 0)) |>
+  dplyr::select(MTD_02, MTD_15, MTD_03, MTD_08, MTD_09, MTD_10) |>
+  tidyr::pivot_longer(dplyr::everything()) |>
+  dplyr::inner_join(IDEATools:::reference_list$metadata, by = c("name" = "metadata_code")) |>
+  dplyr::select(Variable = metadata_name, value) |>
+  dplyr::group_by(Variable) |>
+  dplyr::summarise(
+    "Percentile 5" = stats::quantile(value, 0.05, na.rm=TRUE),
+    "Quartile 1" = stats::quantile(value, 0.25, na.rm=TRUE),
+    "Moyenne" = round(mean(value, na.rm=TRUE)),
+    "Médiane" = stats::median(value, na.rm=TRUE),
+    "Quartile 3" = stats::quantile(value, 0.75, na.rm=TRUE), 
+    "Percentile 95" = stats::quantile(value, 0.95, na.rm=TRUE)
+  ) |> 
+  dplyr::mutate(Variable = c("Capital d'exploitation (€)", "EBE (€)", "Part des PP dans la SAU (%)", "Résultat courant (€)", "SAU (ha)", "UTH")) |> 
+  gt::gt() |> 
+  gt::tab_header(title = "Caractéristiques numériques") |> 
+  gt::tab_options(table.width = gt::pct(100))
+```
+
+```{r}
+unique_age <- unique(metadata$MTD_05)
+unique_atelier<- data.frame(MTD = unique(metadata$MTD_12)) |> dplyr::mutate(MTD = ifelse(MTD == "1", yes = "oui", no = "non")) |> unlist(use.names = FALSE)
+unique_elevage <- dplyr::tibble(MTD = metadata$MTD_14) |>
+  dplyr::mutate(MTD = dplyr::case_when(MTD == 0 ~ "Pas d'élevage",
+                         MTD == 1 ~ "Monogastrique",
+                         TRUE ~ "Herbivore")) |>
+  dplyr::pull(MTD) |> unique()
+
+possible_age <- dplyr::tibble(
+  metadata_name = "Tranche d’âge du chef d’exploitation",
+  value = c("-25","26-35","36-45", "46-55","56-65","65+"),
+  n = 0
+) |>
+  dplyr::filter(!value %in% unique_age)
+
+possible_atelier <- dplyr::tibble(
+  metadata_name = "Atelier hors sol",
+  value = c("oui","non"),
+  n = 0
+) |>
+  dplyr::filter(!value %in% unique_atelier)
+
+possible_elevage <- dplyr::tibble(
+  metadata_name = "Type d’élevage",
+  value = c("Pas d'élevage","Monogastrique","Herbivore"),
+  n = 0
+)|>
+  dplyr::filter(!value %in% unique_elevage)
+
+metadata |>
+  dplyr::select(MTD_05,MTD_06,MTD_11,MTD_12,MTD_12,MTD_13,MTD_14) |>
+  dplyr::mutate(MTD_12 = ifelse(MTD_12 == "1", yes = "oui", no = "non")) |> 
+  dplyr::mutate(MTD_14 = dplyr::case_when(MTD_14 == 0 ~ "Pas d'élevage",
+                            MTD_14 == 1 ~ "Monogastrique",
+                            TRUE ~ "Herbivore")) |>
+  tidyr::pivot_longer(dplyr::everything()) |>
+  dplyr::inner_join(IDEATools:::reference_list$metadata, by = c("name" = "metadata_code")) |>
+  dplyr::select(metadata_name, value) |>
+  dplyr::rowwise() |> 
+  dplyr::mutate(metadata_name = ifelse(stringr::str_detect(metadata_name, "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |> 
+  dplyr::ungroup() |> 
+  dplyr::group_by(metadata_name) |>
+  dplyr::count(value) |>
+  dplyr::bind_rows(possible_age, possible_elevage, possible_atelier) |>
+  dplyr::arrange(metadata_name,value,n) |> 
+  dplyr::select("Nom" = metadata_name, "Modalité" = value, "Nombre d'exploitations" = n) |> 
+  gt::gt() |> 
+  gt::tab_header(title = "Caractéristiques catégorielles") |> 
+  gt::tab_options(table.width = gt::pct(100))
+```
+
+\newpage
+
 # Lecture par les dimensions de la durabilité
 
 ## Résultats pour les 3 dimensions 

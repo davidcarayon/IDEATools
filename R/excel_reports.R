@@ -441,7 +441,7 @@ excel_report <- function(IDEAdata, output_dir, outdir, output_file, prefix, dpi,
 excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
 
   # Check if openxlsx installed
-  rlang::check_installed("openxlsx", reason = "to make excel reports`")
+  rlang::check_installed("openxlsx", reason = "to make excel reports")
 
   # Number of farms
   n_farm <- nrow(IDEAdata$data$metadata)
@@ -496,6 +496,122 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
 
 
   # Beggining the xlsx sequence ---------------------------------------------
+
+  ## Metadata
+
+  ## Creating worksheet
+  openxlsx::addWorksheet(wb, "Donn\u00e9es structurelles")
+
+  metadata <- IDEAdata$data$metadata
+
+  num_data <- metadata |>
+    dplyr::mutate(MTD_02 = round(MTD_02, 1)) |>
+    dplyr::mutate(MTD_15 = round(MTD_15, 1)) |>
+    dplyr::mutate(MTD_03 = round(MTD_03, 1)) |>
+    dplyr::mutate(MTD_08 = round(MTD_08, 0)) |>
+    dplyr::mutate(MTD_09 = round(MTD_09, 0)) |>
+    dplyr::mutate(MTD_10 = round(MTD_10, 0)) |>
+    dplyr::select(MTD_02, MTD_15, MTD_03, MTD_08, MTD_09, MTD_10) |>
+    tidyr::pivot_longer(tidyr::everything()) |>
+    dplyr::inner_join(reference_list$metadata, by = c("name" = "metadata_code")) |>
+    dplyr::select(Variable = metadata_name, value) |>
+    dplyr::group_by(Variable) |>
+    dplyr::summarise(
+      "Percentile 5" = stats::quantile(value, 0.05, na.rm=TRUE),
+      "Quartile 1" = stats::quantile(value, 0.25, na.rm=TRUE),
+      "Moyenne" = round(mean(value, na.rm=TRUE)),
+      "Mediane" = stats::median(value, na.rm=TRUE),
+      "Quartile 3" = stats::quantile(value, 0.75, na.rm=TRUE),
+      "Percentile 95" = stats::quantile(value, 0.95, na.rm=TRUE)
+    ) |>
+    dplyr::mutate(Variable = c("Capital d'exploitation (\u20ac)", "EBE (\u20ac)", "Part des PP dans la SAU (%)", "R\u00e9sultat courant (\u20ac)", "SAU (ha)", "UTH"))
+
+  unique_age <- unique(metadata$MTD_05)
+  unique_atelier<- data.frame(MTD = unique(metadata$MTD_12)) |> dplyr::mutate(MTD = ifelse(MTD == "1", yes = "oui", no = "non")) |> unlist(use.names = FALSE)
+  unique_elevage <- dplyr::tibble(MTD = metadata$MTD_14) |>
+    dplyr::mutate(MTD = dplyr::case_when(MTD == 0 ~ "Pas d'\u00e9levage",
+                                         MTD == 1 ~ "Monogastrique",
+                                         TRUE ~ "Herbivore")) |>
+    dplyr::pull(MTD) |> unique()
+
+  possible_age <- dplyr::tibble(
+    metadata_name = "Tranche d'\u00e2ge du chef d'exploitation",
+    value = c("-25","26-35","36-45", "46-55","56-65","65+"),
+    n = 0
+  ) |>
+    dplyr::filter(!value %in% unique_age)
+
+  possible_atelier <- dplyr::tibble(
+    metadata_name = "Atelier hors sol",
+    value = c("oui","non"),
+    n = 0
+  ) |>
+    dplyr::filter(!value %in% unique_atelier)
+
+  possible_elevage <- dplyr::tibble(
+    metadata_name = "Type d'\u00e9levage",
+    value = c("Pas d'\u00e9levage","Monogastrique","Herbivore"),
+    n = 0
+  )|>
+    dplyr::filter(!value %in% unique_elevage)
+
+  quant_data <- metadata |>
+    dplyr::select(MTD_05,MTD_06,MTD_11,MTD_12,MTD_12,MTD_13,MTD_14) |>
+    dplyr::mutate(MTD_12 = ifelse(MTD_12 == "1", yes = "oui", no = "non")) |>
+    dplyr::mutate(MTD_14 = dplyr::case_when(MTD_14 == 0 ~ "Pas d'\u00e9levage",
+                                            MTD_14 == 1 ~ "Monogastrique",
+                                            TRUE ~ "Herbivore")) |>
+    tidyr::pivot_longer(dplyr::everything()) |>
+    dplyr::inner_join(reference_list$metadata, by = c("name" = "metadata_code")) |>
+    dplyr::select(metadata_name, value) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(metadata_name = ifelse(stringr::str_detect(metadata_name, "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |>
+    dplyr::ungroup() |>
+    dplyr::group_by(metadata_name) |>
+    dplyr::count(value) |>
+    dplyr::bind_rows(possible_age, possible_elevage, possible_atelier) |>
+    dplyr::arrange(metadata_name,value,n) |>
+    dplyr::select("Nom" = metadata_name, "Valeurs" = value, "Nombre d'exploitations" = n)
+
+    # Write the disclaimer
+    title <- data.frame(NA)
+  names(title) <- "NB : Analyse reposant sur un \u00e9chantillon d'une base de donn\u00e9es non repr\u00e9sentative des exploitations agricoles fran\u00e7aises"
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", title,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 1, borders = "all", borderStyle = "medium", headerStyle = bold.style
+  )
+
+
+  # Write the title
+  title <- data.frame(NA)
+  names(title) <- paste0("Caract\u00e9ristiques num\u00e9riques (N = ", nrow(metadata), ")")
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", title,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 3, borders = "all", borderStyle = "medium", headerStyle = bold.style
+  )
+
+  # Write data
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", num_data,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 4, borders = "all", headerStyle = hs1, borderStyle = "medium"
+  )
+
+  # Write the title
+  title <- data.frame(NA)
+  names(title) <- paste0("Caract\u00e9ristiques cat\u00e9gorielles (N = ", nrow(metadata), ")")
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", title,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 12, borders = "all", borderStyle = "medium", headerStyle = bold.style
+  )
+
+  # Write data
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", quant_data,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 13, borders = "all", headerStyle = hs1, borderStyle = "medium"
+  )
+
+  ## Col widths
+  openxlsx::setColWidths(wb, "Donn\u00e9es structurelles", cols = c(2:15), widths = "auto")
 
 
   ## Dimensions
@@ -1043,6 +1159,121 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
 
   # Beggining the xlsx sequence ---------------------------------------------
 
+  ## Metadata
+
+  ## Creating worksheet
+  openxlsx::addWorksheet(wb, "Donn\u00e9es structurelles")
+
+  metadata <- IDEAdata$data$metadata
+
+  num_data <- metadata |>
+    dplyr::mutate(MTD_02 = round(MTD_02, 1)) |>
+    dplyr::mutate(MTD_15 = round(MTD_15, 1)) |>
+    dplyr::mutate(MTD_03 = round(MTD_03, 1)) |>
+    dplyr::mutate(MTD_08 = round(MTD_08, 0)) |>
+    dplyr::mutate(MTD_09 = round(MTD_09, 0)) |>
+    dplyr::mutate(MTD_10 = round(MTD_10, 0)) |>
+    dplyr::select(MTD_02, MTD_15, MTD_03, MTD_08, MTD_09, MTD_10) |>
+    tidyr::pivot_longer(tidyr::everything()) |>
+    dplyr::inner_join(reference_list$metadata, by = c("name" = "metadata_code")) |>
+    dplyr::select(Variable = metadata_name, value) |>
+    dplyr::group_by(Variable) |>
+    dplyr::summarise(
+      "Percentile 5" = stats::quantile(value, 0.05, na.rm=TRUE),
+      "Quartile 1" = stats::quantile(value, 0.25, na.rm=TRUE),
+      "Moyenne" = round(mean(value, na.rm=TRUE)),
+      "Mediane" = stats::median(value, na.rm=TRUE),
+      "Quartile 3" = stats::quantile(value, 0.75, na.rm=TRUE),
+      "Percentile 95" = stats::quantile(value, 0.95, na.rm=TRUE)
+    ) |>
+    dplyr::mutate(Variable = c("Capital d'exploitation (\u20ac)", "EBE (\u20ac)", "Part des PP dans la SAU (%)", "R\u00e9sultat courant (\u20ac)", "SAU (ha)", "UTH"))
+
+  unique_age <- unique(metadata$MTD_05)
+  unique_atelier<- data.frame(MTD = unique(metadata$MTD_12)) |> dplyr::mutate(MTD = ifelse(MTD == "1", yes = "oui", no = "non")) |> unlist(use.names = FALSE)
+  unique_elevage <- dplyr::tibble(MTD = metadata$MTD_14) |>
+    dplyr::mutate(MTD = dplyr::case_when(MTD == 0 ~ "Pas d'\u00e9levage",
+                                         MTD == 1 ~ "Monogastrique",
+                                         TRUE ~ "Herbivore")) |>
+    dplyr::pull(MTD) |> unique()
+
+  possible_age <- dplyr::tibble(
+    metadata_name = "Tranche d'\u00e2ge du chef d'exploitation",
+    value = c("-25","26-35","36-45", "46-55","56-65","65+"),
+    n = 0
+  ) |>
+    dplyr::filter(!value %in% unique_age)
+
+  possible_atelier <- dplyr::tibble(
+    metadata_name = "Atelier hors sol",
+    value = c("oui","non"),
+    n = 0
+  ) |>
+    dplyr::filter(!value %in% unique_atelier)
+
+  possible_elevage <- dplyr::tibble(
+    metadata_name = "Type d'\u00e9levage",
+    value = c("Pas d'\u00e9levage","Monogastrique","Herbivore"),
+    n = 0
+  )|>
+    dplyr::filter(!value %in% unique_elevage)
+
+  quant_data <- metadata |>
+    dplyr::select(MTD_05,MTD_06,MTD_11,MTD_12,MTD_12,MTD_13,MTD_14) |>
+    dplyr::mutate(MTD_12 = ifelse(MTD_12 == "1", yes = "oui", no = "non")) |>
+    dplyr::mutate(MTD_14 = dplyr::case_when(MTD_14 == 0 ~ "Pas d'\u00e9levage",
+                                            MTD_14 == 1 ~ "Monogastrique",
+                                            TRUE ~ "Herbivore")) |>
+    tidyr::pivot_longer(dplyr::everything()) |>
+    dplyr::inner_join(reference_list$metadata, by = c("name" = "metadata_code")) |>
+    dplyr::select(metadata_name, value) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(metadata_name = ifelse(stringr::str_detect(metadata_name, "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |>
+    dplyr::ungroup() |>
+    dplyr::group_by(metadata_name) |>
+    dplyr::count(value) |>
+    dplyr::bind_rows(possible_age, possible_elevage, possible_atelier) |>
+    dplyr::arrange(metadata_name,value,n) |>
+    dplyr::select("Nom" = metadata_name, "Valeurs" = value, "Nombre d'exploitations" = n)
+
+  # Write the disclaimer
+  title <- data.frame(NA)
+  names(title) <- "NB : Analyse reposant sur un \u00e9chantillon d'une base de donn\u00e9es non repr\u00e9sentative des exploitations agricoles fran\u00e7aises"
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", title,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 1, borders = "all", borderStyle = "medium", headerStyle = bold.style
+  )
+
+
+  # Write the title
+  title <- data.frame(NA)
+  names(title) <- paste0("Caract\u00e9ristiques num\u00e9riques (N = ", nrow(metadata), ")")
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", title,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 3, borders = "all", borderStyle = "medium", headerStyle = bold.style
+  )
+
+  # Write data
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", num_data,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 4, borders = "all", headerStyle = hs1, borderStyle = "medium"
+  )
+
+  # Write the title
+  title <- data.frame(NA)
+  names(title) <- paste0("Caract\u00e9ristiques cat\u00e9gorielles (N = ", nrow(metadata), ")")
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", title,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 12, borders = "all", borderStyle = "medium", headerStyle = bold.style
+  )
+
+  # Write data
+  openxlsx::writeData(wb, "Donn\u00e9es structurelles", quant_data,
+                      colNames = TRUE, rowNames = FALSE, startCol = "A",
+                      startRow = 13, borders = "all", headerStyle = hs1, borderStyle = "medium"
+  )
+
+  ## Col widths
+  openxlsx::setColWidths(wb, "Donn\u00e9es structurelles", cols = c(2:15), widths = "auto")
 
   ## Dimensions
 

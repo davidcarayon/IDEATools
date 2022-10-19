@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="A Collection of Tools Dedicated to the IDEA4 Method">
-<meta property="og:description" content="Collection of tools to automate the processing of data collected though the IDEA4 method (see Zahm et al. (2018) &lt;https://doi.org/10.1051/cagri/2019004)&gt;. Starting from the original data collecting files this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. ">
+<meta property="og:description" content="Collection of tools to automate the processing of data collected though the IDEA4 method (see Zahm et al. (2018) &lt;doi:10.1051/cagri/2019004&gt; ). Starting from the original data collecting files this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. ">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -187,7 +187,7 @@
 </li>
 <li>Le types de graphiques qu’il souhaite (dans le cas d’un export brut) <code>plot_choices</code>
 </li>
-<li>Le format de sortie du rapport si désiré (au choix : pdf, docx, odt, pptx, xlsx) <code>report_format</code>
+<li>Le format de sortie du rapport si désiré (au choix : pdf, docx, pptx, xlsx) <code>report_format</code>
 </li>
 <li>Le préfixe à rajouter aux fichiers de sortie (ex : le nom de la ferme) dans le cas d’une analyse individuelle <code>prefix</code>
 </li>
@@ -204,7 +204,7 @@
 <span>          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,</span>
 <span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,</span>
 <span>          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,</span>
-<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"odt"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,</span>
+<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,</span>
 <span>          prefix <span class="op">=</span> <span class="st">"EA"</span>,</span>
 <span>          dpi <span class="op">=</span> <span class="fl">300</span>,</span>
 <span>          quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -255,13 +255,13 @@
 <span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span><span class="op">)</span>,</span>
 <span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"xlsx"</span><span class="op">)</span>,</span>
 <span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Notons qu’il peut demander, en plus de son analyse de groupe, des rapports individuels qu’il pourra donner à chaque exploitation (par exemple au format Libreoffice ODT) :</p>
+<p>Notons qu’il peut demander, en plus de son analyse de groupe, des rapports individuels qu’il pourra donner à chaque exploitation (par exemple au format Microsoft Word) :</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span>input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
 <span>          output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
 <span>          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>,<span class="st">"single"</span><span class="op">)</span>,</span>
 <span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span><span class="op">)</span>,</span>
-<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"odt"</span><span class="op">)</span>,</span>
+<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"docx"</span><span class="op">)</span>,</span>
 <span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note : Une analyse de groupe nécessite un nombre d’exploitations au moins égal à 3.</strong></p>
 </div>
@@ -326,7 +326,7 @@ Quick Link
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-green.svg" alt="Lifecycle:stable"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.3.0-green.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.3.1-green.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://github.com/davidcarayon/IDEATools/actions" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://zenodo.org/badge/latestdoi/251535041" class="external-link"><img src="https://zenodo.org/badge/251535041.svg" alt="DOI"></a></li>

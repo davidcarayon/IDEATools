@@ -43,7 +43,7 @@ remotes::install_github("davidcarayon/IDEATools")
 
 _NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour pouvoir installer le package `{remotes}`, puisque l'installation ici se fait depuis un dépôt de développement (Github) et non un dépôt officiel R. Vous pouvez l'installer ici : [Rtools](https://cran.r-project.org/bin/windows/Rtools/)_
 
-Une fois installé, vous pouvez charger le package avec :
+Une fois installé, vous pouvez charger le package avec : 
 
 ```{r eval = FALSE}
 library(IDEATools)
