@@ -423,9 +423,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-120,305)) +
               ggplot2::ylim(c(15, 210)) +
-              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch")) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
@@ -444,10 +444,10 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-450, 330)) +
               ggplot2::ylim(c(-10, 215)) +
-              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6.2","inch"), height = ggplot2::unit("1.2","inch")) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2.2","inch"))+
-              ggtext::geom_textbox(data = bonus_prop, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"))+
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2.2","inch"), box.size = 2)+
+              ggtext::geom_textbox(data = bonus_prop, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"), box.size = 2)+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 12, "small" = 8.5), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
@@ -465,9 +465,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-200,320)) +
               ggplot2::ylim(c(20,210)) +
-              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch")) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
@@ -485,9 +485,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-270, 320)) +
               ggplot2::ylim(c(20, 370)) +
-              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("1.2","inch")) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
               ggplot2::scale_size_manual(values = c("very very big" = 18, "very big" = 15, "big" = 12.5, "small" = 10), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
@@ -505,9 +505,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-120,313)) +
               ggplot2::ylim(c(80, 210)) +
-              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch")) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2","inch"))+
+              ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
@@ -552,10 +552,10 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           prop_list[[prop]] <- ggplot2::ggplot() +
             ggplot2::xlim(c(-270, 320)) +
             ggplot2::ylim(c(120, 370)) +
-            ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend)) +
-            ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("9","inch"), height = ggplot2::unit("1.8","inch")) +
-            ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"))+
-            ggtext::geom_textbox(ggplot2::aes(x = 25, y = 280), label = "Exploitation agricole", fill = "white", size = 25, text.color = "black", halign = 0.5, valign = 0.5, width = ggplot2::unit("10","inch"), height = ggplot2::unit("3","inch"))+
+            ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
+            ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("9","inch"), height = ggplot2::unit("1.8","inch"), box.size = 2) +
+            ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"), box.size = 2)+
+            ggtext::geom_textbox(ggplot2::aes(x = 25, y = 280), label = "Exploitation agricole", fill = "white", size = 25, text.color = "black", halign = 0.5, valign = 0.5, width = ggplot2::unit("10","inch"), height = ggplot2::unit("3","inch"), box.size = 2)+
             ggplot2::scale_size_manual(values = c("very very big" = 20, "very big" = 15, "big" = 15, "small" = 12), guide = "none") +
             ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
             ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
