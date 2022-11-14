@@ -35,8 +35,6 @@ date : "`r paste("<NA>")`"
 cat(paste0("\\fancyhead[]{}"))
 ```
 
-\newpage
-
 # Principales caractéristiques structurelles
 
 Nombre d'exploitations : **`r n_farm`**
@@ -67,6 +65,8 @@ metadata |>
   gt::tab_header(title = "Caractéristiques numériques") |> 
   gt::tab_options(table.width = gt::pct(100))
 ```
+
+\newpage
 
 ```{r}
 unique_age <- unique(metadata$MTD_05)
