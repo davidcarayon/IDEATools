@@ -1050,6 +1050,12 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
       dplyr::rename("Exploitation" = "farm_id") |>
       dplyr::relocate("Exploitation")
 
+    branches <- df |> tidyr::pivot_longer(-Exploitation) |> dplyr::inner_join(reference_list$properties_nodes, by = c("name"="node_code")) |> dplyr::select(Exploitation,name = node_name,value) |> tidyr::pivot_wider()
+
+    indics <- df |> tidyr::pivot_longer(-Exploitation) |> dplyr::inner_join(reference_list$indic_prop, by = c("name"="indic_code")) |> dplyr::distinct(Exploitation, name, value, indic_name) |> dplyr::select(Exploitation,name = indic_name,value) |> tidyr::pivot_wider()
+
+    df <- dplyr::inner_join(branches,indics, by = "Exploitation")
+
     ## Empty row between data an counter
     empty <- df |> dplyr::slice(1)
     empty[1, ] <- NA
@@ -1630,6 +1636,12 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
     df <- IDEAdata$data$nodes[[i]] |>
       dplyr::rename("Exploitation" = "farm_id") |>
       dplyr::relocate("Exploitation")
+
+    branches <- df |> tidyr::pivot_longer(-Exploitation) |> dplyr::inner_join(reference_list$properties_nodes, by = c("name"="node_code")) |> dplyr::select(Exploitation,name = node_name,value) |> tidyr::pivot_wider()
+
+    indics <- df |> tidyr::pivot_longer(-Exploitation) |> dplyr::inner_join(reference_list$indic_prop, by = c("name"="indic_code")) |> dplyr::distinct(Exploitation, name, value, indic_name) |> dplyr::select(Exploitation,name = indic_name,value) |> tidyr::pivot_wider()
+
+    df <- dplyr::inner_join(branches,indics, by = "Exploitation")
 
     ## Empty row between data an counter
     empty <- df |> dplyr::slice(1)
