@@ -63,15 +63,14 @@ group_path <- system.file("example_data", package = "IDEATools")
 # Find your temporary directory (the output will be there)
 tempdir <- tempdir()
 
-\donttest{
-# Run a full individual diagnosis with local export, with only trees
-diag_idea(
+\dontrun{
+# Run a full individual diagnosis with no export, with only trees
+my_diagnosis <- diag_idea(
   input = path,
   output_directory = tempdir,
   type = "single",
-  export_type = "local",
+  export_type = NULL,
   prefix = "Exploitation_A",
-  dpi = 80,
   plot_choices = "trees",
   quiet = TRUE
 )

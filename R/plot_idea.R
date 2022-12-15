@@ -42,12 +42,8 @@
 #' @importFrom rlang check_installed
 #' @importFrom ggplot2 ggplot geom_bar aes position_dodge geom_hline scale_fill_identity geom_label theme element_text element_blank guides scale_x_discrete labs coord_flip facet_wrap geom_rect geom_col geom_vline coord_polar ylim ggsave xlim theme_void unit geom_segment draw_key_rect scale_size_manual scale_color_manual scale_fill_manual guide_legend element_rect scale_y_continuous geom_tile position_stack scale_alpha_manual geom_text stat_boxplot geom_boxplot geom_point
 #' @importFrom ggpubr ggtexttable ttheme colnames_style rownames_style tbody_style ggarrange
-#' @importFrom ggrepel geom_label_repel
 #' @importFrom ggtext geom_textbox
-#' @importFrom glue glue
-#' @importFrom readr parse_number
 #' @importFrom stringi stri_trans_general
-#' @importFrom stringr str_split str_to_sentence str_to_upper
 #' @importFrom tibble tribble
 #' @importFrom tidyr pivot_longer gather
 #'
@@ -59,8 +55,8 @@
 #' my_data <- read_idea(path)
 #' computed_data <- compute_idea(my_data)
 #'
-#' ## Example without radars
-#' idea_plots <- plot_idea(computed_data, choices = c("dimensions","trees"))
+#' ## Example without radars or dimensions
+#' idea_plots <- plot_idea(computed_data, choices = c("trees"))
 plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
   ## Check if correct input
@@ -166,7 +162,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) |>
         dplyr::distinct() |>
         dplyr::rowwise() |>
-        dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+        dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
         dplyr::mutate(full_name = paste0(indic," - ",indic_name)) |>
         dplyr::mutate(full_name = wrapit(full_name, width = 65)) |>
         dplyr::ungroup() |>
@@ -392,7 +388,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             dplyr::mutate(name = paste0(name, "/", prop_code, "  ", indic_name)) |>
             dplyr::select(prop_code, name, value) |>
             dplyr::rowwise() |>
-            dplyr::mutate(code = stringr::str_split(name, "\\/")[[1]][1]) |>
+            dplyr::mutate(code = sub("\\/.*", "",name)) |>
             dplyr::ungroup() |>
             dplyr::select(code, name, value)
 
@@ -401,15 +397,15 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             dplyr::select(code = name, name = node_name, value)
 
           data_table <- dplyr::bind_rows(leaves, branches) |>
-            dplyr::mutate(value = stringr::str_to_sentence(value))
+            dplyr::mutate(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
 
           rect_df_full <- data_table |>
             dplyr::inner_join(nodes, by = "code") |>
             dplyr::rowwise() |>
             dplyr::mutate(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) |>
             dplyr::mutate(name = ifelse(name == "par l'insertion dans les r\u00e9seaux", yes = "Par l'insertion dans les r\u00e9seaux", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Autonomie", yes = stringr::str_to_upper(name), no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = stringr::str_to_upper(name), no = name)) |>
+            dplyr::mutate(name = ifelse(name == "Autonomie", yes = toupper(name), no = name)) |>
+            dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = toupper(name), no = name)) |>
             dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE BIENS ET DE SERVICES", no = name)) |>
             dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) |>
             ##### ADD OTHERS
@@ -531,7 +527,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             dplyr::select(code = name, name = node_name, value)
 
           data_table <- branches |>
-            dplyr::mutate(value = stringr::str_to_sentence(value))
+            dplyr::mutate(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
 
           rect_df_full <- data_table |>
             dplyr::inner_join(nodes, by = "code") |>
@@ -590,7 +586,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         dplyr::distinct(indic, scaled_value) |>
         dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) |>
         dplyr::rowwise() |>
-        dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+        dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
         dplyr::ungroup() |>
         dplyr::arrange(dimension_code, indic_number) |>
         dplyr::mutate(score_indic = round(scaled_value / max_indic * 100, 0)) |>
@@ -634,7 +630,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           dplyr::mutate(indic_code = as.character(indic)) |>
           dplyr::inner_join(reference_list$indic_dim, by = "indic_code") |>
           dplyr::rowwise() |>
-          dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+          dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
           dplyr::mutate(indic_name = wrapit(indic_name)) |>
           dplyr::ungroup() |>
           dplyr::arrange(dimension_code, indic_number) |>
@@ -705,7 +701,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           ggplot2::theme(axis.text.y = ggplot2::element_blank()) +
           ggplot2::theme(axis.title = ggplot2::element_blank()) +
           ggplot2::theme(panel.grid = ggplot2::element_blank()) +
-          ggplot2::labs(fill = "Dimension", title = glue::glue('Indicateurs de la propri\u00e9t\u00e9 "{full_prop_name}"')) +
+          ggplot2::labs(fill = "Dimension", title = paste0('Indicateurs de la propri\u00e9t\u00e9 ',full_prop_name,'')) +
           ggplot2::theme(legend.position = "top") +
           ggplot2::coord_polar()
 
@@ -850,14 +846,11 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       dplyr::group_by(dimension) |>
       dplyr::summarise(Mean = mean(dimension_value))
 
-    rlang::check_installed("ggrepel", reason = "to use `plot_idea() for group analysis`")
-
     ## Plotting dimensions boxplot
     dimensions_boxplot <- ggplot2::ggplot(boxplot_dim_data, ggplot2::aes(x = dimension, y = dimension_value)) +
       ggplot2::stat_boxplot(geom = "errorbar", width = 0.3) +
       ggplot2::geom_boxplot(color = "black", ggplot2::aes(fill = dimension), width = 0.8) +
       ggplot2::geom_point(data = means, ggplot2::aes(x = dimension, y = Mean), size = 4, color = "darkred", shape = 18) +
-      ggrepel::geom_label_repel(data = means, ggplot2::aes(x = dimension, y = Mean, label = paste0("Moyenne = ", round(Mean, 1))), nudge_x = 0.5, nudge_y = 5) +
       theme_idea() +
       ggplot2::scale_fill_identity("Dimension", labels = c("Agro\u00e9cologique","Socio-Territoriale","Economique"), guide = "legend") +
       ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
@@ -917,7 +910,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
                                        yes = "Bouclage de flux de mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
                                        no = component
       )) |>
-      dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+      dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
       dplyr::ungroup() |>
       dplyr::arrange(indic_number) |>
       dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
@@ -955,7 +948,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
                                        no = component
       )) |>
       dplyr::ungroup() |>
-      dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+      dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
       dplyr::arrange(indic_number) |>
       dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
       dplyr::mutate(component = factor(component, levels = unique(component)))
@@ -988,7 +981,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) |>
       dplyr::mutate(full_name = wrapit(full_name, width = 75)) |>
       dplyr::ungroup() |>
-      dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+      dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
       dplyr::arrange(indic_number) |>
       dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
       dplyr::mutate(component = factor(component, levels = unique(component)))

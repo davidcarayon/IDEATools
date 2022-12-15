@@ -14,7 +14,9 @@ This function loads a graphical user interface (GUI) to use IDEATools.
 }
 \examples{
 library(IDEATools)
-\dontrun{
+
+## Only run this example in interactive R sessions
+ if (interactive()) {
 runGUI()
 }
 }

@@ -63,7 +63,7 @@ idea_plots <- plot_idea(computed_data)
 # Find your temporary directory
 tempdir <- tempdir()
 
-\donttest{
+\dontrun{
 # Export as raw plots to your tempdir.
 write_idea(idea_plots,
   output_directory = tempdir,

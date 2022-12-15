@@ -26,7 +26,6 @@
 #' @importFrom dplyr arrange case_when filter pull distinct rowwise mutate ungroup select group_by inner_join bind_cols
 #' @importFrom readxl excel_sheets read_excel
 #' @importFrom stats na.omit
-#' @importFrom stringr str_split
 #' @importFrom tidyr nest unnest spread
 #'
 #' @examples
@@ -34,6 +33,7 @@
 #' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 #' my_data <- read_idea(path)
 #' computed_data <- compute_idea(my_data)
+#' computed_data
 compute_idea <- function(data) {
 
   ## Check if correct input
@@ -45,7 +45,7 @@ compute_idea <- function(data) {
   ## Extracting metadata from input data
   metadata <- data$metadata
   version <- metadata$MTD_00
-  version_number <- as.numeric(stringr::str_remove_all(version, "\\."))
+  version_number <- as.numeric(gsub('[[:punct:] ]+','',version))
 
 
   # 5 Decision rules for indicators using custom functions --------------------------------------------------------
@@ -201,8 +201,8 @@ compute_idea <- function(data) {
     dplyr::rowwise() |>
     # separating indicator and item, could be done with dplyr::separate()
     dplyr::mutate(
-      indic = stringr::str_split(item, "_")[[1]][1],
-      item = stringr::str_split(item, "_")[[1]][2]
+      indic = sub("\\_.*", "", item),
+      item = sub(".*\\_", "", item)
     ) |>
     dplyr::ungroup() |>
     dplyr::select(indic, item, value) |>
@@ -250,19 +250,6 @@ compute_idea <- function(data) {
   }
 
   # Computing nodes ---------------------------------------------------------
-
-  # Custom function to simplify indicator names for joining
-  simplify_indicator_name <- function(name) {
-    list_indic <- reference_list$indic_dim |>
-      dplyr::pull(indic_code) |> unique()
-
-    indic <- ifelse(stringr::str_split(name, " ")[[1]][1] %in% list_indic,
-                    yes = stringr::str_split(name, " ")[[1]][1],
-                    no = name
-    )
-
-    return(indic)
-  }
 
   # Renaming computed_categories for the full pipeline
   prop_data <- computed_categories

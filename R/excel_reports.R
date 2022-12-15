@@ -565,7 +565,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
     dplyr::inner_join(reference_list$metadata, by = c("name" = "metadata_code")) |>
     dplyr::select(metadata_name, value) |>
     dplyr::rowwise() |>
-    dplyr::mutate(metadata_name = ifelse(stringr::str_detect(metadata_name, "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |>
+    dplyr::mutate(metadata_name = ifelse(grepl(x = metadata_name, pattern = "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |>
     dplyr::ungroup() |>
     dplyr::group_by(metadata_name) |>
     dplyr::count(value) |>
@@ -829,7 +829,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
     dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code")) |>
     dplyr::mutate(dimension = factor(dimension, levels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))) |>
     dplyr::rowwise() |>
-    dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+    dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
     dplyr::ungroup() |>
     dplyr::arrange(dimension, indic_number) |>
     dplyr::mutate(full_name = indic_name) |>
@@ -1227,7 +1227,7 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
     dplyr::inner_join(reference_list$metadata, by = c("name" = "metadata_code")) |>
     dplyr::select(metadata_name, value) |>
     dplyr::rowwise() |>
-    dplyr::mutate(metadata_name = ifelse(stringr::str_detect(metadata_name, "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |>
+    dplyr::mutate(metadata_name = ifelse(grepl(x = metadata_name, pattern = "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |>
     dplyr::ungroup() |>
     dplyr::group_by(metadata_name) |>
     dplyr::count(value) |>
@@ -1420,7 +1420,7 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
     dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code")) |>
     dplyr::mutate(dimension = factor(dimension, levels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))) |>
     dplyr::rowwise() |>
-    dplyr::mutate(indic_number = readr::parse_number(indic)) |>
+    dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
     dplyr::ungroup() |>
     dplyr::arrange(dimension, indic_number) |>
     dplyr::mutate(full_name = indic_name) |>

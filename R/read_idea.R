@@ -19,10 +19,8 @@
 #' For some older versions (from about 2019-01-01), you can replace the " \code{read_idea() |>  compute_idea()} " pipeline by "\code{old_idea()}" which will focus on indicators rather than items.
 #'
 #' @importFrom dplyr select bind_rows mutate filter group_by row_number ungroup case_when
-#' @importFrom janitor clean_names
 #' @importFrom jsonlite fromJSON
 #' @importFrom readxl excel_sheets read_excel
-#' @importFrom stringr str_remove_all str_replace_all str_remove
 #' @importFrom tibble tibble
 #' @importFrom tidyr drop_na pivot_longer everything fill pivot_wider
 #' @importFrom tools file_ext
@@ -31,6 +29,7 @@
 #' library(IDEATools)
 #' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 #' my_data <- read_idea(path)
+#' my_data
 read_idea <- function(input) {
 
   # Standardizing the input encoding
@@ -83,7 +82,7 @@ read_idea <- function(input) {
   ## Overall version_number converted to numeric for "if" statements
   version_number <- ifelse(version_number == "old",
     yes = "Unknown",
-    no = as.numeric(stringr::str_remove_all(version_number, "\\."))
+    no = as.numeric(gsub('[[:punct:] ]+','',version_number))
   )
 
   ## Error if not the appropriate version
@@ -106,7 +105,7 @@ read_idea <- function(input) {
     if (metadata$MTD_01 %in% c("0", NA)) {
       file_name <- tools::file_path_sans_ext(basename(input))
       file_name_short <- substr(file_name, start = 1, stop = 10) # Limit to 10
-      metadata$MTD_01 <- stringr::str_replace_all(file_name_short," ","_")
+      metadata$MTD_01 <- gsub(x = file_name_short,pattern = " ",replacement = "_")
     }
 
     # Standardizing the MTD_14 field
@@ -191,7 +190,7 @@ read_idea <- function(input) {
     if (metadata$MTD_01 %in% c("0", NA)) {
       file_name <- tools::file_path_sans_ext(basename(input))
       file_name_short <- substr(file_name, start = 1, stop = 10) # Limit to 10
-      metadata$MTD_01 <- stringr::str_replace_all(file_name_short," ","_")
+      metadata$MTD_01 <- gsub(x = file_name_short,pattern = " ",replacement = "_")
     }
 
     # Making sure metadata is of right format and cleaned.
@@ -236,11 +235,14 @@ read_idea <- function(input) {
 
   # Finding items -----------------------------------------------------------
   if (filetype == "json") {
-    items <- dplyr::bind_rows(json_file$items) |>
-      tidyr::pivot_longer(tidyr::everything(), names_to = "item") |>
-      dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) |>  # Convert A01 to A1
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) |>
-      tidyr::drop_na(item)
+
+    items <- as.data.frame(json_file$items) |>
+      reshape(direction = "long", varying = list(names(as.data.frame(json_file$items))), v.names = c("value"), timevar = "item") |>
+      transform(item = names(json_file$items)) |>
+      transform(item = gsub(x = item, pattern = "(?<=[[:upper:]])0", replacement = "", perl = TRUE)) |>  # Convert A01 to A1
+      transform(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
+      subset(!is.na(item)) |>
+      subset(select = -id)
 
     ## Error if not complete
     if (sum(is.na(items$value)) > 0) {
@@ -260,8 +262,8 @@ read_idea <- function(input) {
 
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range)) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_replace_all(item, "(?<=[:upper:])0", "")) |>  # Convert A01 to A1
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_")) |>
+      dplyr::mutate(item = gsub(x = item, pattern = "(?<=[:upper:])", replacement = "")) |>  # Convert A01 to A1
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
       tidyr::drop_na(item)
 
     ## Error if not complete

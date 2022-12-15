@@ -11,8 +11,6 @@ navbar:
     - icon: fa-book
       text: "Documentation"
       menu:
-      -  text: Présentation d'IDEATools
-         href: articles/ideatools_advanced_fr.html
       -  text: About decision rules
          href: articles/decision_rules.html
       -  text: About colored trees

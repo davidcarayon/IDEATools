@@ -17,6 +17,11 @@
 #'
 #' Note : For the farm id metadata, the full First/Last name will be used if found.
 #'
+#' @importFrom dplyr pull filter distinct case_when select first slice ungroup mutate group_by inner_join bind_rows rowwise bind_cols
+#' @importFrom readxl excel_sheets read_excel
+#' @importFrom tidyr drop_na unnest nest spread
+#' @importFrom tools file_ext file_path_sans_ext
+#'
 #' @examples
 #' library(IDEATools)
 #'
@@ -25,7 +30,6 @@
 #' input <- "path_to_your_old_file.xlsx"
 #' computed_data <- old_idea(input)
 #' }
-#'
 old_idea <- function(input) {
 
   # Standardizing the input encoding
@@ -140,7 +144,6 @@ old_idea <- function(input) {
 
   ## Extract the appropriate sheet
   saisie_et_calc <- suppressMessages(readxl::read_excel(input, sheet = "Saisie et Calculateur") |>
-    janitor::clean_names() |>
     dplyr::select(1:6) |>
     as.data.frame())
 
@@ -154,12 +157,12 @@ old_idea <- function(input) {
   metadata$MTD_06 <- NA
   metadata$MTD_07 <- NA
   metadata$MTD_08 <- saisie_et_calc |>
-    dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)") |>
-    dplyr::pull(x6) |>
+    dplyr::filter(!!as.symbol("I - Donn\u00e9es g\u00e9n\u00e9rales et inventaires de l'exploitation") == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)") |>
+    dplyr::pull(6) |>
     dplyr::first()
   metadata$MTD_09 <- saisie_et_calc |>
-    dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "EBE retenu IDEA") |>
-    dplyr::pull(x6) |>
+    dplyr::filter(!!as.symbol("I - Donn\u00e9es g\u00e9n\u00e9rales et inventaires de l'exploitation") == "EBE retenu IDEA") |>
+    dplyr::pull(6) |>
     dplyr::first()
   metadata$MTD_10 <- NA
   metadata$MTD_11 <- as.character(saisie_et_calc[6, 2])
@@ -167,13 +170,11 @@ old_idea <- function(input) {
   metadata$MTD_13 <- saisie_et_calc[4, 6] |>
     as.numeric() |>
     as.Date(origin = "1900-01-01") |>
-    stringr::str_split("-") |>
-    unlist() |>
-    dplyr::first() |>
+    sub(pattern = "\\-.*", replacement = "")
     as.numeric()
   metadata$MTD_14 <- saisie_et_calc |>
-    dplyr::filter(i_donnees_generales_et_inventaires_de_lexploitation == "Pr\u00e9sence d'\u00e9levage :") |>
-    dplyr::pull(x2) |>
+    dplyr::filter(!!as.symbol("I - Donn\u00e9es g\u00e9n\u00e9rales et inventaires de l'exploitation") == "Pr\u00e9sence d'\u00e9levage :") |>
+    dplyr::pull(2) |>
     dplyr::first()
   metadata$MTD_15 <- NA
   metadata$MTD_16 <- NA
@@ -200,7 +201,7 @@ old_idea <- function(input) {
   if (metadata$MTD_01 %in% c("0", NA)) {
     file_name <- tools::file_path_sans_ext(basename(input))
     file_name_short <- substr(file_name, start = 1, stop = 10) # Limit to 10
-    metadata$MTD_01 <- stringr::str_replace_all(file_name_short," ","_")
+    metadata$MTD_01 <- gsub(x = file_name_short, pattern = " ",replacement = "_")
   }
 
   # Making sure metadata is of right format and cleaned.
@@ -228,65 +229,59 @@ old_idea <- function(input) {
 
   ## Label
   AE_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agro\u00e9cologique") |>
-    janitor::clean_names() |>
-    dplyr::select(x2) |>
+    dplyr::select(2) |>
     tidyr::drop_na())
 
   ## Value
   AE_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agro\u00e9cologique") |>
-    janitor::clean_names() |>
-    dplyr::select(x8) |>
+    dplyr::select(8) |>
     tidyr::drop_na() |>
     dplyr::slice(seq(2, 38, 2)))
 
   ## Error if not complete
   if (nrow(AE_val) != 19) (stop("The algorithm expects 19 indicators in the 'Dimension agro\u00e9cologique' sheet"))
 
-  AE <- dplyr::bind_cols(AE_lab, AE_val) |>
-    dplyr::select(indic = x2, unscaled_value = x8)
+  AE <- cbind(AE_lab, AE_val) |>
+    dplyr::select(indic = 1, unscaled_value = 2)
 
   ## Socio-territorial
 
   ## Label
   ST_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale") |>
-    janitor::clean_names() |>
-    dplyr::select(x2) |>
+    dplyr::select(2) |>
     tidyr::drop_na())
 
   ## Value
   ST_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale") |>
-    janitor::clean_names() |>
-    dplyr::select(x8) |>
+    dplyr::select(8) |>
     tidyr::drop_na() |>
     dplyr::slice(seq(2, 46, 2)))
 
   ## Error if not complete
   if (nrow(ST_val) != 23) (stop("The algorithm expects 23 indicators in the 'Dimension socio-territoriale' sheet"))
 
-  ST <- dplyr::bind_cols(ST_lab, ST_val) |>
-    dplyr::select(indic = x2, unscaled_value = x8)
+  ST <- cbind(ST_lab, ST_val) |>
+    dplyr::select(indic = 1, unscaled_value = 2)
 
 
   ## Economique
 
   ## Label
   EC_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension \u00e9conomique") |>
-    janitor::clean_names() |>
-    dplyr::select(x2) |>
+    dplyr::select(2) |>
     tidyr::drop_na())
 
   ## Value
   EC_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension \u00e9conomique") |>
-    janitor::clean_names() |>
-    dplyr::select(x7) |>
+    dplyr::select(7) |>
     tidyr::drop_na() |>
     dplyr::slice(seq(2, 22, 2)))
 
   ## Error if not complete
   if (nrow(EC_val) != 11) (stop("The algorithm expects 11 indicators in the 'Dimension \u00e9conomique' sheet"))
 
-  EC <- dplyr::bind_cols(EC_lab, EC_val) |>
-    dplyr::select(indic = x2, unscaled_value = x7)
+  EC <- cbind(EC_lab, EC_val) |>
+    dplyr::select(indic = 1, unscaled_value = 2)
 
   # Computing dimensions and properties -------------------------------------
 
@@ -328,19 +323,6 @@ old_idea <- function(input) {
   }
 
   # Computing nodes ---------------------------------------------------------
-
-  # Custom function to simplify indicator names for joining
-  simplify_indicator_name <- function(name) {
-    list_indic <- reference_list$indic_dim |>
-      dplyr::pull(indic_code)
-
-    indic <- ifelse(stringr::str_split(name, " ")[[1]][1] %in% list_indic,
-      yes = stringr::str_split(name, " ")[[1]][1],
-      no = name
-    )
-
-    return(indic)
-  }
 
   # Renaming computed_categories for the full pipeline
   prop_data <- computed_categories

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.0</span>
       </span>
     </div>
 
@@ -44,9 +44,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/ideatools_advanced_fr.html">Présentation d'IDEATools</a>
-    </li>
-    <li>
       <a href="../articles/decision_rules.html">About decision rules</a>
     </li>
     <li>
@@ -166,12 +163,19 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidcarayon.github.io/IDEATools/index.html" class="external-link">IDEATools</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"example_data/idea_example_1.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_idea.html">read_idea</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>TRE pattern compilation error 'Invalid regexp'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::mutate(tidyr::pivot_longer(dplyr::bind_rows(json_file$items),     tidyr::everything(), names_to = "item"), item = gsub(x = item,     pattern = "(?&lt;=[:upper:])0", replacement = "")):</span> Problem while computing `item = gsub(x = item, pattern =</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> "(?&lt;=[:upper:])0", replacement = "")`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `gsub()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> invalid regular expression '(?&lt;=[:upper:])0', reason 'Invalid regexp'</span>
 <span class="r-in"><span><span class="va">computed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="compute_idea.html">compute_idea</a></span><span class="op">(</span><span class="va">my_data</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compute_idea(my_data):</span> object 'my_data' not found</span>
 <span class="r-in"><span><span class="va">idea_plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot_idea.html">plot_idea</a></span><span class="op">(</span><span class="va">computed_data</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in class(IDEA_data) %in% c("IDEA_data", "IDEA_group_data"):</span> object 'computed_data' not found</span>
 <span class="r-in"><span><span class="co"># Find your temporary directory</span></span></span>
 <span class="r-in"><span><span class="va">tempdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Export as raw plots to your tempdir.</span></span></span>
 <span class="r-in"><span><span class="fu">write_idea</span><span class="op">(</span><span class="va">idea_plots</span>,</span></span>
 <span class="r-in"><span>  output_directory <span class="op">=</span> <span class="va">tempdir</span>,</span></span>
@@ -179,13 +183,6 @@
 <span class="r-in"><span>  prefix <span class="op">=</span> <span class="st">"myFarm"</span>,</span></span>
 <span class="r-in"><span>  dpi <span class="op">=</span> <span class="fl">50</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Production des 3 types de graphiques demandés</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Production des graphiques dimensions...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Les graphiques dimensions ont été exportés à l'adresse '/var/folders/v5/lyzf3f3d72l2yk6f662slrx00000gn/T//RtmpOjMFZQ/2022-10-19/myFarm/Dimensions' (5s)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Production des graphiques radars...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Les graphiques radars ont été exportés à l'adresse '/var/folders/v5/lyzf3f3d72l2yk6f662slrx00000gn/T//RtmpOjMFZQ/2022-10-19/myFarm/Propriétés/Radars' (1s)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Production des arbres éclairés</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Les arbres éclairés ont été exportés à l'adresse '/var/folders/v5/lyzf3f3d72l2yk6f662slrx00000gn/T//RtmpOjMFZQ/2022-10-19/myFarm/Propriétés/Arbres éclairés' (4s)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Export as xlsx reports to your tempdir.</span></span></span>
 <span class="r-in"><span><span class="fu">write_idea</span><span class="op">(</span><span class="va">idea_plots</span>,</span></span>
@@ -195,10 +192,7 @@
 <span class="r-in"><span>  report_format <span class="op">=</span> <span class="st">"xlsx"</span>,</span></span>
 <span class="r-in"><span>  dpi <span class="op">=</span> <span class="fl">50</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Production des 1 rapports demandés</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Production du rapport Microsoft Excel...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Le rapport a été exporté à l'adresse '/var/folders/v5/lyzf3f3d72l2yk6f662slrx00000gn/T//RtmpOjMFZQ/2022-10-19/myFarm/Rapport_individuel_myFarm.xlsx' (9s)</span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>

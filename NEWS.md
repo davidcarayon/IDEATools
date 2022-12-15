@@ -1,3 +1,9 @@
+# IDEATools 3.4.0
+* Fixes to documentation
+* Removed a vignette showing the dev history of IDEATools and associated images
+* Droping heavy dependencies : janitor, scales, ggrepel, glue, readr, stringr, dplyr and tidyr
+
+
 # IDEATools 3.3.1
 * Documentation fixes for CRAN
 * New logo on PDF first page

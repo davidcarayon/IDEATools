@@ -5,7 +5,9 @@
 #' @return Loads a shiny application
 #' @examples
 #' library(IDEATools)
-#' \dontrun{
+#'
+#' ## Only run this example in interactive R sessions
+#'  if (interactive()) {
 #' runGUI()
 #' }
 #' @importFrom rlang check_installed

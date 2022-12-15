@@ -1,6 +1,6 @@
 Package: IDEATools
-Title: A Collection of Tools Dedicated to the IDEA4 Method
-Version: 3.3.1
+Title: A collection of tools associated with the IDEA4 method
+Version: 3.4.0
 Authors@R: 
     person(given = "David",
            family = "Carayon",
@@ -17,30 +17,24 @@ BugReports: https://github.com/davidcarayon/IDEATools/issues
 RoxygenNote: 7.2.1
 Imports: 
     dplyr,
-    janitor,
+    tidyr,
     jsonlite,
     readxl,
-    readr,
-    stringr,
-    stringi,
     tibble,
-    tidyr,
+    stringi,
     ggimage,
     pdftools,
     ggpubr,
     ggplot2,
-    glue,
     rlang,
-    ggrepel,
-    rmarkdown,
     ggtext,
-    shiny
+    shiny,
+    rmarkdown
 License: GPL-3
 Depends: 
     R (>= 4.1.0)
 VignetteBuilder: knitr
 Suggests: 
-    scales,
     knitr,
     officedown,
     openxlsx,

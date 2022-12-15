@@ -31,4 +31,5 @@ For some older versions (from about 2019-01-01), you can replace the " \code{rea
 library(IDEATools)
 path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
+my_data
 }

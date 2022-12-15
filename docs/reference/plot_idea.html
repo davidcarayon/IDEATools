@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.0</span>
       </span>
     </div>
 
@@ -44,9 +44,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/ideatools_advanced_fr.html">Présentation d'IDEATools</a>
-    </li>
-    <li>
       <a href="../articles/decision_rules.html">About decision rules</a>
     </li>
     <li>
@@ -144,10 +141,17 @@
 <span class="r-in"><span><span class="co">## Example given for a single analysis. See diag_idea() for a group analysis.</span></span></span>
 <span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"example_data/idea_example_1.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_idea.html">read_idea</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>TRE pattern compilation error 'Invalid regexp'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::mutate(tidyr::pivot_longer(dplyr::bind_rows(json_file$items),     tidyr::everything(), names_to = "item"), item = gsub(x = item,     pattern = "(?&lt;=[:upper:])0", replacement = "")):</span> Problem while computing `item = gsub(x = item, pattern =</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> "(?&lt;=[:upper:])0", replacement = "")`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `gsub()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> invalid regular expression '(?&lt;=[:upper:])0', reason 'Invalid regexp'</span>
 <span class="r-in"><span><span class="va">computed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="compute_idea.html">compute_idea</a></span><span class="op">(</span><span class="va">my_data</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compute_idea(my_data):</span> object 'my_data' not found</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Example without radars</span></span></span>
-<span class="r-in"><span><span class="va">idea_plots</span> <span class="op">&lt;-</span> <span class="fu">plot_idea</span><span class="op">(</span><span class="va">computed_data</span>, choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Example without radars or dimensions</span></span></span>
+<span class="r-in"><span><span class="va">idea_plots</span> <span class="op">&lt;-</span> <span class="fu">plot_idea</span><span class="op">(</span><span class="va">computed_data</span>, choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"trees"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in class(IDEA_data) %in% c("IDEA_data", "IDEA_group_data"):</span> object 'computed_data' not found</span>
 </code></pre></div>
     </div>
   </div>

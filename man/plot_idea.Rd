@@ -53,6 +53,6 @@ path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
 computed_data <- compute_idea(my_data)
 
-## Example without radars
-idea_plots <- plot_idea(computed_data, choices = c("dimensions","trees"))
+## Example without radars or dimensions
+idea_plots <- plot_idea(computed_data, choices = c("trees"))
 }

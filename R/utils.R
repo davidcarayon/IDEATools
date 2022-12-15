@@ -8,16 +8,12 @@
 #'
 #' @importFrom dplyr select mutate filter arrange
 #' @importFrom jsonlite toJSON
-#' @importFrom readr parse_number
 #' @importFrom readxl read_excel
-#' @importFrom stringr str_remove_all str_remove
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom tools file_path_sans_ext
 #' @importFrom dplyr select mutate mutate_all filter arrange
 #' @importFrom jsonlite toJSON
-#' @importFrom readr parse_number
 #' @importFrom readxl read_excel
-#' @importFrom stringr str_remove_all str_remove
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom tools file_path_sans_ext
 jsonify <- function(input, output, write = FALSE) {
@@ -27,7 +23,7 @@ jsonify <- function(input, output, write = FALSE) {
 
   ## Collecte du numero de version
   version <- readxl::read_excel(file.path(calcs), sheet = "Notice", range = "K4") |> names()
-  version_number <- as.numeric(stringr::str_remove_all(version, "\\."))
+  version_number <- as.numeric(gsub('[[:punct:] ]+','',version))
 
   ## Import metadata
   metadata <- readxl::read_excel(file.path(calcs), sheet = "Renvoi BDD", range = "A4:E21") |>
@@ -52,10 +48,9 @@ jsonify <- function(input, output, write = FALSE) {
   }
 
   # Only extracting number from the OTEX
-  metadata$MTD_06 <- readr::parse_number(as.character(metadata$MTD_06))
-
+  metadata$MTD_06 <- regmatches(as.character(metadata$MTD_06), regexpr("[[:digit:]]+", as.character(metadata$MTD_06)))
   # Only extracting number from the department
-  metadata$MTD_11 <- readr::parse_number(as.character(metadata$MTD_11))
+  metadata$MTD_11 <- regmatches(as.character(metadata$MTD_11), regexpr("[[:digit:]]+", as.character(metadata$MTD_11)))
 
   # Making sure metadata is of right format and cleaned.
   metadata$MTD_00 <- as.character(metadata$MTD_00)
@@ -83,7 +78,7 @@ jsonify <- function(input, output, write = FALSE) {
 
     items <- suppressMessages(readxl::read_excel(file.path(input), sheet = "Renvoi BDD", range = "A25:E143")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value) |>
@@ -163,7 +158,7 @@ jsonify <- function(input, output, write = FALSE) {
 
     items <- suppressMessages(readxl::read_excel(file.path(input), sheet = "Renvoi BDD", range = "A25:E144")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -194,7 +189,7 @@ jsonify <- function(input, output, write = FALSE) {
 
     items <- suppressMessages(readxl::read_excel(file.path(input), sheet = "Renvoi BDD", range = "A25:E143")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -222,7 +217,7 @@ jsonify <- function(input, output, write = FALSE) {
 
     items <- suppressMessages(readxl::read_excel(file.path(input), sheet = "Renvoi BDD", range = "A25:E144")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -239,7 +234,7 @@ jsonify <- function(input, output, write = FALSE) {
 
     items <- suppressMessages(readxl::read_excel(file.path(input), sheet = "Renvoi BDD", range = "A26:E145")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
   }
 
@@ -277,15 +272,13 @@ jsonify <- function(input, output, write = FALSE) {
 #' @return a list of json files exported to the output directory
 #' @importFrom dplyr select mutate filter arrange
 #' @importFrom jsonlite toJSON
-#' @importFrom readr parse_number
 #' @importFrom readxl read_excel
-#' @importFrom stringr str_remove_all str_remove
 #' @importFrom tidyr drop_na pivot_wider spread gather
 jsonify2 <- function (input, output) {
 
   ## Collecte du numero de version
   version <- readxl::read_excel(input, sheet = "Notice", range = "K4") |> names()
-  version_number <- as.numeric(stringr::str_remove_all(version, "\\."))
+  version_number <- as.numeric(gsub('[[:punct:] ]+','',version))
 
   ## Import metadata
   metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22") |>
@@ -311,10 +304,10 @@ jsonify2 <- function (input, output) {
   }
 
   # Only extracting number from the OTEX
-  metadata$MTD_06 <- readr::parse_number(metadata$MTD_06)
+  metadata$MTD_06 <- regmatches(as.character(metadata$MTD_06), regexpr("[[:digit:]]+", as.character(metadata$MTD_06)))
 
   # Only extracting number from the department
-  metadata$MTD_11 <- readr::parse_number(metadata$MTD_11)
+  metadata$MTD_11 <- regmatches(as.character(metadata$MTD_11), regexpr("[[:digit:]]+", as.character(metadata$MTD_11)))
 
   # Making sure metadata is of right format and cleaned.
   metadata$MTD_00 <- as.character(metadata$MTD_00)
@@ -342,7 +335,7 @@ jsonify2 <- function (input, output) {
 
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E143")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -421,7 +414,7 @@ jsonify2 <- function (input, output) {
 
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E144")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -452,7 +445,7 @@ jsonify2 <- function (input, output) {
 
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E143")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -480,7 +473,7 @@ jsonify2 <- function (input, output) {
 
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A25:E144")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
     item_wide <- items |>
       tidyr::spread(key = item, value = value)
@@ -497,7 +490,7 @@ jsonify2 <- function (input, output) {
 
     items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = "A26:E145")) |>
       dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = stringr::str_remove(item, "IDEA_"))
+      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = ""))
 
   }
 

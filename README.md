@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.3.1-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.4.0-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![R build
 status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
@@ -29,10 +29,17 @@ install.packages("remotes")
 remotes::install_github("davidcarayon/IDEATools")
 ```
 
-*NB : Le logiciel RTools est parfois nécessaire sur les machines Windows
-pour pouvoir installer le package `{remotes}`, puisque l’installation
-ici se fait depuis un dépôt de développement (Github) et non un dépôt
-officiel R. Vous pouvez l’installer ici :
+Si vous souhaitez utiliser certaines fonctionnalités avancées (interface
+graphique, rapports automatisés), vous des packages supplémentaires sont
+nécessaires, il peuvent être installés directement en préciseant
+l’argument `dependencies` :
+
+``` r
+remotes::install_github("davidcarayon/IDEATools", dependencies = TRUE)
+```
+
+*NB : Le logiciel RTools est parfois nécessaire sur les machines
+Windows. Vous pouvez l’installer ici :
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/)*
 
 Une fois installé, vous pouvez charger le package avec :

@@ -108,7 +108,7 @@ metadata |>
   dplyr::inner_join(IDEATools:::reference_list$metadata, by = c("name" = "metadata_code")) |>
   dplyr::select(metadata_name, value) |>
   dplyr::rowwise() |> 
-  dplyr::mutate(metadata_name = ifelse(stringr::str_detect(metadata_name, "Atelier"), yes = "Atelier hors sol", no = metadata_name)) |> 
+  dplyr::mutate(metadata_name = ifelse(grepl(x = metadata_name, pattern = "Atelier"), yes = "Atelier hors sol", no = metadata_name))
   dplyr::ungroup() |> 
   dplyr::group_by(metadata_name) |>
   dplyr::count(value) |>

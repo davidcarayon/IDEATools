@@ -29,7 +29,6 @@
 #'
 #' @importFrom dplyr mutate recode
 #' @importFrom ggplot2 ggsave
-#' @importFrom glue glue
 #' @importFrom rmarkdown render
 #' @importFrom tibble tibble
 #' @importFrom pdftools pdf_convert
@@ -44,7 +43,7 @@
 #' # Find your temporary directory
 #' tempdir <- tempdir()
 #'
-#' \donttest{
+#' \dontrun{
 #' # Export as raw plots to your tempdir.
 #' write_idea(idea_plots,
 #'   output_directory = tempdir,
@@ -118,8 +117,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             heights = c(5.6, 11.5, 8, 12, 13.5, 9)
           ) |>
           dplyr::mutate(folder = dimension_directory) |>
-          dplyr::mutate(path = file.path(dimension_directory, glue::glue("{prefix}_{plotname}"))) |>
-          dplyr::mutate(png_path = glue::glue("{path}.png")) |>
+          dplyr::mutate(path = file.path(dimension_directory, paste0(prefix,"_",plotname))) |>
+          dplyr::mutate(png_path = paste0(path,".png")) |>
           dplyr::mutate(dpi = dpi)
 
         # Iterating
@@ -160,8 +159,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             heights = 7.61
           ) |>
           dplyr::mutate(folder = radar_directory) |>
-          dplyr::mutate(path = file.path(radar_directory, glue::glue("{prefix}_{plotname}"))) |>
-          dplyr::mutate(png_path = glue::glue("{path}.png"))|>
+          dplyr::mutate(path = file.path(radar_directory, paste0(prefix,"_",plotname))) |>
+          dplyr::mutate(png_path = paste0(path,".png")) |>
           dplyr::mutate(dpi = dpi)
 
 
@@ -204,8 +203,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           dplyr::mutate(plotname = dplyr::recode(name, "Capacite" = "Capacit\u00e9 productive et reproductive de biens et de services", "Ancrage" = "Ancrage Territorial", "Autonomie" = "Autonomie", "Robustesse" = "Robustesse", "Responsabilite" = "Responsabilit\u00e9 globale", "Global" = "Arbre global")) |>
           dplyr::mutate(path = file.path(tree_directory, paste0(prefix, "_", plotname))) |>
           dplyr::mutate(
-            png_path = glue::glue("{path}.png"),
-            pdf_path = glue::glue("{path}.pdf")
+            png_path = paste0(path,".png"),
+            pdf_path = paste0(path,".pdf")
           )|>
           dplyr::mutate(dpi = dpi)
 
@@ -478,9 +477,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             widths = c(10, 7.95, 11.3, 11.9, 11.9, 11.9),
             heights = c(5, 6.91, 8.94, 12.5, 14, 11)
           ) |>
-          dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) |>
+          dplyr::mutate(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
           dplyr::mutate(path = file.path(group_directory, plotname)) |>
-          dplyr::mutate(png_path = glue::glue("{path}.png")) |>
+          dplyr::mutate(png_path = paste0(path,".png")) |>
           dplyr::mutate(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
@@ -614,9 +613,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             widths = c(10.4,10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
             heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
           ) |>
-          dplyr::mutate(plotname = stringr::str_replace_all(plotname, " ", "_")) |>
+          dplyr::mutate(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
           dplyr::mutate(path = file.path(group_directory, plotname)) |>
-          dplyr::mutate(png_path = glue::glue("{path}.png")) |>
+          dplyr::mutate(png_path = paste0(path,".png")) |>
           dplyr::mutate(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
