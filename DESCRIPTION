@@ -28,8 +28,8 @@ Imports:
     ggplot2,
     rlang,
     ggtext,
-    shiny,
-    rmarkdown
+    rmarkdown,
+    shiny
 License: GPL-3
 Depends: 
     R (>= 4.1.0)

@@ -18,13 +18,11 @@
 #'
 #' For some older versions (from about 2019-01-01), you can replace the " \code{read_idea() |>  compute_idea()} " pipeline by "\code{old_idea()}" which will focus on indicators rather than items.
 #'
-#' @importFrom dplyr select bind_rows mutate filter group_by row_number ungroup case_when
 #' @importFrom jsonlite fromJSON
 #' @importFrom readxl excel_sheets read_excel
 #' @importFrom tibble tibble
-#' @importFrom tidyr drop_na pivot_longer everything fill pivot_wider
 #' @importFrom tools file_ext
-#' @importFrom stats na.omit
+#' @importFrom stats na.omit reshape setNames
 #' @examples
 #' library(IDEATools)
 #' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
@@ -158,11 +156,16 @@ read_idea <- function(input) {
   if (filetype %in% c("xls", "xlsx")) {
 
     ## Reading metadata from "Renvoi BDD"
-    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22") |>
-      dplyr::select(c(1, 4)) |>
-      tidyr::drop_na(Code) |>
-      tidyr::pivot_wider(names_from = Code, values_from = Valeur) |>
+    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22")[,c(1,4)] |>
+      subset(!is.na(Code)) |>
+      transform(id = 1) |>
+      stats::reshape(direction = "wide", idvar = "id",timevar = "Code", v.names = "Valeur") |>
       as.list()
+
+    names(metadata) <- unlist(lapply(names(metadata), gsub, pattern = "Valeur\\.", replacement = ""))
+    attr(metadata,"reshapeWide") <- NULL
+    metadata[["id"]] <- NULL
+
 
     ## In the rare case where the version number wasn't transfered to the "Renvoi BDD" sheet, extract it in
     ## "Notice"
@@ -237,7 +240,7 @@ read_idea <- function(input) {
   if (filetype == "json") {
 
     items <- as.data.frame(json_file$items) |>
-      reshape(direction = "long", varying = list(names(as.data.frame(json_file$items))), v.names = c("value"), timevar = "item") |>
+      stats::reshape(direction = "long", varying = list(names(as.data.frame(json_file$items))), v.names = c("value"), timevar = "item") |>
       transform(item = names(json_file$items)) |>
       transform(item = gsub(x = item, pattern = "(?<=[[:upper:]])0", replacement = "", perl = TRUE)) |>  # Convert A01 to A1
       transform(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
@@ -260,11 +263,11 @@ read_idea <- function(input) {
     end_row <- ifelse(version_number < 433, yes = 144, no = 145)
     range = paste0("A",start_row,":E",end_row)
 
-    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range)) |>
-      dplyr::select(item = Code, value = `A Exporter`) |>
-      dplyr::mutate(item = gsub(x = item, pattern = "(?<=[:upper:])", replacement = "")) |>  # Convert A01 to A1
-      dplyr::mutate(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
-      tidyr::drop_na(item)
+    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range))[,c("Code","A Exporter")] |>
+      stats::setNames(c("item","value")) |>
+      transform(item = gsub(x = item, pattern = "(?<=[[:upper:]])0", replacement = "", perl = TRUE)) |>
+      transform(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
+      subset(!is.na(item))
 
     ## Error if not complete
     if (sum(is.na(items$value)) > 0) {
@@ -280,7 +283,7 @@ read_idea <- function(input) {
   ## Building the output list
   output <- list(
     metadata = metadata,
-    items = items
+    items = tibble::tibble(items)
   )
 
   class(output) <- c(class(output), "IDEA_items")

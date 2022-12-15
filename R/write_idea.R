@@ -277,7 +277,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
     if (any(type == "report")) {
 
-      rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr","gt"), reason = "to produce reports`")
+      rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","gt"), reason = "to produce reports`")
 
       # Reports requires all 3 types of plots
       if (length(names(IDEA_plots)) < 4) (stop("Reporting functions requires that all three kind of plots are drawn in previous `plots_idea()` call"))
