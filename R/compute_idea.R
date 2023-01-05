@@ -52,7 +52,7 @@ compute_idea <- function(data) {
 
   ## Aggregates items into indicators
   Item2Indic <- function(indicateur, df) {
-    df <- df |> dplyr::arrange(item)
+    df <- df[order(df$item),]
 
     items <- df$value |> as.numeric()
 
@@ -74,11 +74,9 @@ compute_idea <- function(data) {
       }
 
       if (indicateur == "A7") {
-        value <- dplyr::case_when(
-          metadata$MTD_14 == 0 ~ 0,
-          metadata$MTD_14 == 2 ~ round(0.7 * items[1] + 0.3 * items[2] + 1e-10),
-          metadata$MTD_14 == 1 ~ as.numeric(items[2])
-        )
+        value <- ifelse(metadata$MTD_14 == 0, 0,
+                        ifelse(metadata$MTD_14 == 2, round(0.7 * items[1] + 0.3 * items[2] + 1e-10),
+                               as.numeric(items[2])))
       }
 
       if (indicateur == "A8") {
@@ -94,11 +92,10 @@ compute_idea <- function(data) {
       }
 
       if (indicateur == "A14") {
-        value <- dplyr::case_when(
-          metadata$MTD_16 == 0 ~ 4,
-          metadata$MTD_14 == 0 ~ as.numeric(items[1]),
-          metadata$MTD_14 != 0 & metadata$MTD_16 != 0 ~ min(as.numeric(items))
-        )
+        value <- ifelse(metadata$MTD_16 == 0, 4,
+                        ifelse(metadata$MTD_14 == 0, as.numeric(items[1]),
+                               ifelse(metadata$MTD_14 != 0 & metadata$MTD_16 != 0, min(as.numeric(items)), NA)))
+
       }
       if (indicateur == "A19") {
         value <- ifelse(metadata$MTD_14 == 0, yes = items[1], no = min(as.numeric(items)))
@@ -120,9 +117,9 @@ compute_idea <- function(data) {
 
   ## Scale indicators
   ScaleIndicator <- function(indic, value) {
-    max <- reference_list$indic_dim |>
-      dplyr::filter(indic_code == indic) |>
-      dplyr::pull(max_indic) |> unique()
+    max <- unique(reference_list$indic_dim[reference_list$indic_dim$indic_code == indic, "max_indic"]) |>
+      unlist(use.names = FALSE)
+
 
     # We add 1e-10 to make .5 rounded to above.
     value <- round(value + 1e-10)
@@ -138,10 +135,9 @@ compute_idea <- function(data) {
 
   ## Re-scales the component value according to the max authorized value
   ScaleComponent <- function(compo, value) {
-    max <- reference_list$indic_dim |>
-      dplyr::filter(component_code == compo) |>
-      dplyr::pull(component_max) |>
-      unique()
+
+    max <- unique(reference_list$indic_dim[reference_list$indic_dim$component_code == compo, "component_max"]) |>
+      unlist(use.names = FALSE)
 
     scaled_value <- ifelse(value > max, yes = max, no = value)
     if (scaled_value < 0) {
@@ -152,10 +148,8 @@ compute_idea <- function(data) {
 
   ## Calculates the dimension score based on components
   Component2Dimension <- function(df) {
-    df |>
-      dplyr::distinct(component, component_value) |>
-      dplyr::pull(component_value) |>
-      sum(na.rm = TRUE)
+    df <- df |> subset(select = c("component", "component_value")) |> unique()
+    df <- sum(df$component_value, na.rm = TRUE)
   }
 
   ## Converts the unscaled indicator values to qualitative categories according to the DEXi model
@@ -169,27 +163,16 @@ compute_idea <- function(data) {
     vals <-  stats::na.omit(c(TDEF, DEF, INT, FAV))
 
     if (length(vals) == 4) {
-      res <- dplyr::case_when(
-        score < DEF ~ "tr\u00e8s d\u00e9favorable",
-        score >= DEF & score < INT ~ "d\u00e9favorable",
-        score >= INT & score < FAV ~ "interm\u00e9diaire",
-        score >= FAV ~ "favorable"
-      )
+      res <- cut(score, breaks = c(-Inf, DEF, INT, FAV, Inf), labels = c("très défavorable", "défavorable", "intermédiaire", "favorable"), right = FALSE)
+
     }
 
     if (length(vals) == 3) {
-      res <- dplyr::case_when(
-        score < INT ~ "d\u00e9favorable",
-        score >= INT & score < FAV ~ "interm\u00e9diaire",
-        score >= FAV ~ "favorable"
-      )
+      res <- cut(score, breaks = c(-Inf,INT, FAV,Inf), labels = c("défavorable", "intermédiaire", "favorable"),right = FALSE)
     }
 
     if (length(vals) == 2) {
-      res <- dplyr::case_when(
-        score < FAV ~ "interm\u00e9diaire",
-        score >= FAV ~ "favorable"
-      )
+      res <- cut(score, breaks = c(-Inf, FAV, Inf), labels = c("intermédiaire", "favorable"),right = FALSE)
     }
 
     return(res)
@@ -197,68 +180,79 @@ compute_idea <- function(data) {
 
   # Compute dimensions ------------------------------------------------------
 
-  computed_dimensions <- data$items |>
-    dplyr::rowwise() |>
-    # separating indicator and item, could be done with dplyr::separate()
-    dplyr::mutate(
-      indic = sub("\\_.*", "", item),
-      item = sub(".*\\_", "", item)
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::select(indic, item, value) |>
-    # Computing indicators
-    dplyr::group_by(indic) |>
-    # For each indicator, we nest the data and apply our custom functions
-    tidyr::nest() |>
-    dplyr::mutate(unscaled_value = mapply(indic, data, FUN=Item2Indic)) |>
-    dplyr::mutate(scaled_value = mapply(indic, unscaled_value, FUN=ScaleIndicator)) |>
-    dplyr::mutate(unscaled_value = round(unscaled_value + 1e-10, 0)) |> # We add 1e-10 to make .5 rounded to above.
-    dplyr::select(-data) |>
-    dplyr::ungroup() |>
-    # Computing components
-    dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) |>
-    dplyr::group_by(component_code) |>
-    dplyr::mutate(component_value = sum(scaled_value, na.rm = TRUE)) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(component_value = mapply(component_code, component_value, FUN=ScaleComponent)) |>
-    # Computing dimensions
-    dplyr::group_by(dimension) |>
-    tidyr::nest() |>
-    dplyr::mutate(dimension_value = lapply(data, FUN=Component2Dimension)) |>
-    tidyr::unnest(cols = c(data,dimension_value)) |>
-    dplyr::ungroup() |>
-    dplyr::select(indic, unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value)
+  # Convertir "data" en data.table
+  data_dt <- as.data.table(data$items)
+
+  # Séparer l'indicateur et l'élément, qui pourrait être fait avec dplyr::separate()
+  data_dt[, c("indic", "item") := list(sub("\\_.*", "", item), sub(".*\\_", "", item))]
+
+  # Compute indicators
+  data_dt_grouped_by_indic <- data_dt[, .(item, value), by = indic]
+
+  # Pour chaque indicateur, nous avons inclus les données et appliqué nos fonctions personnalisées
+  data_dt_nested_by_indic <- data_dt_grouped_by_indic[, .(data = list(.SD)), by = indic]
+
+  data_dt_nested_by_indic[, unscaled_value := mapply(indic, data, FUN = Item2Indic)]
+  data_dt_nested_by_indic[, scaled_value := mapply(indic, unscaled_value, FUN = ScaleIndicator)]
+  data_dt_nested_by_indic[, unscaled_value := round(unscaled_value + 1e-10, 0)]
+
+  # We add 1e-10 to make .5 rounded to above.
+  data_dt_nested_by_indic[, c("data") := NULL]
+
+  setDT(reference_list[["indic_dim"]])
+  setDT(decision_rules_total[["categorisation"]])
+
+  # Compute components
+  data_dt_with_indic_dim <- data_dt_nested_by_indic[reference_list[["indic_dim"]], on = c("indic" = "indic_code")]
+  data_dt_grouped_by_component_code <- data_dt_with_indic_dim[, .(indic, unscaled_value, scaled_value, dimension, component,dimension_code), by = component_code]
+  data_dt_grouped_by_component_code[, component_value := sum(scaled_value, na.rm = TRUE), by = component_code]
+  data_dt_grouped_by_component_code[, component_value := mapply(component_code, component_value, FUN = ScaleComponent)]
+
+  # Compute dimensions
+  data_dt_grouped_by_dimension <- data_dt_grouped_by_component_code[, .(data = list(.SD)), by = dimension]
+  data_dt_grouped_by_dimension[, dimension_value := lapply(data, FUN = Component2Dimension)]
+  data_dt_unnested <- data_dt_grouped_by_dimension[, c("data") := NULL]
+
+  # Sélectionner les colonnes finales
+  computed_dimensions <- data_dt_grouped_by_component_code[data_dt_unnested, on = "dimension"][,.(indic, unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value)]
+
 
   # Compute properties ------------------------------------------------------
 
   ## Score to category
-  computed_categories <- computed_dimensions |>
-    dplyr::inner_join(decision_rules_total$categorisation, by = "indic") |>
-    dplyr::group_by(indic) |>
-    tidyr::nest() |>
-    dplyr::mutate(score_category = lapply(data, FUN=Score2Category)) |>
-    tidyr::unnest(cols = c(data,score_category)) |>
-    dplyr::ungroup() |>
-    dplyr::select(indic, unscaled_value, scaled_value, score_category, dimension_code, component_code, component_value, dimension_value)
+
+  # Joindre avec "decision_rules_total$categorisation" sur la colonne "indic"
+  computed_categories_dt <- computed_dimensions[decision_rules_total[["categorisation"]], on = "indic"]
+
+  # Grouper par "indic"
+  computed_categories_dt_grouped <- computed_categories_dt[, .(unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value, TDEF,DEF,INT,FAV), by = indic]
+
+  # Inclure les données et appliquer la fonction "Score2Category"
+  computed_categories_dt_nested <- computed_categories_dt_grouped[, .(data = list(.SD)), by = indic]
+  computed_categories_dt_nested[, score_category := lapply(data, FUN = Score2Category)]
+
+  # Dé-nidifier les colonnes "data" et "score_category"
+  computed_categories_dt_unnested <- computed_categories_dt_nested[, c("data") := NULL]
+
+  # Sélectionner les colonnes finales
+  computed_categories_dt <- computed_categories_dt_unnested[computed_dimensions, on = "indic"][, .(indic, unscaled_value, scaled_value, score_category, dimension_code, component_code, component_value, dimension_value)]
+
 
   ### Assigning A7 to "NC" if MTD_14 is 0
   if (metadata$MTD_14 == "0") {
-    computed_categories <- computed_categories |>
-      dplyr::rowwise() |>
-      dplyr::mutate(score_category = ifelse(indic == "A7", yes = "NC", no = score_category)) |>
-      dplyr::ungroup()
+    computed_categories_dt[indic == "A7", score_category := "NC"]
   }
 
   # Computing nodes ---------------------------------------------------------
 
   # Renaming computed_categories for the full pipeline
-  prop_data <- computed_categories
+  prop_data <- computed_categories_dt
 
   # Robustesse --------------------------------------------------------------
 
   ## Node 1
 
-  decision_rules <- decision_rules_total$node_1
+  decision_rules <- as.data.table(decision_rules_total$node_1)
 
   node_1 <- prop_data |>
     dplyr::filter(indic %in% names(decision_rules)) |>

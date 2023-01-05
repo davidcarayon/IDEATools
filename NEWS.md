@@ -2,7 +2,8 @@
 * Fixes to documentation
 * Removed a vignette showing the dev history of IDEATools and associated images
 * Droping heavy dependencies : janitor, scales, ggrepel, glue, readr, stringr, dplyr and tidyr
-
+* New (light) dependency to data.table
+* Fixed a bug with excel reports for properties labels
 
 # IDEATools 3.3.1
 * Documentation fixes for CRAN
