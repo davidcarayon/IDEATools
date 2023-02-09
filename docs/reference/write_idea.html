@@ -163,15 +163,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidcarayon.github.io/IDEATools/index.html" class="external-link">IDEATools</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"example_data/idea_example_1.json"</span>, package <span class="op">=</span> <span class="st">"IDEATools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_idea.html">read_idea</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>TRE pattern compilation error 'Invalid regexp'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::mutate(tidyr::pivot_longer(dplyr::bind_rows(json_file$items),     tidyr::everything(), names_to = "item"), item = gsub(x = item,     pattern = "(?&lt;=[:upper:])0", replacement = "")):</span> Problem while computing `item = gsub(x = item, pattern =</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> "(?&lt;=[:upper:])0", replacement = "")`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `gsub()`:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> invalid regular expression '(?&lt;=[:upper:])0', reason 'Invalid regexp'</span>
 <span class="r-in"><span><span class="va">computed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="compute_idea.html">compute_idea</a></span><span class="op">(</span><span class="va">my_data</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compute_idea(my_data):</span> object 'my_data' not found</span>
 <span class="r-in"><span><span class="va">idea_plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot_idea.html">plot_idea</a></span><span class="op">(</span><span class="va">computed_data</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in class(IDEA_data) %in% c("IDEA_data", "IDEA_group_data"):</span> object 'computed_data' not found</span>
 <span class="r-in"><span><span class="co"># Find your temporary directory</span></span></span>
 <span class="r-in"><span><span class="va">tempdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -207,7 +200,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -23,9 +23,10 @@
 #'
 #' If the input is a list of files and/or a directory, and if type is "group*", then the "import" (\code{read_idea() |> compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() |> write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
 #'
-#' Note that group analysis requires a number of unique farms greater or equal to 3.
-#'
 #' @export
+#'
+#' @import data.table
+#' @importFrom tibble tibble
 #'
 #' @examples
 #' library(IDEATools)
@@ -270,11 +271,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
   # Group analysis ----------------------------------------------------------
 
-  ## Error if the input is a single file
-  if (any(type %in%  c("group","group_reference")) & input_type == "file") {
-    stop("Group analysis is not possible with only one file.")
-  }
-
   if ((any(type %in%  c("group","group_reference")) & input_type == "list_files") | (any(type %in%  c("group","group_reference")) & input_type == "directory")) {
 
     ## Creating the iterating vector according to the input
@@ -283,11 +279,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     }
     if (input_type == "directory") {
       files_iter <- list.files(input, full.names = TRUE)
-    }
-
-    ## Checking the number of farms (must be >= 3)
-    if (length(unique(files_iter)) < 3) {
-      stop("Group analysis requires >= 3 unique farms")
     }
 
     ## Printing starting info
@@ -340,11 +331,11 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
       ## Adding farm id
       IDEA_data$dataset$farm_id <- IDEA_data$metadata$MTD_01
-      IDEA_data$nodes <- lapply(IDEA_data$nodes, function(x) dplyr::mutate(x, farm_id = IDEA_data$metadata$MTD_01))
+      IDEA_data$nodes <- lapply(IDEA_data$nodes, function(x) transform(x, farm_id = IDEA_data$metadata$MTD_01))
 
       ## Creating the group list
-      group_list$dataset <- dplyr::bind_rows(group_list$dataset, IDEA_data$dataset)
-      group_list$metadata <- dplyr::bind_rows(group_list$metadata, IDEA_data$metadata)
+      group_list$dataset <- rbind(group_list$dataset, IDEA_data$dataset)
+      group_list$metadata <- rbind(group_list$metadata, IDEA_data$metadata)
       group_list$nodes[[IDEA_data$metadata$MTD_01]] <- IDEA_data$nodes
 
       ## Estimating duration
@@ -370,16 +361,18 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     # Aggregating results for properties
     group_list$nodes <- list(
-      "Robustesse" = lapply(group_list$nodes, FUN = dplyr::nth, 1) |> dplyr::bind_rows(),
-      "Capacite" =  lapply(group_list$nodes, FUN = dplyr::nth, 2) |> dplyr::bind_rows(),
-      "Autonomie" =  lapply(group_list$nodes, FUN = dplyr::nth, 3) |> dplyr::bind_rows(),
-      "Responsabilite" = lapply(group_list$nodes, FUN = dplyr::nth, 4) |> dplyr::bind_rows(),
-      "Ancrage" =  lapply(group_list$nodes, FUN = dplyr::nth, 5) |> dplyr::bind_rows(),
-      "Global" =  lapply(group_list$nodes, FUN = dplyr::nth, 6) |> dplyr::bind_rows()
+      "Robustesse" = lapply(group_list$nodes, FUN = function(x) x[[1]]) |> data.table::rbindlist(),
+      "Capacite" =  lapply(group_list$nodes, FUN = function(x) x[[2]]) |> data.table::rbindlist(),
+      "Autonomie" =  lapply(group_list$nodes, FUN = function(x) x[[3]]) |> data.table::rbindlist(),
+      "Responsabilite" = lapply(group_list$nodes, FUN = function(x) x[[4]]) |> data.table::rbindlist(),
+      "Ancrage" =  lapply(group_list$nodes, FUN = function(x) x[[5]]) |> data.table::rbindlist(),
+      "Global" =  lapply(group_list$nodes, FUN = function(x) x[[6]]) |> data.table::rbindlist()
     )
 
     ## Applying a special class to the list for plot_idea to understand it's a group analysis
     class(group_list) <- c(class(group_list), "IDEA_group_data")
+
+    group_list$nodes$Global[,index :=  NULL]
 
     ## Plotting
     IDEA_group_plots <- plot_idea(group_list)

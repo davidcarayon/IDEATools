@@ -44,7 +44,6 @@ reference:
 - title: "Utility functions"
   desc: "Other miscellaneous functions"
 - contents:
-  - jsonify
   - jsonify2
   - theme_idea
   - show_decision_rules

@@ -3,7 +3,8 @@ Thank you very much for your valuable remarks. I hope that this new version shou
 
 * I added a reference to the IDEA4 method following your guidelines in the DESCRIPTION file
 * I reduced the package size under 5MB as requested
-* I added and documented the `\value` tags as requested
+* Reduced dependencies coming from {dplyr} and {tidyr} by using {data.table}
+* I added and documented the missing `\value` tags as requested
 * Switched from `\dontrun{}` to `\donttest{}` when running examples would take more than 5 seconds. I only kept 2 `\dontrun{}` calls for a function loading a shiny app (`runGUI()`) and for a function where the example refers to an excel file (`old_idea()`) that I don't want to store in the package (would take at least 5MB). I can't see how to avoid them otherwise.
 * Removed the `options(warn = -1)` call
 * I made sure that in the only place where I change the working directory of the user (in the Shiny app), I reset it to the original one straight after code execution

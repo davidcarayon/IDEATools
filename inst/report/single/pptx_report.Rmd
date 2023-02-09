@@ -10,6 +10,7 @@ params:
   outdir : "tmp"
   data: "data"
   prefix: "EA"
+  dpi: 320
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +23,7 @@ IDEAdata <- IDEA_plots$data
 outdir <- params$outdir
 prefix = params$prefix
 
-IDEATools::write_idea(IDEA_plots, output_directory = outdir, type = "local", prefix = prefix, quiet = TRUE)
+IDEATools::write_idea(IDEA_plots, output_directory = outdir, type = "local", prefix = prefix, dpi = params$dpi, quiet = TRUE)
 ```
 
 
@@ -39,7 +40,7 @@ IDEATools::write_idea(IDEA_plots, output_directory = outdir, type = "local", pre
 ### Résultats globaux pour les trois dimensions
 
 ```{r}
-min_val <- min(IDEAdata$dataset$dimension_value)
+min_val <- min(unlist(IDEAdata$dataset$dimension_value))
 ```
 
 ```{r  fig.width = 9.11, fig.height=5.6, fig.cap = "Figure 1 : Notes obtenues pour chaque dimension de la durabilité"}

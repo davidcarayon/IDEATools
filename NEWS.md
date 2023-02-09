@@ -1,9 +1,11 @@
 # IDEATools 3.4.0
 * Fixes to documentation
 * Removed a vignette showing the dev history of IDEATools and associated images
-* Droping heavy dependencies : janitor, scales, ggrepel, glue, readr, stringr, dplyr and tidyr
+* Droping heavy dependencies : janitor, scales, ggrepel, glue, readr, stringr and especially **dplyr** and **tidyr**
 * New (light) dependency to data.table
 * Fixed a bug with excel reports for properties labels
+* Removed limit of 3 for group analysis
+* Better dpi management for PDF reports
 
 # IDEATools 3.3.1
 * Documentation fixes for CRAN

@@ -23,10 +23,8 @@
 #'
 #' @encoding UTF-8
 #'
-#' @importFrom dplyr arrange case_when filter pull distinct rowwise mutate ungroup select group_by inner_join bind_cols
-#' @importFrom readxl excel_sheets read_excel
+#' @import data.table
 #' @importFrom stats na.omit
-#' @importFrom tidyr nest unnest spread
 #'
 #' @examples
 #' library(IDEATools)
@@ -163,16 +161,16 @@ compute_idea <- function(data) {
     vals <-  stats::na.omit(c(TDEF, DEF, INT, FAV))
 
     if (length(vals) == 4) {
-      res <- cut(score, breaks = c(-Inf, DEF, INT, FAV, Inf), labels = c("très défavorable", "défavorable", "intermédiaire", "favorable"), right = FALSE)
+      res <- cut(score, breaks = c(-Inf, DEF, INT, FAV, Inf), labels = c("tr\u00e8s d\u00e9favorable", "d\u00e9favorable", "interm\u00e9diaire", "favorable"), right = FALSE)
 
     }
 
     if (length(vals) == 3) {
-      res <- cut(score, breaks = c(-Inf,INT, FAV,Inf), labels = c("défavorable", "intermédiaire", "favorable"),right = FALSE)
+      res <- cut(score, breaks = c(-Inf,INT, FAV,Inf), labels = c("d\u00e9favorable", "interm\u00e9diaire", "favorable"),right = FALSE)
     }
 
     if (length(vals) == 2) {
-      res <- cut(score, breaks = c(-Inf, FAV, Inf), labels = c("intermédiaire", "favorable"),right = FALSE)
+      res <- cut(score, breaks = c(-Inf, FAV, Inf), labels = c("interm\u00e9diaire", "favorable"),right = FALSE)
     }
 
     return(res)
@@ -181,26 +179,20 @@ compute_idea <- function(data) {
   # Compute dimensions ------------------------------------------------------
 
   # Convertir "data" en data.table
-  data_dt <- as.data.table(data$items)
+  data_dt <- data.table::as.data.table(data$items)
 
-  # Séparer l'indicateur et l'élément, qui pourrait être fait avec dplyr::separate()
   data_dt[, c("indic", "item") := list(sub("\\_.*", "", item), sub(".*\\_", "", item))]
 
-  # Compute indicators
   data_dt_grouped_by_indic <- data_dt[, .(item, value), by = indic]
 
-  # Pour chaque indicateur, nous avons inclus les données et appliqué nos fonctions personnalisées
   data_dt_nested_by_indic <- data_dt_grouped_by_indic[, .(data = list(.SD)), by = indic]
-
   data_dt_nested_by_indic[, unscaled_value := mapply(indic, data, FUN = Item2Indic)]
   data_dt_nested_by_indic[, scaled_value := mapply(indic, unscaled_value, FUN = ScaleIndicator)]
   data_dt_nested_by_indic[, unscaled_value := round(unscaled_value + 1e-10, 0)]
-
-  # We add 1e-10 to make .5 rounded to above.
   data_dt_nested_by_indic[, c("data") := NULL]
 
-  setDT(reference_list[["indic_dim"]])
-  setDT(decision_rules_total[["categorisation"]])
+  data.table::setDT(reference_list[["indic_dim"]])
+  decision_rules_total <- lapply(decision_rules_total,data.table::as.data.table)
 
   # Compute components
   data_dt_with_indic_dim <- data_dt_nested_by_indic[reference_list[["indic_dim"]], on = c("indic" = "indic_code")]
@@ -213,7 +205,7 @@ compute_idea <- function(data) {
   data_dt_grouped_by_dimension[, dimension_value := lapply(data, FUN = Component2Dimension)]
   data_dt_unnested <- data_dt_grouped_by_dimension[, c("data") := NULL]
 
-  # Sélectionner les colonnes finales
+  # Selectionner les colonnes finales
   computed_dimensions <- data_dt_grouped_by_component_code[data_dt_unnested, on = "dimension"][,.(indic, unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value)]
 
 
@@ -227,14 +219,14 @@ compute_idea <- function(data) {
   # Grouper par "indic"
   computed_categories_dt_grouped <- computed_categories_dt[, .(unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value, TDEF,DEF,INT,FAV), by = indic]
 
-  # Inclure les données et appliquer la fonction "Score2Category"
+  # Inclure les donnees et appliquer la fonction "Score2Category"
   computed_categories_dt_nested <- computed_categories_dt_grouped[, .(data = list(.SD)), by = indic]
   computed_categories_dt_nested[, score_category := lapply(data, FUN = Score2Category)]
 
-  # Dé-nidifier les colonnes "data" et "score_category"
+  # De-nidifier les colonnes "data" et "score_category"
   computed_categories_dt_unnested <- computed_categories_dt_nested[, c("data") := NULL]
 
-  # Sélectionner les colonnes finales
+  # Selectionner les colonnes finales
   computed_categories_dt <- computed_categories_dt_unnested[computed_dimensions, on = "indic"][, .(indic, unscaled_value, scaled_value, score_category, dimension_code, component_code, component_value, dimension_value)]
 
 
@@ -247,483 +239,212 @@ compute_idea <- function(data) {
 
   # Renaming computed_categories for the full pipeline
   prop_data <- computed_categories_dt
+  decision_rules_total <- lapply(decision_rules_total,data.table::as.data.table)
 
   # Robustesse --------------------------------------------------------------
 
   ## Node 1
-
-  decision_rules <- as.data.table(decision_rules_total$node_1)
-
-  node_1 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A1", "A3", "A4"))
+  node_1 <- prop_data[indic %in% names(decision_rules_total$node_1)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_1, by = c("A1", "A3", "A4"))
 
   ## Node 2
-
-  decision_rules <- decision_rules_total$node_2
-
-  node_2 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_1) |>
-    dplyr::inner_join(decision_rules, by = c("A14", "C5", "R1"))
+  node_2 <- prop_data[indic %in% names(decision_rules_total$node_2)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_1, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_2, by = c("A14", "C5", "R1"))
 
   ## Node 3
-
-  decision_rules <- decision_rules_total$node_3
-
-  node_3 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("C4", "C7"))
+  node_3 <- prop_data[indic %in% names(decision_rules_total$node_3)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_3, by = c("C4", "C7"))
 
   ## Node 4
-
-  decision_rules <- decision_rules_total$node_4
-
-  node_4 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_3) |>
-    dplyr::inner_join(decision_rules, by = c("A2", "R3"))
+  node_4 <- prop_data[indic %in% names(decision_rules_total$node_4)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_3, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_4, by = c("A2", "R3"))
 
   ## Node 5
-
-  decision_rules <- decision_rules_total$node_5
-
-  node_5 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("C8", "C9"))
+  node_5 <- prop_data[indic %in% names(decision_rules_total$node_5)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_5, by = c("C8", "C9"))
 
   ## Node 6
-
-  decision_rules <- decision_rules_total$node_6
-
-  node_6 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_5) |>
-    dplyr::inner_join(decision_rules, by = c("A15", "R5"))
+  node_6 <- prop_data[indic %in% names(decision_rules_total$node_6)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_5, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_6, by = c("A15", "R5"))
 
   ## Node 7
-
-  decision_rules <- decision_rules_total$node_7
-
-  node_7 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_4) |>
-    dplyr::bind_cols(node_6) |>
-    dplyr::inner_join(decision_rules, by = c("B22", "R4", "R6"))
+  node_7 <- prop_data[indic %in% names(decision_rules_total$node_7)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_4, on = "index"][node_6, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_7, by = c("B22", "R4", "R6"))
 
   ## Node 8
-
-  decision_rules <- decision_rules_total$node_8
-
-  node_8 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B13", "B15"))
+  node_8 <- prop_data[indic %in% names(decision_rules_total$node_8)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_8, by = c("B13", "B15"))
 
   ## Node 9
-
-  decision_rules <- decision_rules_total$node_9
-
-  node_9 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_8) |>
-    dplyr::inner_join(decision_rules, by = c("B16", "B18", "R8"))
+  node_9 <- prop_data[indic %in% names(decision_rules_total$node_9)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_8, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_9, by = c("B16", "B18", "R8"))
 
   ## Node 10
-  decision_rules <- decision_rules_total$node_10
-
-  node_10 <- node_9 |>
-    dplyr::bind_cols(node_7) |>
-    dplyr::bind_cols(node_2) |>
-    dplyr::inner_join(decision_rules, by = c("R9", "R7", "R2"))
+  node_10 <- node_9[node_7, on = "index"][node_2, on = "index"] |>
+    merge(decision_rules_total$node_10,by = c("R9", "R7", "R2"))
 
   # Capacit\u00e9 productive et reproductive de biens et services ----------------
 
   ## Node 11
-
-  decision_rules <- decision_rules_total$node_11
-
-  node_11 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A12", "A13", "A5"))
-
+  node_11 <- prop_data[indic %in% names(decision_rules_total$node_11)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_11, by = c("A12", "A13", "A5"))
 
   ## Node 12
-
-  decision_rules <- decision_rules_total$node_12
-
-  node_12 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B14", "B15", "B16"))
+  node_12 <- prop_data[indic %in% names(decision_rules_total$node_12)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_12, by = c("B14", "B15", "B16"))
 
   ## Node 13
-
-  decision_rules <- decision_rules_total$node_13
-
-  node_13 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B13", "B18"))
+  node_13 <- prop_data[indic %in% names(decision_rules_total$node_13)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_13, by = c("B13", "B18"))
 
   ## Node 14
-
-  decision_rules <- decision_rules_total$node_14
-
-  node_14 <- node_12 |>
-    dplyr::bind_cols(node_13) |>
-    dplyr::inner_join(decision_rules, by = c("CP2", "CP3"))
+  node_14 <- node_12[node_13, on = "index"] |>
+    merge(decision_rules_total$node_14, by = c("CP2", "CP3"))
 
   ## Node 15
-
-  decision_rules <- decision_rules_total$node_15
-
-  node_15 <- node_11 |>
-    dplyr::bind_cols(node_14) |>
-    dplyr::inner_join(decision_rules, by = c("CP1", "CP4"))
-
+  node_15 <- node_11[node_14, on = "index"] |>
+    merge(decision_rules_total$node_15, by = c("CP1", "CP4"))
 
   ## Node 16
-
-  decision_rules <- decision_rules_total$node_16
-
-  node_16 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B1", "B3"))
+  node_16 <- prop_data[indic %in% names(decision_rules_total$node_16)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_16, by = c("B1", "B3"))
 
   ## Node 17
-
-  decision_rules <- decision_rules_total$node_17
-
-  node_17 <- node_16 |>
-    dplyr::bind_cols(node_15) |>
-    dplyr::inner_join(decision_rules, by = c("CP6", "CP5"))
+  node_17 <- node_16[node_15, on = "index"] |>
+    merge(decision_rules_total$node_17, by = c("CP6", "CP5"))
 
   ## Node 18
-
-  decision_rules <- decision_rules_total$node_18
-
-  node_18 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("C2", "C3"))
+  node_18 <- prop_data[indic %in% names(decision_rules_total$node_18)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_18, by = c("C2", "C3"))
 
   ## Node 19
-
-  decision_rules <- decision_rules_total$node_19
-
-  node_19 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_18) |>
-    dplyr::inner_join(decision_rules, by = c("C1", "C10", "CP8"))
+  node_19 <- prop_data[indic %in% names(decision_rules_total$node_19)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_18, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_19, by = c("C1", "C10", "CP8"))
 
   ## Node 20
-
-  decision_rules <- decision_rules_total$node_20
-
-  node_20 <- node_17 |>
-    dplyr::bind_cols(node_19) |>
-    dplyr::inner_join(decision_rules, by = c("CP7", "CP9"))
+  node_20 <- node_17[node_19, on = "index"] |>
+    merge(decision_rules_total$node_20, by = c("CP7", "CP9"))
 
   # Autonomie ---------------------------------------------------------------
 
   ## Node 21
-
-  decision_rules <- decision_rules_total$node_21
-
-  node_21 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B13", "B15", "B18"))
+  node_21 <- prop_data[indic %in% names(decision_rules_total$node_21)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_21, by = c("B13", "B15", "B18"))
 
   ## Node 22
-
-  decision_rules <- decision_rules_total$node_22
-
-  node_22 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B8", "C5"))
+  node_22 <- prop_data[indic %in% names(decision_rules_total$node_22)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_22, by = c("B8", "C5"))
 
   ## Node 23
-
-  decision_rules <- decision_rules_total$node_23
-
-  node_23 <- node_21 |>
-    dplyr::bind_cols(node_22) |>
-    dplyr::inner_join(decision_rules, by = c("AU1", "AU2"))
+  node_23 <- node_21[node_22, on = "index"] |>
+    merge(decision_rules_total$node_23, by = c("AU1", "AU2"))
 
   ## Node 24
-
-  decision_rules <- decision_rules_total$node_24
-
-  node_24 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("C3", "C6"))
+  node_24 <- prop_data[indic %in% names(decision_rules_total$node_24)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_24, by = c("C3", "C6"))
 
   ## Node 25
-
-  decision_rules <- decision_rules_total$node_25
-
-  node_25 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A6", "A7", "A8"))
+  node_25 <- prop_data[indic %in% names(decision_rules_total$node_25)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_25, by = c("A6", "A7", "A8"))
 
   ## Node 26
-
-  decision_rules <- decision_rules_total$node_26
-
-  node_26 <- node_23 |>
-    dplyr::bind_cols(node_24) |>
-    dplyr::bind_cols(node_25) |>
-    dplyr::inner_join(decision_rules, by = c("AU3", "AU4", "AU5"))
+  node_26 <- node_23[node_24, on = "index"][node_25, on = "index"] |>
+    merge(decision_rules_total$node_26, by = c("AU3", "AU4", "AU5"))
 
   # Responsabilit\u00e9 Globale --------------------------------------------------
 
   ## Node 27
-
-  decision_rules <- decision_rules_total$node_27
-
-  node_27 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B20", "B5"))
+  node_27 <- prop_data[indic %in% names(decision_rules_total$node_27)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_27, by = c("B20", "B5"))
 
   ## Node 28
-
-  decision_rules <- decision_rules_total$node_28
-
-  node_28 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B11", "B19"))
-
+  node_28 <- prop_data[indic %in% names(decision_rules_total$node_28)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_28, by = c("B11", "B19"))
 
   ## Node 29
-
-  decision_rules <- decision_rules_total$node_29
-
-  node_29 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B1", "B2", "B4"))
+  node_29 <- prop_data[indic %in% names(decision_rules_total$node_29)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_29, by = c("B1", "B2", "B4"))
 
   ## Node 30
-
-  decision_rules <- decision_rules_total$node_30
-
-  node_30 <- node_27 |>
-    dplyr::bind_cols(node_28) |>
-    dplyr::bind_cols(node_29) |>
-    dplyr::inner_join(decision_rules, by = c("RG1", "RG2", "RG3"))
-
+  node_30 <- node_27[node_28, on = "index"][node_29, on = "index"] |>
+    merge(decision_rules_total$node_30, by = c("RG1", "RG2", "RG3"))
 
   ## Node 31
-
-  decision_rules <- decision_rules_total$node_31
-
-  node_31 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A10", "A9"))
-
+  node_31 <- prop_data[indic %in% names(decision_rules_total$node_31)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_31, by = c("A10", "A9"))
 
   ## Node 32
-
-  decision_rules <- decision_rules_total$node_32
-
-  node_32 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A11", "C11"))
+  node_32 <- prop_data[indic %in% names(decision_rules_total$node_32)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_32, by = c("A11", "C11"))
 
   ## Node 33
-
-  decision_rules <- decision_rules_total$node_33
-
-  node_33 <- node_32 |>
-    dplyr::bind_cols(node_31) |>
-    dplyr::inner_join(decision_rules, by = c("RG6", "RG5"))
+  node_33 <- node_32[node_31, on = "index"] |>
+    merge(decision_rules_total$node_33, by = c("RG6", "RG5"))
 
   ## Node 34
-
-  decision_rules <- decision_rules_total$node_34
-
-  node_34 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B14", "B17"))
+  node_34 <- prop_data[indic %in% names(decision_rules_total$node_34)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_34, by = c("B14", "B17"))
 
   ## Node 35
-
-  decision_rules <- decision_rules_total$node_35
-
-  node_35 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B16", "B21"))
+  node_35 <- prop_data[indic %in% names(decision_rules_total$node_35)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_35, by = c("B16", "B21"))
 
   ## Node 36
-
-  decision_rules <- decision_rules_total$node_36
-
-  node_36 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A5", "B23"))
+  node_36 <- prop_data[indic %in% names(decision_rules_total$node_36)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_36, by = c("A5", "B23"))
 
   ## Node 37
-
-  decision_rules <- decision_rules_total$node_37
-
-  node_37 <- node_34 |>
-    dplyr::bind_cols(node_35) |>
-    dplyr::bind_cols(node_36) |>
-    dplyr::inner_join(decision_rules,by = c("RG8", "RG9", "RG10"))
+  node_37 <- node_34[node_35, on = "index"][node_36, on = "index"] |>
+    merge(decision_rules_total$node_37, by = c("RG8", "RG9", "RG10"))
 
   ## Node 38
-
-  decision_rules <- decision_rules_total$node_38
-
-  node_38 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A16", "A17", "A18"))
+  node_38 <- prop_data[indic %in% names(decision_rules_total$node_38)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_38, by = c("A16", "A17", "A18"))
 
   ## Node 39
-
-  decision_rules <- decision_rules_total$node_39
-
-  node_39 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("A19", "B12"))
+  node_39 <- prop_data[indic %in% names(decision_rules_total$node_39)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_39, by =  c("A19", "B12"))
 
   ## Node 40
-
-  decision_rules <- decision_rules_total$node_40
-
-  node_40 <- node_38 |>
-    dplyr::bind_cols(node_39) |>
-    dplyr::inner_join(decision_rules, by = c("RG12", "RG13"))
+  node_40 <- node_38[node_39, on = "index"]|>
+    merge(decision_rules_total$node_40, by = c("RG12", "RG13"))
 
   ## Node 41
-
-  decision_rules <- decision_rules_total$node_41
-
-  node_41 <- node_30 |>
-    dplyr::bind_cols(node_33) |>
-    dplyr::bind_cols(node_37) |>
-    dplyr::bind_cols(node_40) |>
-    dplyr::inner_join(decision_rules, by = c("RG4", "RG7", "RG11", "RG14"))
+  node_41 <- node_30[node_33, on = "index"][node_37, on = "index"][node_40, on = "index"] |>
+    merge(decision_rules_total$node_41, by = c("RG4", "RG7", "RG11", "RG14"))
 
   # Ancrage territorial -----------------------------------------------------
 
   ## Node 42
-
-  decision_rules <- decision_rules_total$node_42
-
-  node_42 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B10", "B3"))
+  node_42 <- prop_data[indic %in% names(decision_rules_total$node_42)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_42, by =  c("B10", "B3"))
 
   ## Node 43
-
-  decision_rules <- decision_rules_total$node_43
-
-  node_43 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B7", "B8", "B9"))
-
+  node_43 <- prop_data[indic %in% names(decision_rules_total$node_43)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_43, by = c("B7", "B8", "B9"))
 
   ## Node 44
-
-  decision_rules <- decision_rules_total$node_44
-
-  node_44 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::inner_join(decision_rules, by = c("B14", "B15"))
-
+  node_44 <- prop_data[indic %in% names(decision_rules_total$node_44)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_44, by = c("B14", "B15"))
 
   ## Node 45
-
-  decision_rules <- decision_rules_total$node_45
-
-  node_45 <- prop_data |>
-    dplyr::filter(indic %in% names(decision_rules)) |>
-    dplyr::distinct(indic, score_category) |>
-    tidyr::spread(key = indic, value = score_category) |>
-    dplyr::bind_cols(node_44) |>
-    dplyr::inner_join(decision_rules, by = c("B19", "B6", "AN3"))
+  node_45 <- prop_data[indic %in% names(decision_rules_total$node_45)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_44, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+    merge(decision_rules_total$node_45, by = c("B19", "B6", "AN3"))
 
   ## Node 46
-
-  decision_rules <- decision_rules_total$node_46
-
-  node_46 <- node_42 |>
-    dplyr::bind_cols(node_43) |>
-    dplyr::bind_cols(node_45) |>
-    dplyr::inner_join(decision_rules, by = c("AN1", "AN2", "AN4"))
-
+  node_46 <- node_42[node_43, on = "index"][node_45, on = "index"] |>
+    merge(decision_rules_total$node_46, by = c("AN1", "AN2", "AN4"))
 
   ## Final node
-  node_final <- node_10 |>
-    dplyr::inner_join(node_20, by = c("B16", "B18", "B13", "B15")) |>
-    dplyr::inner_join(node_26, by = c("B18", "B13", "B15", "C5", "C3")) |>
-    dplyr::inner_join(node_41, by = c("B16", "B1", "A5", "B14")) |>
-    dplyr::inner_join(node_46, by = c("B15", "B3", "B14", "B8", "B19"))
+    node_final <- node_10 |>
+      merge(node_20[, c("index") := NULL], by = c("B16", "B18", "B13", "B15")) |>
+      merge(node_26[, c("index") := NULL], by = c("B18", "B13", "B15", "C5", "C3")) |>
+      merge(node_41[, c("index") := NULL], by = c("B16", "B1", "A5", "B14")) |>
+      merge(node_46[, c("index") := NULL], by = c("B15", "B3", "B14", "B8", "B19"))
 
 
   ## Final nodes list
-  end_nodes <- list("Robustesse" = node_10, "Capacite" = node_20, "Autonomie" = node_26, "Responsabilite" = node_41, "Ancrage" = node_46, Global = node_final)
+  end_nodes <- list("Robustesse" = tibble::tibble(node_10), "Capacite" = tibble::tibble(node_20), "Autonomie" = tibble::tibble(node_26), "Responsabilite" = tibble::tibble(node_41), "Ancrage" = tibble::tibble(node_46), Global = tibble::tibble(node_final))
 
   ## Removing intermediate node objects
   rm(list = ls(pattern = "node_"))
@@ -731,7 +452,7 @@ compute_idea <- function(data) {
   ## Generating output
   output <- list(
     metadata = metadata,
-    dataset = computed_categories,
+    dataset = tibble::tibble(computed_categories_dt),
     nodes = end_nodes
   )
 

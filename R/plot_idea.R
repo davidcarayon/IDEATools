@@ -37,7 +37,7 @@
 #'
 #' @encoding UTF-8
 #'
-#' @importFrom dplyr inner_join distinct mutate case_when rowwise ungroup arrange filter everything group_by summarise select bind_rows pull n_distinct desc
+#' @import data.table
 #' @importFrom ggimage geom_image
 #' @importFrom rlang check_installed
 #' @importFrom ggplot2 ggplot geom_bar aes position_dodge geom_hline scale_fill_identity geom_label theme element_text element_blank guides scale_x_discrete labs coord_flip facet_wrap geom_rect geom_col geom_vline coord_polar ylim ggsave xlim theme_void unit geom_segment draw_key_rect scale_size_manual scale_color_manual scale_fill_manual guide_legend element_rect scale_y_continuous geom_tile position_stack scale_alpha_manual geom_text stat_boxplot geom_boxplot geom_point
@@ -45,7 +45,6 @@
 #' @importFrom ggtext geom_textbox
 #' @importFrom stringi stri_trans_general
 #' @importFrom tibble tribble
-#' @importFrom tidyr pivot_longer gather
 #'
 #' @examples
 #' library(IDEATools)
@@ -71,19 +70,16 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## If the user chooses "dimensions"
     if (any(choices == "dimensions")) {
 
-
       ## Vector of colors for dimensions to use with each dimension plot
       vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
 
+      data.table::setDT(reference_list[["indic_dim"]])
+      data.table::setDT(IDEA_data[["dataset"]])
 
       ## Dimensions dataset
-      res_dim <- IDEA_data$dataset |>
-        dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") |>
-        dplyr::distinct(dimension_code, dimension, dimension_value) |>
-        dplyr::mutate(max_dim = 100) |>
-        dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
-                                                   dimension_code == "B" ~ vec_colors["B"],
-                                                   dimension_code == "C" ~ vec_colors["C"]))
+      res_dim <- unique(IDEA_data[["dataset"]][, index := 1][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index][,.(dimension_code, dimension_value)])[reference_list[["indic_dim"]], on = "dimension_code"][,.(dimension_code, dimension_value, max_dim = 100L, dimension = vec_colors[dimension_code])] |>
+        unique() |>
+        transform(dimension_value = as.numeric(dimension_value))
 
       ## Finding the lowest dimension value
       critiq <- min(res_dim$dimension_value)
@@ -115,23 +111,20 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
 
-      lbl_dim <- reference_list$indic_dim |> dplyr::select(dim = dimension,dimension_code) |> unique()
+      lbl_dim <- reference_list[["indic_dim"]][, .(dim = dimension,dimension_code)] |> unique()
 
       ## Components dataset
-      res_compo <- IDEA_data$dataset |>
-        dplyr::inner_join(reference_list$indic_dim, by = c("dimension_code","component_code")) |>
-        dplyr::distinct(dimension,dimension_code, component_code, component, component_value, component_max) |>
-        dplyr::rowwise() |>
-        dplyr::mutate(component = wrapit(component, width = 40)) |>
-        dplyr::ungroup() |>
-        dplyr::mutate(component = factor(component, levels = rev(component))) |>
-        dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
-                                                   dimension_code == "B" ~ vec_colors["B"],
-                                                   dimension_code == "C" ~ vec_colors["C"])) |>
-        dplyr::inner_join(res_dim, by = c("dimension_code","dimension")) |>
-        dplyr::inner_join(lbl_dim,  by = "dimension_code") |>
-        dplyr::mutate(facet_label = paste0("Dimension ",dim," (",dimension_value,"/100)")) |>
-        dplyr::mutate(facet_label = factor(facet_label, levels = unique(facet_label)))
+      res_compo <- unique(IDEA_data[["dataset"]][, index := 1][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index][,.(dimension_code, dimension_value, component_code, component_value)])[reference_list[["indic_dim"]], on = c("dimension_code","component_code")][,.(dimension,dimension_code, component_code, component, component_value, component_max)] |>
+        unique() |>
+        transform(component = sapply(component, FUN = wrapit, width = 40, USE.NAMES = FALSE)) |>
+        transform(component = factor(component, levels = rev(component))) |>
+        transform(dimension = vec_colors[dimension_code]) |>
+        merge(res_dim, by = c("dimension_code","dimension")) |>
+        merge(lbl_dim, by = "dimension_code") |>
+        transform(facet_label = paste0("Dimension ",dim," (",dimension_value,"/100)")) |>
+        transform(facet_label = factor(facet_label, levels = unique(facet_label))) |>
+        transform(component_value = as.numeric(component_value))
+
 
       ## Plot for components
       plot_components <- ggplot2::ggplot(res_compo, ggplot2::aes(
@@ -157,27 +150,23 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::coord_flip()
 
       ## Indicators dataset
-      res_indic <- IDEA_data$dataset |>
-        dplyr::distinct(indic, scaled_value, component_value) |>
-        dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) |>
-        dplyr::distinct() |>
-        dplyr::rowwise() |>
-        dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
-        dplyr::mutate(full_name = paste0(indic," - ",indic_name)) |>
-        dplyr::mutate(full_name = wrapit(full_name, width = 65)) |>
-        dplyr::ungroup() |>
-        dplyr::arrange(dimension_code, indic_number) |>
-        dplyr::mutate(full_name = factor(full_name, levels = rev(full_name))) |>
-        dplyr::rowwise() |>
-        dplyr::mutate(component = paste0("Composante : ", component, " (", component_value, "/", component_max, ")")) |>
-        dplyr::mutate(component = wrapit(component, width = 70)) |>
-        dplyr::ungroup() |>
-        dplyr::mutate(component = factor(component, levels = unique(component)))
+
+      res_indic <- unique(IDEA_data[["dataset"]][,.(indic,scaled_value,component_value)]) |>
+        merge(reference_list[["indic_dim"]], by.x = "indic", by.y = "indic_code") |>
+        transform(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
+        transform(full_name = paste0(indic, " - ", indic_name)) |>
+        transform(full_name = sapply(full_name, FUN = wrapit, width = 65, USE.NAMES = FALSE)) |>
+        transform(indic_number = as.numeric(indic_number)) |>
+        data.table::setorderv(cols = c("dimension_code", "indic_number")) |>
+        transform(full_name = factor(full_name, levels = rev(full_name))) |>
+        transform(component = paste0("Composante : ", component, " (", component_value, "/", component_max, ")")) |>
+        transform(component = sapply(component, FUN = wrapit, width = 70)) |>
+        transform(component = factor(component, levels = unique(component)))
 
       ### Agroecologie
 
       ## Subset for dimension A
-      df <- res_indic |> dplyr::filter(dimension_code == "A")
+      df <- res_indic[dimension_code == "A"]
 
       ## Plot for indicators of dimension A
       plot_indic_ae <- ggplot2::ggplot(df, ggplot2::aes(x = full_name, y = scaled_value)) +
@@ -198,7 +187,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ### Socio-Territorial
 
       ## Subset for dimension B
-      df <- res_indic |> dplyr::filter(dimension_code == "B")
+      df <- res_indic[dimension_code == "B"]
 
       ## Plot for indicators of dimension B
       plot_indic_st <- ggplot2::ggplot(df, ggplot2::aes(x = full_name, y = scaled_value, fill = dimension)) +
@@ -220,7 +209,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ### Economique
 
       ## Subset dimension C
-      df <- res_indic |> dplyr::filter(dimension_code == "C")
+      df <- res_indic[dimension_code == "C"]
 
       ## Plot for indicators of dimension C
       plot_indic_ec <- ggplot2::ggplot(df, ggplot2::aes(x = full_name, y = scaled_value, fill = dimension)) +
@@ -245,7 +234,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       # data for standardized components (%)
       component_data <- res_compo |>
-        dplyr::mutate(score = round((component_value / component_max) * 100))
+        transform(score = round((component_value / component_max) * 100))
 
       ## First plot : Polarised histogram exported to pdf
       donut <- ggplot2::ggplot(component_data, ggplot2::aes(x = component_code, y = score, fill = dimension)) +
@@ -304,16 +293,14 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         "COMP12", "picto_transmissibilite.png",
         "COMP13", "picto_efficience.png"
       ) |>
-        dplyr::rowwise() |>
-        dplyr::mutate(path = file.path(img_folder, path)) |>
-        dplyr::ungroup()
+        transform(path = file.path(img_folder, path))
 
 
       ## Arrange component data and join with paths
       path_data <- component_data |>
-        dplyr::mutate(order = 1:13) |>
-        dplyr::inner_join(path_tab, by = c("component_code")) |>
-        dplyr::arrange(order)
+        transform(order = 1:13) |>
+        merge(path_tab, by = c("component_code")) |>
+        data.table::setorderv(cols = c("order"))
 
 
       # Make the polarised plot
@@ -368,53 +355,47 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ## For loop on each property + another synthetic one
       for (prop in names(IDEA_data$nodes)) {
 
-
         structure_list <- tree_structure[[prop]]
 
         nodes = structure_list$nodes
         lines = structure_list$lines
 
-
         if(prop != "Global") {
 
-          pivoted_data <- IDEA_data$nodes[[prop]] |>
-            tidyr::pivot_longer(dplyr::everything())
+          data.table::setDT(IDEA_data$nodes[[prop]])
 
-          leaves <- pivoted_data |>
-            dplyr::inner_join(reference_list$indic_prop, by = c("name" = "indic_code")) |>
-            dplyr::group_by(name, indic_name, value) |>
-            dplyr::summarise(prop_code = paste(prop_code, collapse = " ")) |>
-            dplyr::ungroup() |>
-            dplyr::mutate(name = paste0(name, "/", prop_code, "  ", indic_name)) |>
-            dplyr::select(prop_code, name, value) |>
-            dplyr::rowwise() |>
-            dplyr::mutate(code = sub("\\/.*", "",name)) |>
-            dplyr::ungroup() |>
-            dplyr::select(code, name, value)
+          IDEA_data$nodes[[prop]]$index = 1
 
-          branches <- pivoted_data |>
-            dplyr::inner_join(reference_list$properties_nodes, by = c("name" = "node_code")) |>
-            dplyr::select(code = name, name = node_name, value)
+          pivoted_data <- IDEA_data$nodes[[prop]][, data.table::melt(.SD, id.vars = "index")]
 
-          data_table <- dplyr::bind_rows(leaves, branches) |>
-            dplyr::mutate(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
+          merged_data <- pivoted_data[,.(indic_code = variable,value)] |>
+            merge(reference_list$indic_prop, by = "indic_code")
+
+          leaves <- merged_data[, prop_code := paste(prop_code, collapse = " "), by = c("indic_code")][, name := paste0(indic_code, "/", prop_code, "  ", indic_name)][,.(prop_code, name, value)][,code := sub("\\/.*", "",name)][,.(code,name,value)]
+
+          merged_data <- pivoted_data[,.(node_code = variable, value)] |>
+            merge(reference_list$properties_nodes, by = "node_code")
+
+          branches <- merged_data[,.(code = node_code, name = node_name, value)]
+
+          data_table <- rbind(leaves, branches) |>
+            transform(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
 
           rect_df_full <- data_table |>
-            dplyr::inner_join(nodes, by = "code") |>
-            dplyr::rowwise() |>
-            dplyr::mutate(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "par l'insertion dans les r\u00e9seaux", yes = "Par l'insertion dans les r\u00e9seaux", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Autonomie", yes = toupper(name), no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = toupper(name), no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE BIENS ET DE SERVICES", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) |>
+            merge(nodes, by = "code") |>
+            transform(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) |>
+            transform(name = ifelse(name == "par l'insertion dans les r\u00e9seaux", yes = "Par l'insertion dans les r\u00e9seaux", no = name)) |>
+            transform(name = ifelse(name == "Autonomie", yes = toupper(name), no = name)) |>
+            transform(name = ifelse(name == "Ancrage territorial", yes = toupper(name), no = name)) |>
+            transform(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE BIENS ET DE SERVICES", no = name)) |>
+            transform(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) |>
             ##### ADD OTHERS
-            dplyr::mutate(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
+            transform(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
 
           if(prop == "Robustesse") {
 
-            main <- rect_df_full |> dplyr::filter(!code %in% c("R9","R2"))
-            bonus <- rect_df_full |> dplyr::filter(code %in% c("R9","R2"))
+            main <- tibble::tibble(rect_df_full[!code %in% c("R9","R2"),])
+            bonus <- tibble::tibble(rect_df_full[code %in% c("R9","R2"),])
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-120,305)) +
@@ -433,9 +414,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
           if(prop == "Capacite") {
 
-            main <- rect_df_full |> dplyr::filter(!code %in% c("CP7","CP9","CP10","CP5","CP6","CP8"))
-            bonus <- rect_df_full |> dplyr::filter(code %in% c("CP7","CP9","CP5","CP6","CP8"))
-            bonus_prop <- rect_df_full |> dplyr::filter(code %in% c("CP10"))
+            main <- rect_df_full[!code %in% c("CP7","CP9","CP10","CP5","CP6","CP8"),]
+            bonus <- rect_df_full[code %in% c("CP7","CP9","CP5","CP6","CP8"),]
+            bonus_prop <- rect_df_full[code %in% c("CP10"),]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-450, 330)) +
@@ -455,8 +436,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
           if(prop == "Autonomie") {
 
-            main <- rect_df_full |> dplyr::filter(!code %in% c("AU3","AU5","AU4"))
-            bonus <- rect_df_full |> dplyr::filter(code %in% c("AU3","AU5","AU4"))
+            main <- rect_df_full[!code %in% c("AU3","AU5","AU4"),]
+            bonus <- rect_df_full[code %in% c("AU3","AU5","AU4"),]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-200,320)) +
@@ -475,8 +456,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
           if(prop == "Responsabilite") {
 
-            main <- rect_df_full |> dplyr::filter(!code %in% paste0("RG",1:15))
-            bonus <- rect_df_full |> dplyr::filter(code %in% paste0("RG",1:15))
+            main <- rect_df_full[!code %in% paste0("RG",1:15),]
+            bonus <- rect_df_full[code %in% paste0("RG",1:15),]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-270, 320)) +
@@ -495,8 +476,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
           if(prop == "Ancrage") {
 
-            main <- rect_df_full |> dplyr::filter(!code %in% c("AN2","AN1","AN4","AN5"))
-            bonus <- rect_df_full |> dplyr::filter(code %in% c("AN2","AN1","AN4","AN5"))
+            main <- rect_df_full[!code %in% c("AN2","AN1","AN4","AN5"),]
+            bonus <- rect_df_full[code %in% c("AN2","AN1","AN4","AN5"),]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-120,313)) +
@@ -519,31 +500,32 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
         } else {
 
-          pivoted_data <- IDEA_data$nodes[["Global"]] |>
-            tidyr::pivot_longer(dplyr::everything())
+          data.table::setDT(IDEA_data$nodes[[prop]])
+
+          pivoted_data <- IDEA_data$nodes[["Global"]][, data.table::melt(.SD, id.vars = "index")]
 
           branches <- pivoted_data |>
-            dplyr::inner_join(reference_list$properties_nodes, by = c("name" = "node_code")) |>
-            dplyr::select(code = name, name = node_name, value)
+            merge(reference_list$properties_nodes, by.x = "variable", by.y = "node_code")
+
+          branches <- branches[,.(code = variable, name = node_name, value)]
 
           data_table <- branches |>
-            dplyr::mutate(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
+            transform(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
 
           rect_df_full <- data_table |>
-            dplyr::inner_join(nodes, by = "code") |>
-            dplyr::rowwise() |>
-            dplyr::mutate(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE\u00A0 BIENS ET DE SERVICES", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Capacit\u00e9 \u00e0 produire dans le temps des biens et services remun\u00e9r\u00e9s", yes = "Capacit\u00e9 \u00e0 produire dans le temps des\u00A0biens\u00A0et services remun\u00e9r\u00e9s", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Disposer d'une libert\u00e9 de d\u00e9cision dans ses choix de gouvernance et de production", yes = "Disposer d'une libert\u00e9 de d\u00e9cision\u00A0dans \u00A0ses\u00A0choix de gouvernance et de production", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Autonomie", yes = "AUTONOMIE", no = name)) |>
-            dplyr::mutate(name = wrapit(name, 45)) |>
-            dplyr::mutate(name = ifelse(name == "Ancrage territorial", yes = "ANCRAGE TERRITORIAL", no = name)) |>
-            dplyr::mutate(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) |>
-            dplyr::mutate(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
+            merge(nodes, by = "code") |>
+            transform(name = ifelse(name == "Robustesse", yes = "ROBUSTESSE", no = name)) |>
+            transform(name = ifelse(name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "CAPACIT\uc9 PRODUCTIVE ET REPRODUCTIVE DE\u00A0 BIENS ET DE SERVICES", no = name)) |>
+            transform(name = ifelse(name == "Capacit\u00e9 \u00e0 produire dans le temps des biens et services remun\u00e9r\u00e9s", yes = "Capacit\u00e9 \u00e0 produire dans le temps des\u00A0biens\u00A0et services remun\u00e9r\u00e9s", no = name)) |>
+            transform(name = ifelse(name == "Disposer d'une libert\u00e9 de d\u00e9cision dans ses choix de gouvernance et de production", yes = "Disposer d'une libert\u00e9 de d\u00e9cision\u00A0dans \u00A0ses\u00A0choix de gouvernance et de production", no = name)) |>
+            transform(name = ifelse(name == "Autonomie", yes = "AUTONOMIE", no = name)) |>
+            transform(name = sapply(name, FUN = wrapit, width = 45, USE.NAMES = FALSE)) |>
+            transform(name = ifelse(name == "Ancrage territorial", yes = "ANCRAGE TERRITORIAL", no = name)) |>
+            transform(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) |>
+            transform(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
 
-          main <- rect_df_full |> dplyr::filter(!code %in% c("CP10"))
-          bonus <- rect_df_full |> dplyr::filter(code %in% c("CP10"))
+          main <- rect_df_full[!code %in% c("CP10"),] |> tibble::tibble()
+          bonus <- rect_df_full[code %in% c("CP10"),] |> tibble::tibble()
 
           prop_list[[prop]] <- ggplot2::ggplot() +
             ggplot2::xlim(c(-270, 320)) +
@@ -560,15 +542,6 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
 
         }
-
-
-
-
-
-
-
-
-
       }
 
       ## Add the list of trees to the return plotlist
@@ -582,17 +555,15 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
 
       ## Creating a dataset with standardised indicators (%)
-      prop_radar <- IDEA_data$dataset |>
-        dplyr::distinct(indic, scaled_value) |>
-        dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code")) |>
-        dplyr::rowwise() |>
-        dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
-        dplyr::ungroup() |>
-        dplyr::arrange(dimension_code, indic_number) |>
-        dplyr::mutate(score_indic = round(scaled_value / max_indic * 100, 0)) |>
-        dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
-                                                   dimension_code == "B" ~ vec_colors["B"],
-                                                   dimension_code == "C" ~ vec_colors["C"]))
+      prop_radar <- merge(
+        unique(IDEA_data$dataset[,.(indic_code = indic, scaled_value)]),
+        reference_list$indic_dim,
+        by = "indic_code"
+      )[,indic_number := regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))] |>
+        transform(indic_number = as.numeric(indic_number)) |>
+        data.table::setorderv(cols = c("dimension_code", "indic_number")) |>
+        transform(score_indic = round(scaled_value / max_indic * 100, 0)) |>
+        transform(dimension = vec_colors[dimension_code])
 
 
       ## Names
@@ -614,28 +585,25 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         list_indic_prop <- indic_codes[[i]]
 
         # Get the name and the y position of each label
-        label_data <- prop_radar |> dplyr::filter(indic %in% list_indic_prop)
+        label_data <- prop_radar[indic_code %in% list_indic_prop,]
         label_data$id <- seq(1, nrow(label_data))
         number_of_bar <- nrow(label_data)
         angle <- 90 - 360 * (label_data$id - 0.5) / number_of_bar
         label_data$hjust <- ifelse(angle < -90, 1, 0)
         label_data$angle <- ifelse(angle < -90, angle + 180, angle)
-        label_data <- label_data |> dplyr::filter(score_indic > 5)
+        label_data <- label_data[score_indic > 5,]
 
 
         ## Build the table on the side of the plot
-        mytable <- prop_radar |>
-          dplyr::filter(indic %in% list_indic_prop) |>
-          dplyr::select(indic) |>
-          dplyr::mutate(indic_code = as.character(indic)) |>
-          dplyr::inner_join(reference_list$indic_dim, by = "indic_code") |>
-          dplyr::rowwise() |>
-          dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
-          dplyr::mutate(indic_name = wrapit(indic_name)) |>
-          dplyr::ungroup() |>
-          dplyr::arrange(dimension_code, indic_number) |>
-          dplyr::select(Code = indic_code, `Nom de l'indicateur` = indic_name) |>
-          unique()
+        mytable <- prop_radar[indic_code %in% list_indic_prop,.(indic_code = as.character(indic_code))] |>
+          merge(reference_list$indic_dim, by = "indic_code") |>
+          transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
+          transform(indic_number = as.numeric(indic_number)) |>
+          transform(indic_name = sapply(indic_name, FUN = wrapit, width = 45, USE.NAMES = FALSE)) |>
+          data.table::setorderv(cols = c("dimension_code", "indic_number"))
+
+        mytable <- unique(mytable[,.(Code = indic_code, `Nom de l'indicateur` = indic_name)])
+
 
 
         ## Re-identifying names
@@ -677,7 +645,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         )
 
         ## Building legend
-        list_dimensions <- prop_radar |> dplyr::filter(indic %in% list_indic_prop) |> dplyr::distinct(dimension_code) |> dplyr::pull()
+        list_dimensions <- unique(prop_radar[indic_code %in% list_indic_prop,dimension_code])
 
         # A simple vector with dimension names
         vec_dim <- c("A"="Agro\u00e9cologique", "B" = "Socio-Territoriale", "C"= "Economique")
@@ -687,11 +655,11 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
         ## Creating the radar plot (polarised histogram)
         p <- ggplot2::ggplot(
-          prop_radar |> dplyr::filter(indic %in% list_indic_prop),
-          ggplot2::aes(x = indic, y = score_indic, fill = dimension)
+          prop_radar[indic_code %in% list_indic_prop,],
+          ggplot2::aes(x = indic_code, y = score_indic, fill = dimension)
         ) +
           ggplot2::geom_rect(xmin = -Inf, ymin = -20, xmax = Inf, ymax = 100, fill = "white", color = "white") +
-          ggplot2::geom_col(ggplot2::aes(x = indic, y = 100, fill = dimension), alpha = 0.3, color = "black") +
+          ggplot2::geom_col(ggplot2::aes(x = indic_code, y = 100, fill = dimension), alpha = 0.3, color = "black") +
           ggplot2::geom_col() +
           ggplot2::geom_label(ggplot2::aes(label = paste0(score_indic,"%"))) +
           ggplot2::scale_fill_identity("Dimension", labels = vec_legend, guide = "legend") +
@@ -729,7 +697,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
   if (any(class(IDEA_data) == "IDEA_group_data")) {
 
     # Number of farms
-    n_farms <- dplyr::n_distinct(IDEA_data$dataset$farm_id)
+    n_farms <- length(unique(IDEA_data$dataset$farm_id))
 
     vec_colors <- c(
       "favorable" = "#33FF00",
@@ -739,45 +707,33 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     )
 
     ## Heatmap for properties
-    heatmap_data <- IDEA_data$nodes$Global |>
-      tidyr::gather(key = indic, value = result, -farm_id) |>
-      dplyr::inner_join(reference_list$properties_nodes, by = c("indic" = "node_code")) |>
-      dplyr::filter(level == "propriete") |>
-      dplyr::mutate(node_name = ifelse(node_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = node_name)) |>
-      dplyr::mutate(result_ascii = stringi::stri_trans_general(result,id = "Latin-ASCII")) |>
-      dplyr::mutate(result_ascii = factor(result_ascii, levels = c("tres defavorable","defavorable","favorable","tres favorable"))) |>
-      dplyr::arrange(result_ascii)
-
+    heatmap_data <- IDEA_data$nodes$Global[, data.table::melt(.SD, id.vars = "farm_id")] |>
+      merge(reference_list$properties_nodes, by.x = "variable", by.y = "node_code") |>
+      subset(level == "propriete") |>
+      transform(node_name = ifelse(node_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = node_name)) |>
+      transform(result_ascii = stringi::stri_trans_general(value,id = "Latin-ASCII")) |>
+      transform(result_ascii = factor(result_ascii, levels = c("tres defavorable","defavorable","favorable","tres favorable"))) |>
+      data.table::setorderv(cols = c("result_ascii"))
 
     ## Building legend
-    legend_names <- heatmap_data |>
-      dplyr::distinct(result) |>
-      dplyr::pull() |>
-      unname()
+    legend_names <- unique(heatmap_data[,value])
 
     heatmap <- heatmap_data |>
-      dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) |>
-      dplyr::mutate(result = vec_colors[result]) |>
-      dplyr::mutate(result = factor(result, levels = c("#CD0000","#FF6347","#33FF00","#008B00"))) |>
-      ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = result)) +
+      transform(value = stringi::stri_trans_general(value,id = "Latin-ASCII")) |>
+      transform(value = vec_colors[value]) |>
+      transform(value = factor(value, levels = c("#CD0000","#FF6347","#33FF00","#008B00"))) |>
+      ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = value)) +
       ggplot2::geom_tile(color = "black") +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
       ggplot2::labs(x = "Exploitations agricoles", y = "Propri\u00e9t\u00e9", fill = "\uc9valuation") +
       theme_idea() +
-      ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = element_text(angle = 90,hjust = 1))
+      ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = ggplot2::element_text(angle = 90,hjust = 1))
 
 
-    freq_data <- heatmap_data |>
-      dplyr::group_by(node_name,result) |>
-      dplyr::summarise(n = dplyr::n_distinct(farm_id)) |>
-      dplyr::group_by(node_name) |>
-      dplyr::mutate(prop = n / sum(n)*100) |>
-      dplyr::mutate(result = stringi::stri_trans_general(result,id = "Latin-ASCII")) |>
-      dplyr::mutate(result = vec_colors[result]) |>
-      dplyr::mutate(result = factor(result, levels = c("#CD0000","#FF6347","#33FF00","#008B00")))
+    freq_data <- heatmap_data[,.(node_name,value)][, .(n = .N), by = .(node_name,value)][,prop := n / sum(n)*100, by = node_name][, value := stringi::stri_trans_general(value,id = "Latin-ASCII")][,value := vec_colors[value]][, value := factor(value, levels = c("#CD0000","#FF6347","#33FF00","#008B00"))]
 
 
-    freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = result)) +
+    freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = value)) +
       ggplot2::geom_col(position = "stack", color ="black") +
       ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5)) +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
@@ -786,35 +742,31 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::labs(x = "", y = "Fr\u00e9quence (%)") +
       ggplot2::scale_y_continuous(breaks = seq(0,100,5))
 
-
-
     ## Histograms for dimensions
 
+    setDT(IDEA_data$dataset)
+    setDT(reference_list$indic_dim)
+
     ## Data for dimensions
-    dim_data <- IDEA_data$dataset |>
-      dplyr::distinct(farm_id, dimension_code, dimension_value) |>
-      dplyr::mutate(alpha = "b")
+    dim_data <- unique(IDEA_data$dataset[,.(farm_id, dimension_code, dimension_value = as.numeric(dimension_value))])[,alpha := "b"]
 
     ## dataframe with an "alpha" argument
-    alpha <- dim_data |>
-      dplyr::mutate(dimension_value = 100 - dimension_value) |>
-      dplyr::mutate(alpha = "a")
-
+    alpha <- dim_data[,.(farm_id, dimension_code, dimension_value = 100-dimension_value, alpha = "a")]
 
     ## Vector of colors for dimensions to use with each dimension plot
     vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
 
 
     ## Full data for the dimension histogram
-    hist_data <- dplyr::bind_rows(dim_data, alpha) |>
-      dplyr::mutate(label = ifelse(alpha == "a", yes = "", no = paste0(dimension_value, "/100"))) |>
-      dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") |>
-      dplyr::distinct(dimension, dimension_value, dimension_code, farm_id, label, alpha) |>
-      dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
-                                                 dimension_code == "B" ~ vec_colors["B"],
-                                                 dimension_code == "C" ~ vec_colors["C"])) |>
-      dplyr::arrange(dplyr::desc(dimension_code)) |>
-      dplyr::mutate(dimension = factor(dimension, levels = unique(dimension)))
+    hist_data <- rbind(dim_data, alpha) |>
+      transform(label = ifelse(alpha == "a", yes = "", no = paste0(dimension_value, "/100"))) |>
+      merge(unique(reference_list$indic_dim[,.(dimension, dimension_code)]), by = "dimension_code") |>
+      subset(select = c(dimension, dimension_value, dimension_code, farm_id, label, alpha)) |>
+      unique() |>
+      transform(dimension = vec_colors[dimension_code])|>
+      data.table::setorderv(cols = c("dimension_code"), order = -1) |>
+      transform(dimension = factor(dimension, levels = unique(dimension)))
+
 
 
     # Plotting dimensions histogram
@@ -834,49 +786,42 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Dimensions
 
     ## Dimension data
+
     boxplot_dim_data <- dim_data |>
-      dplyr::inner_join(reference_list$indic_dim, by = "dimension_code") |>
-      dplyr::distinct(farm_id, dimension_code, dimension, dimension_value) |>
-      dplyr::mutate(dimension = dplyr::case_when(dimension_code == "A" ~ vec_colors["A"],
-                                                 dimension_code == "B" ~ vec_colors["B"],
-                                                 dimension_code == "C" ~ vec_colors["C"]))
+      merge(unique(reference_list$indic_dim[,.(dimension, dimension_code)]), by = "dimension_code")|>
+      subset(select = c(farm_id, dimension_code, dimension, dimension_value)) |>
+      unique() |>
+      transform(dimension = vec_colors[dimension_code])
 
     ## Estimating means to add on the boxplot
-    means <- boxplot_dim_data |>
-      dplyr::group_by(dimension) |>
-      dplyr::summarise(Mean = mean(dimension_value))
+    means <- boxplot_dim_data[,.(Mean = mean(dimension_value)), by = dimension]
 
     ## Plotting dimensions boxplot
     dimensions_boxplot <- ggplot2::ggplot(boxplot_dim_data, ggplot2::aes(x = dimension, y = dimension_value)) +
       ggplot2::stat_boxplot(geom = "errorbar", width = 0.3) +
       ggplot2::geom_boxplot(color = "black", ggplot2::aes(fill = dimension), width = 0.8) +
-      ggplot2::geom_point(data = means, ggplot2::aes(x = dimension, y = Mean), size = 4, color = "darkred", shape = 18) +
+      ggplot2::geom_point(data = means, ggplot2::aes(x = dimension, y = Mean,color = "Moyenne"), size = 4, shape = 18) +
       theme_idea() +
       ggplot2::scale_fill_identity("Dimension", labels = c("Agro\u00e9cologique","Socio-Territoriale","Economique"), guide = "legend") +
+      ggplot2::scale_color_manual(name = "L\u00e9gende",values = c("darkred")) +
       ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
       ggplot2::labs(y = "Valeur de la dimension", fill = "Dimension", caption = paste0("(N = ", n_farms, ")")) +
       ggplot2::scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100))+
       ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
-
-
     ## Components
 
     ## Component data
     compo_data <- IDEA_data$dataset |>
-      dplyr::inner_join(reference_list$indic_dim, by = c("dimension_code", "component_code")) |>
-      dplyr::distinct(farm_id, dimension_code, dimension, component_code, component, component_value, component_max) |>
-      dplyr::mutate(min_compo = 0) |>
-      dplyr::rowwise() |>
-      dplyr::mutate(component = wrapit(component, width = 60)) |>
-      dplyr::ungroup() |>
-      dplyr::mutate(component = factor(component, levels = rev(unique(component))))
+      merge(unique(reference_list$indic_dim[,.(dimension_code,component_code,component_max, component,dimension)]), by = c("dimension_code","component_code")) |>
+      subset(select = c(farm_id, dimension_code, dimension, component_code, component, component_value, component_max)) |>
+      unique() |>
+      transform(min_compo = 0) |>
+      transform(component = sapply(component, FUN = wrapit, width = 60, USE.NAMES = FALSE)) |>
+      transform(component = factor(component, levels = rev(unique(component))))
 
     ## Estimating means to add on the boxplot
-    means <- compo_data |>
-      dplyr::group_by(dimension, component, component_code) |>
-      dplyr::summarise(Mean = mean(component_value)) |>
-      dplyr::ungroup()
+    means <- compo_data[,.(Mean = mean(component_value)), by = .(dimension,component,component_code)]
 
     ## Plotting components boxplot
     components_boxplot <- ggplot2::ggplot(compo_data, ggplot2::aes(x = component, y = component_value)) +
@@ -900,26 +845,24 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Agroecologie
 
     ## Subset for dimension A
-    indic_data <- IDEA_data$dataset |>
-      dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code", "component_code")) |>
-      dplyr::filter(dimension_code == "A") |>
-      dplyr::rowwise() |>
-      dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) |>
-      dplyr::mutate(full_name = wrapit(full_name, width = 75)) |>
-      dplyr::mutate(component = ifelse(component == "Bouclage de flux \nde mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
-                                       yes = "Bouclage de flux de mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
-                                       no = component
+    indic_data <- IDEA_data$dataset[,.(indic_code = indic, scaled_value, dimension_code,component_code,component_value)] |>
+      merge(reference_list$indic_dim, by = c("indic_code", "dimension_code", "component_code")) |>
+      subset(dimension_code == "A") |>
+      transform(full_name = paste0(indic_code, " - ", indic_name)) |>
+      transform(full_name = sapply(full_name, FUN = wrapit, width = 75, USE.NAMES = FALSE)) |>
+      transform(component = ifelse(component == "Bouclage de flux \nde mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
+                                   yes = "Bouclage de flux de mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
+                                   no = component
       )) |>
-      dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
-      dplyr::ungroup() |>
-      dplyr::arrange(indic_number) |>
-      dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
-      dplyr::mutate(component = factor(component, levels = unique(component)))
+      transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
+      transform(indic_number = as.numeric(indic_number)) |>
+      data.table::setorderv(cols = c("indic_number")) |>
+      transform(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
+      transform(component = factor(component, levels = unique(component)))
+
 
     ## Estimating means to add on the boxplot
-    moys <- indic_data |>
-      dplyr::group_by(component, full_name, indic) |>
-      dplyr::summarise(Moyenne = mean(scaled_value))
+    moys <- indic_data[,.(Mean = mean(scaled_value)), by = .(component,full_name, indic_code)]
 
     ## Plotting indicators for dimension A
     indic_ae_boxplot <- ggplot2::ggplot(indic_data, ggplot2::aes(x = full_name, y = scaled_value)) +
@@ -937,26 +880,25 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Socio-Territorial
 
     ## Subset for dimension B
-    indic_data <- IDEA_data$dataset |>
-      dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code", "component_code")) |>
-      dplyr::filter(dimension_code == "B") |>
-      dplyr::rowwise() |>
-      dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) |>
-      dplyr::mutate(full_name = wrapit(full_name, width = 75)) |>
-      dplyr::mutate(component = ifelse(component == "D\u00e9veloppement local \net \u00e9conomie circulaire",
-                                       yes = "D\u00e9veloppement local et \u00e9conomie circulaire",
-                                       no = component
+    indic_data <- IDEA_data$dataset[,.(indic_code = indic, scaled_value, dimension_code,component_code,component_value)] |>
+      merge(reference_list$indic_dim, by = c("indic_code", "dimension_code", "component_code")) |>
+      subset(dimension_code == "B") |>
+      transform(full_name = paste0(indic_code, " - ", indic_name)) |>
+      transform(full_name = sapply(full_name, FUN = wrapit, width = 75, USE.NAMES = FALSE)) |>
+      transform(component = ifelse(component == "D\u00e9veloppement local \net \u00e9conomie circulaire",
+                                   yes = "D\u00e9veloppement local et \u00e9conomie circulaire",
+                                   no = component
       )) |>
-      dplyr::ungroup() |>
-      dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
-      dplyr::arrange(indic_number) |>
-      dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
-      dplyr::mutate(component = factor(component, levels = unique(component)))
+      transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
+      transform(indic_number = as.numeric(indic_number)) |>
+      data.table::setorderv(cols = c("indic_number")) |>
+      transform(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
+      transform(component = factor(component, levels = unique(component)))
+
+
 
     ## Estimating means to add on the boxplot
-    moys <- indic_data |>
-      dplyr::group_by(component, full_name, indic) |>
-      dplyr::summarise(Moyenne = mean(scaled_value))
+    moys <- indic_data[,.(Mean = mean(scaled_value)), by = .(component,full_name, indic_code)]
 
     ## Plotting indicators for dimension B
     indic_st_boxplot <- ggplot2::ggplot(indic_data, ggplot2::aes(x = full_name, y = scaled_value)) +
@@ -974,22 +916,19 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Economique
 
     ## Subset for dimension C
-    indic_data <- IDEA_data$dataset |>
-      dplyr::inner_join(reference_list$indic_dim, by = c("indic" = "indic_code", "dimension_code", "component_code")) |>
-      dplyr::filter(dimension_code == "C") |>
-      dplyr::rowwise() |>
-      dplyr::mutate(full_name = paste0(indic, " - ", indic_name)) |>
-      dplyr::mutate(full_name = wrapit(full_name, width = 75)) |>
-      dplyr::ungroup() |>
-      dplyr::mutate(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
-      dplyr::arrange(indic_number) |>
-      dplyr::mutate(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
-      dplyr::mutate(component = factor(component, levels = unique(component)))
+    indic_data <- IDEA_data$dataset[,.(indic_code = indic, scaled_value, dimension_code,component_code,component_value)] |>
+      merge(reference_list$indic_dim, by = c("indic_code", "dimension_code", "component_code")) |>
+      subset(dimension_code == "C") |>
+      transform(full_name = paste0(indic_code, " - ", indic_name)) |>
+      transform(full_name = sapply(full_name, FUN = wrapit, width = 75, USE.NAMES = FALSE)) |>
+      transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
+      transform(indic_number = as.numeric(indic_number)) |>
+      data.table::setorderv(cols = c("indic_number")) |>
+      transform(full_name = factor(full_name, levels = rev(unique(full_name)))) |>
+      transform(component = factor(component, levels = unique(component)))
 
     ## Estimating means to add on the boxplot
-    moys <- indic_data |>
-      dplyr::group_by(component, full_name, indic) |>
-      dplyr::summarise(Moyenne = mean(scaled_value))
+    moys <- indic_data[,.(Mean = mean(scaled_value)), by = .(component,full_name, indic_code)]
 
     ## Plotting indicators for dimension C
     indic_ec_boxplot <- ggplot2::ggplot(indic_data, ggplot2::aes(x = full_name, y = scaled_value)) +
@@ -1017,7 +956,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     # Saving original data in the list for future usage in write.
     plotlist$data$metadata <- IDEA_data$metadata
-    plotlist$data$dataset <- IDEA_data$dataset
+    plotlist$data$dataset <- tibble::tibble(IDEA_data$dataset)
     plotlist$data$nodes <- IDEA_data$nodes
 
     ## Assigning the appropriate class

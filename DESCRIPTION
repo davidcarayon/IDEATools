@@ -1,5 +1,5 @@
 Package: IDEATools
-Title: A collection of tools associated with the IDEA4 method
+Title: A Collection of Tools Associated with the IDEA4 Method
 Version: 3.4.0
 Authors@R: 
     person(given = "David",
@@ -14,10 +14,9 @@ Roxygen: list(markdown = TRUE)
 URL: https://davidcarayon.github.io/IDEATools/index.html,
     https://github.com/davidcarayon/IDEATools
 BugReports: https://github.com/davidcarayon/IDEATools/issues
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: 
-    dplyr,
-    tidyr,
+    data.table,
     jsonlite,
     readxl,
     tibble,

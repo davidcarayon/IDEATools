@@ -159,7 +159,6 @@
 <p>If the input is a single file, then a simple "<code>read_idea() |&gt; compute_idea() |&gt; plot_idea() |&gt; write_idea()</code>" or "<code>old_idea() |&gt; plot_idea() |&gt; write_idea()</code>" pipeline will be used. If export_type is NULL, then the output of <code><a href="plot_idea.html">plot_idea()</a></code> will be returned.</p>
 <p>If the input is a list of files and/or a directory, and if type is "single", then the single analysis pipelines are iterated over each file. If export_type is NULL, then the multiple outputs of <code><a href="plot_idea.html">plot_idea()</a></code> are gathered in an unique list and returned.</p>
 <p>If the input is a list of files and/or a directory, and if type is "group*", then the "import" (<code>read_idea() |&gt; compute_idea()</code> or <code><a href="old_idea.html">old_idea()</a></code>) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the <code>plot_idea() |&gt; write_idea()</code> pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of <code><a href="plot_idea.html">plot_idea()</a></code> will be returned.</p>
-<p>Note that group analysis requires a number of unique farms greater or equal to 3.</p>
     </div>
 
     <div id="ref-examples">
@@ -197,7 +196,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

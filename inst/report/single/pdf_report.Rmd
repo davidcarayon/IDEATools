@@ -2,6 +2,7 @@
 title: "RAPPORT DE DIAGNOSTIC INDIVIDUEL IDEA 4"
 output: 
   pdf_document:
+    dev: cairo_pdf
     latex_engine: pdflatex
     includes: 
       before_body: templates/page_de_garde.tex
@@ -9,11 +10,12 @@ output:
 toc: true
 params:
   data: "data"
+  dpi: 320
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, out.width = "100%", fig.align = "center")
+knitr::opts_chunk$set(echo = FALSE, out.width = "100%", fig.align = "center", dpi = params$dpi)
 
 library(IDEATools)
 IDEA_plots <- params$data
@@ -43,8 +45,9 @@ cat(paste0("\\fancyhead[]{}"))
 
 ```{r}
 tibble::tibble(metadata_code = names(IDEA_data$metadata), value = unlist(IDEA_data$metadata)) |> 
-  dplyr::inner_join(IDEATools:::reference_list$metadata, by = "metadata_code") |> 
-  dplyr::select(`Caractéristique` = metadata_name, Valeur = value) |> 
+  merge(IDEATools:::reference_list$metadata, by = "metadata_code") |> 
+  subset(select = c(metadata_name, value)) |> 
+  setNames(c("Caractéristique", "Valeur")) |> 
   knitr::kable()
 ```
 
@@ -57,7 +60,7 @@ tibble::tibble(metadata_code = names(IDEA_data$metadata), value = unlist(IDEA_da
 \Large
 
 ```{r}
-min_val <- min(IDEA_data$dataset$dimension_value)
+min_val <- min(unlist(IDEA_data$dataset$dimension_value))
 ```
 
 La note de durabilité attribuée par IDEA4 à cette exploitation agricole est de

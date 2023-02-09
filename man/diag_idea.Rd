@@ -52,8 +52,6 @@ If the input is a single file, then a simple "\code{read_idea() |> compute_idea(
 If the input is a list of files and/or a directory, and if type is "single", then the single analysis pipelines are iterated over each file. If export_type is NULL, then the multiple outputs of \code{plot_idea()} are gathered in an unique list and returned.
 
 If the input is a list of files and/or a directory, and if type is "group*", then the "import" (\code{read_idea() |> compute_idea()} or \code{old_idea()}) pipeline is iterated over each file and the results are gathered in an object of class "IDEA_group_data". This object introduced in the \code{plot_idea() |> write_idea()} pipeline will trigger a new algorithm suited to group analysis. If export_type is NULL, then the output of \code{plot_idea()} will be returned.
-
-Note that group analysis requires a number of unique farms greater or equal to 3.
 }
 \examples{
 library(IDEATools)

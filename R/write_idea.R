@@ -27,7 +27,7 @@
 #' @return Reports and/or raw plots in \code{output_directory}.
 #' @export
 #'
-#' @importFrom dplyr mutate recode
+#' @import data.table
 #' @importFrom ggplot2 ggsave
 #' @importFrom rmarkdown render
 #' @importFrom tibble tibble
@@ -110,21 +110,26 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(dimension_plots), plot = dimension_plots) |>
-          dplyr::mutate(plotname = dplyr::recode(plotname, "plot_dimensions" = "Dimensions", "plot_components" = "Composantes", "plot_components_polarised" = "Composantes polaris\u00e9es", "plot_indic_st" = "Indicateurs Socio-Territoriaux", "plot_indic_ec" = "Indicateurs Economiques", "plot_indic_ae" = "Indicateurs Agro\u00e9cologiques")) |>
-          dplyr::mutate(prefix = prefix) |>
-          dplyr::mutate(
+          transform(plotname = ifelse(plotname == "plot_dimensions", "Dimensions",
+                                      ifelse(plotname == "plot_components", "Composantes",
+                                             ifelse(plotname == "plot_components_polarised", "Composantes polaris\u00e9es",
+                                                    ifelse(plotname == "plot_indic_st", "Indicateurs Socio-Territoriaux",
+                                                           ifelse(plotname == "plot_indic_ec", "Indicateurs Economiques",
+                                                                  ifelse(plotname == "plot_indic_ae", "Indicateurs Agro\u00e9cologiques", plotname))))))) |>
+          transform(prefix = prefix) |>
+          transform(
             widths = c(9.11, 11, 8, 10.69, 10.69, 10.69),
             heights = c(5.6, 11.5, 8, 12, 13.5, 9)
           ) |>
-          dplyr::mutate(folder = dimension_directory) |>
-          dplyr::mutate(path = file.path(dimension_directory, paste0(prefix,"_",plotname))) |>
-          dplyr::mutate(png_path = paste0(path,".png")) |>
-          dplyr::mutate(dpi = dpi)
+          transform(folder = dimension_directory) |>
+          transform(path = file.path(dimension_directory, paste0(prefix,"_",plotname))) |>
+          transform(png_path = paste0(path,".png")) |>
+          transform(dpi = dpi)
 
         # Iterating
         for(i in 1:nrow(tab_res)) {
 
-          tab <- tab_res |> dplyr::slice(i)
+          tab <- tab_res[i,]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, dpi = tab$dpi, width = tab$widths, height = tab$heights)
 
         }
@@ -153,22 +158,26 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(radar_plots), plot = radar_plots) |>
-          dplyr::mutate(plotname = dplyr::recode(plotname, "radar_Capacite" = "Capacit\u00e9 productive et reproductive de biens et de services", "radar_Ancrage" = "Ancrage Territorial", "radar_Autonomie" = "Autonomie", "radar_Robustesse" = "Robustesse", "radar_Responsabilite" = "Responsabilit\u00e9 globale")) |>
-          dplyr::mutate(
+          transform(plotname = ifelse(plotname == "radar_Capacite", "Capacit\u00e9 productive et reproductive de biens et de services",
+                                      ifelse(plotname == "radar_Ancrage", "Ancrage Territorial",
+                                             ifelse(plotname == "radar_Autonomie", "Autonomie",
+                                                    ifelse(plotname == "radar_Robustesse", "Robustesse",
+                                                           ifelse(plotname == "radar_Responsabilite", "Responsabilit\u00e9 globale", plotname)))))) |>
+          transform(
             widths = 16.1,
             heights = 7.61
           ) |>
-          dplyr::mutate(folder = radar_directory) |>
-          dplyr::mutate(path = file.path(radar_directory, paste0(prefix,"_",plotname))) |>
-          dplyr::mutate(png_path = paste0(path,".png")) |>
-          dplyr::mutate(dpi = dpi)
+          transform(folder = radar_directory) |>
+          transform(path = file.path(radar_directory, paste0(prefix,"_",plotname))) |>
+          transform(png_path = paste0(path,".png")) |>
+          transform(dpi = dpi)
 
 
 
         # Iterating
         for(i in 1:nrow(tab_res)) {
 
-          tab <- tab_res |> dplyr::slice(i)
+          tab <- tab_res[i,]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, dpi = tab$dpi, width = tab$widths, height = tab$heights)
 
         }
@@ -199,14 +208,20 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(name = names(tree_plots), itemlist = tree_plots) |>
-          dplyr::mutate(folder = tree_directory) |>
-          dplyr::mutate(plotname = dplyr::recode(name, "Capacite" = "Capacit\u00e9 productive et reproductive de biens et de services", "Ancrage" = "Ancrage Territorial", "Autonomie" = "Autonomie", "Robustesse" = "Robustesse", "Responsabilite" = "Responsabilit\u00e9 globale", "Global" = "Arbre global")) |>
-          dplyr::mutate(path = file.path(tree_directory, paste0(prefix, "_", plotname))) |>
-          dplyr::mutate(
+          transform(folder = tree_directory) |>
+          transform(plotname = ifelse(name == "Capacite", "Capacit\u00e9 productive et reproductive de biens et de services",
+                                      ifelse(name == "Ancrage", "Ancrage Territorial",
+                                             ifelse(name == "Autonomie", "Autonomie",
+                                                    ifelse(name == "Robustesse", "Robustesse",
+                                                           ifelse(name == "Responsabilite", "Responsabilit\u00e9 globale",
+                                                                  ifelse(name == "Global", "Arbre global", name))))))
+          ) |>
+          transform(path = file.path(tree_directory, paste0(prefix, "_", plotname))) |>
+          transform(
             png_path = paste0(path,".png"),
             pdf_path = paste0(path,".pdf")
           )|>
-          dplyr::mutate(dpi = dpi)
+          transform(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
         export_heuristic_map <- function(prop, itemlist, folder, png_path, pdf_path) {
@@ -225,7 +240,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           dim <- heuristic_res[[prop]]
 
           # Save to PDF
-          ggplot2::ggsave(itemlist, filename = pdf_path, width = dim[1], height = dim[2])
+          ggplot2::ggsave(itemlist, filename = pdf_path, width = dim[1], height = dim[2], device = cairo_pdf)
 
           # Convert to PNG
           pdftools::pdf_convert(pdf = pdf_path, format = "png", pages = NULL, filenames = basename(png_path), opw = "", upw = "", verbose = FALSE)
@@ -257,7 +272,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         # Iterating
         for(i in 1:nrow(tab_res)) {
 
-          tab <- tab_res |> dplyr::slice(i)
+          tab <- tab_res[i,]
 
           suppressWarnings(
             export_heuristic_map(prop = tab$name, itemlist = tab$itemlist[[1]], tab$folder, tab$png_path, tab$pdf_path)
@@ -302,7 +317,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         # Defining params
         params <- list(
-          data = IDEA_plots
+          data = IDEA_plots,
+          dpi = dpi
         )
 
         output_file <- paste0("Rapport_individuel_", prefix, ".pdf")
@@ -339,7 +355,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         params <- list(
           data = IDEA_plots,
           outdir = "tmp",
-          prefix = prefix
+          prefix = prefix,
+          dpi = dpi
         )
 
         output_file <- paste0("Rapport_individuel_", prefix, ".docx")
@@ -373,7 +390,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         params <- list(
           data = IDEA_plots,
           outdir = "tmp",
-          prefix = prefix
+          prefix = prefix,
+          dpi = dpi
         )
 
         output_file <- paste0("Rapport_individuel_", prefix, ".pptx")
@@ -470,17 +488,22 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
-          dplyr::filter(plotname != "data") |>
-          dplyr::filter(!plotname %in% c("heatmap","dimensions_histogram")) |>
-          dplyr::mutate(plotname = dplyr::recode(plotname,"freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) |>
-          dplyr::mutate(
+          subset(plotname != "data") |>
+          subset(!plotname %in% c("heatmap","dimensions_histogram")) |>
+          transform(plotname = ifelse(plotname == "freq_plot", "Fr\u00e9quence_propri\u00e9t\u00e9s",
+                                      ifelse(plotname == "dimensions_boxplot", "Distribution_dimensions",
+                                             ifelse(plotname == "components_boxplot", "Distribution_composantes",
+                                                    ifelse(plotname == "indic_ae_boxplot", "Distribution_indicateurs_agroecologiques",
+                                                           ifelse(plotname == "indic_st_boxplot", "Distribution_indicateurs_socio_territoriaux",
+                                                                  ifelse(plotname == "indic_ec_boxplot", "Distribution_indicateurs_economiques", plotname))))))) |>
+          transform(
             widths = c(10, 7.95, 11.3, 11.9, 11.9, 11.9),
             heights = c(5, 6.91, 8.94, 12.5, 14, 11)
           ) |>
-          dplyr::mutate(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
-          dplyr::mutate(path = file.path(group_directory, plotname)) |>
-          dplyr::mutate(png_path = paste0(path,".png")) |>
-          dplyr::mutate(dpi = dpi)
+          transform(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
+          transform(path = file.path(group_directory, plotname)) |>
+          transform(png_path = paste0(path,".png")) |>
+          transform(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
         export_metaplot <- function(plotname, plot, widths, heights, png_path, dpi) {
@@ -490,7 +513,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         # Iterating
         for(i in 1:nrow(tab_res)) {
 
-          tab <- tab_res |> dplyr::slice(i)
+          tab <- tab_res[i,]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
 
         }
@@ -529,7 +552,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Defining params
           params <- list(
-            data = IDEA_plots
+            data = IDEA_plots,
+            dpi = dpi
           )
 
           output_file <- paste0("Rapport_groupe_ref_", n_farm, ".pdf")
@@ -607,16 +631,23 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
-          dplyr::filter(plotname != "data") |>
-          dplyr::mutate(plotname = dplyr::recode(plotname, "heatmap" = "Matrice_propri\u00e9t\u00e9s","freq_plot"= "Fr\u00e9quence_propri\u00e9t\u00e9s", "dimensions_histogram" = "Histogramme_dimensions", "dimensions_boxplot" = "Distribution_dimensions", "components_boxplot" = "Distribution_composantes", "indic_ae_boxplot" = "Distribution_indicateurs_agroecologiques", "indic_st_boxplot" = "Distribution_indicateurs_socio_territoriaux", "indic_ec_boxplot" = "Distribution_indicateurs_economiques")) |>
-          dplyr::mutate(
+          subset(plotname != "data") |>
+          transform(plotname = ifelse(plotname == "heatmap", "Matrice_propri\u00e9t\u00e9s",
+                           ifelse(plotname == "freq_plot", "Fr\u00e9quence_propri\u00e9t\u00e9s",
+                                  ifelse(plotname == "dimensions_histogram", "Histogramme_dimensions",
+                                         ifelse(plotname == "dimensions_boxplot", "Distribution_dimensions",
+                                                ifelse(plotname == "components_boxplot", "Distribution_composantes",
+                                                       ifelse(plotname == "indic_ae_boxplot", "Distribution_indicateurs_agroecologiques",
+                                                              ifelse(plotname == "indic_st_boxplot", "Distribution_indicateurs_socio_territoriaux",
+                                                                     ifelse(plotname == "indic_ec_boxplot", "Distribution_indicateurs_economiques", plotname))))))))) |>
+          transform(
             widths = c(10.4,10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
             heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
           ) |>
-          dplyr::mutate(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
-          dplyr::mutate(path = file.path(group_directory, plotname)) |>
-          dplyr::mutate(png_path = paste0(path,".png")) |>
-          dplyr::mutate(dpi = dpi)
+          transform(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
+          transform(path = file.path(group_directory, plotname)) |>
+          transform(png_path = paste0(path,".png")) |>
+          transform(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
         export_metaplot <- function(plotname, plot, widths, heights, png_path, dpi) {
@@ -626,7 +657,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         # Iterating
         for(i in 1:nrow(tab_res)) {
 
-          tab <- tab_res |> dplyr::slice(i)
+          tab <- tab_res[i,]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
 
         }
@@ -676,7 +707,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Defining params
           params <- list(
-            data = IDEA_plots
+            data = IDEA_plots,
+            dpi = dpi
           )
 
           output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
