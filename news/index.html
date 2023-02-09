@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.0</span>
       </span>
     </div>
 
@@ -44,9 +44,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/ideatools_advanced_fr.html">Présentation d'IDEATools</a>
-    </li>
-    <li>
       <a href="../articles/decision_rules.html">About decision rules</a>
     </li>
     <li>
@@ -88,6 +85,17 @@
       <small>Source: <a href="https://github.com/davidcarayon/IDEATools/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="3.4.0" id="ideatools-340">IDEATools 3.4.0<a class="anchor" aria-label="anchor" href="#ideatools-340"></a></h2>
+<ul><li>Fixes to documentation</li>
+<li>Removed a vignette showing the dev history of IDEATools and associated images</li>
+<li>Droping heavy dependencies : janitor, scales, ggrepel, glue, readr, stringr and especially <strong>dplyr</strong> and <strong>tidyr</strong>
+</li>
+<li>New (light) dependency to data.table</li>
+<li>Fixed a bug with excel reports for properties labels</li>
+<li>Removed limit of 3 for group analysis</li>
+<li>Better dpi management for PDF reports</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="3.3.1" id="ideatools-331">IDEATools 3.3.1<a class="anchor" aria-label="anchor" href="#ideatools-331"></a></h2>
 <ul><li>Documentation fixes for CRAN</li>
@@ -147,7 +155,7 @@
 <li>Updated the pdf reports by reintroducing LaTeX and removing the {pagedown} dependency</li>
 <li>Updated the pdf, xlsx, docx and odt reports with the new colored trees</li>
 <li>Removed the html and pptx outputs</li>
-<li>Created new vignette about utilities such as <code><a href="../reference/jsonify.html">jsonify()</a></code>
+<li>Created new vignette about utilities such as <code>jsonify()</code>
 </li>
 <li>removed the internal “canvas” object, linked to old SVG approach for colored trees</li>
 <li>Fixed 4.3.3 excel IDEA calculator compatibility</li>
@@ -216,7 +224,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
