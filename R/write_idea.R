@@ -345,7 +345,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           message("Production du rapport Microsoft Word...")
         }
 
-        if(!requireNamespace("officedown", quietly = TRUE)){stop("Package {officedown} is required for DOCX reports. Please use `install.packages('officedown')`")}
+
 
         start <- Sys.time()
 
@@ -418,8 +418,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         if (!quiet) {
           message("Production du rapport Microsoft Excel...")
         }
-
-        if(!requireNamespace("openxlsx", quietly = TRUE)){stop("Package {openxlsx} is required for XLSX reports. Please use `install.packages('openxlsx')`")}
 
         start <- Sys.time()
 
@@ -580,8 +578,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             message("Production du rapport Microsoft Excel...")
           }
 
-          if(!requireNamespace("openxlsx", quietly = TRUE)){stop("Package {openxlsx} is required for XLSX reports. Please use `install.packages('openxlsx')`")}
-
           start <- Sys.time()
 
           output_file <- paste0("Rapport_groupe_ref_", n_farm, ".xlsx")
@@ -739,8 +735,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             message("Production du rapport Microsoft Word...")
           }
 
-          if(!requireNamespace("officedown", quietly = TRUE)){stop("Package {officedown} is required for DOCX reports. Please use `install.packages('officedown')`")}
-
           start <- Sys.time()
 
           report_path <- file.path(knitting_dir, "report","group", "docx_group_report.Rmd")
@@ -808,8 +802,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           if (!quiet) {
             message("Production du rapport Microsoft Excel...")
           }
-
-          if(!requireNamespace("openxlsx", quietly = TRUE)){stop("Package {openxlsx} is required for XLSX reports. Please use `install.packages('openxlsx')`")}
 
           start <- Sys.time()
 

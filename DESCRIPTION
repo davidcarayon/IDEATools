@@ -34,7 +34,4 @@ Depends:
     R (>= 4.1.0)
 VignetteBuilder: knitr
 Suggests: 
-    knitr,
-    officedown,
-    openxlsx,
-    gt
+    knitr
