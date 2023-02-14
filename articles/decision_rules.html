@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.1</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@
 
       
 
-      </header><script src="decision_rules_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>About decision rules</h1>
@@ -123,15 +123,22 @@
 
     
     
-<p>The aggregations from items to indicators, components, dimensions and properties are based on <strong>decision rules</strong>.</p>
-<p>These decision rules are mainly expert-advice judgment combined with a thorough review of scientific literature.</p>
-<p>In IDEATools, the decision rules are stored in an internal object named <code>decision_rules_total</code>. This list can be easily exported in the directory of your choice as an excel file using the internal function :</p>
+<p>The aggregations from items to indicators, components, dimensions and
+properties are based on <strong>decision rules</strong>.</p>
+<p>These decision rules are mainly expert-advice judgment combined with
+a thorough review of scientific literature.</p>
+<p>In IDEATools, the decision rules are stored in an internal object
+named <code>decision_rules_total</code>. This list can be easily
+exported in the directory of your choice as an excel file using the
+internal function :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">IDEATools</span><span class="fu">:::</span><span class="fu"><a href="../reference/show_decision_rules.html">show_decision_rules</a></span><span class="op">(</span><span class="st">"my_directory"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="decision-rules-for-the-dimensions-approach">Decision rules for the Dimensions approach<a class="anchor" aria-label="anchor" href="#decision-rules-for-the-dimensions-approach"></a>
 </h2>
-<p>In the majority of cases, each indicator value can be obtained as the sum of all items related to this indicator. However, there are a few exceptions :</p>
+<p>In the majority of cases, each indicator value can be obtained as the
+sum of all items related to this indicator. However, there are a few
+exceptions :</p>
 <table class="table">
 <thead><tr class="header">
 <th>Indicator</th>
@@ -235,7 +242,10 @@
 <div class="section level2">
 <h2 id="decision-rules-for-the-properties-approach">Decision rules for the Properties approach<a class="anchor" aria-label="anchor" href="#decision-rules-for-the-properties-approach"></a>
 </h2>
-<p>For the properties approach, the decision rules are 46 data frames giving the evaluation for each node depending on the previous leaves and nodes, named with the pattern “node_xx”, based on this numeration of the heuristic tree (see <a href="https://doi.org/10.1051/cagri/2019004" class="external-link">Zahm et al., 2019</a>) :</p>
+<p>For the properties approach, the decision rules are 46 data frames
+giving the evaluation for each node depending on the previous leaves and
+nodes, named with the pattern “node_xx”, based on this numeration of the
+heuristic tree :</p>
 <p><img src="img/heuristic_numbers.png" width="100%"></p>
 </div>
   </div>
