@@ -6,12 +6,10 @@
 <!-- badges: start -->
 
 [![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.4.0-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-3.4.1-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![R build
-status](https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg)](https://github.com/davidcarayon/IDEATools/actions)
 [![DOI](https://zenodo.org/badge/251535041.svg)](https://zenodo.org/badge/latestdoi/251535041)
-
+[![R-CMD-check](https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
@@ -135,15 +133,16 @@ possibilités de paramétrage :
 
 ``` r
 diag_idea(input,
-          output_directory,
-          type = c("single","group"),
-          export_type = c("report","local",NULL),
-          plot_choices = c("dimensions","trees","radars"),
-          report_format = c("pdf","docx","xlsx","pptx"),
-          prefix = "EA",
-          dpi = 300,
-          quiet = FALSE,
-          append = FALSE)
+  output_directory,
+  type = c("single", "group"),
+  export_type = c("report", "local", NULL),
+  plot_choices = c("dimensions", "trees", "radars"),
+  report_format = c("pdf", "docx", "xlsx", "pptx"),
+  prefix = "EA",
+  dpi = 300,
+  quiet = FALSE,
+  append = FALSE
+)
 ```
 
 *Pour information, les utilisateurs les moins habitués à l’écosystème R
@@ -152,9 +151,9 @@ RStudio) pour sélectionner les dossier/fichiers via une fenêtre en
 presse-bouton:*
 
 ``` r
-input <- rstudioapi::selectDirectory() # Dans le cas d'un répertoire 
+input <- rstudioapi::selectDirectory() # Dans le cas d'un répertoire
 # OU
-input<- rstudioapi::selectFile() # Si un seul calculateur
+input <- rstudioapi::selectFile() # Si un seul calculateur
 
 output_directory <- rstudioapi::selectDirectory()
 ```
@@ -169,13 +168,15 @@ récupérer ses résultats pour sa ferme, mais uniquement ses arbres
 éclairés. Le code sera alors :
 
 ``` r
-diag_idea(input = "chemin_calculateur",
-          output_directory = "mes_resultats",
-          type = "single",
-          export_type = "local",
-          prefix = "MaFerme",
-          plot_choices = "trees",
-          quiet = FALSE)
+diag_idea(
+  input = "chemin_calculateur",
+  output_directory = "mes_resultats",
+  type = "single",
+  export_type = "local",
+  prefix = "MaFerme",
+  plot_choices = "trees",
+  quiet = FALSE
+)
 ```
 
 ## Les analyses multi-individuelles
@@ -189,12 +190,14 @@ qu’il pourra commenter ainsi qu’une présentation powerpoint contenant
 toutes les figures et prête à projeter. Le code sera alors :
 
 ``` r
-diag_idea(input = "chemin_vers_dossier",
-          output_directory = "mes_resultats",
-          type = "single",
-          export_type = "report",
-          report_format = c("docx","pptx"),
-          quiet = FALSE)
+diag_idea(
+  input = "chemin_vers_dossier",
+  output_directory = "mes_resultats",
+  type = "single",
+  export_type = "report",
+  report_format = c("docx", "pptx"),
+  quiet = FALSE
+)
 ```
 
 ## Les analyses de groupe
@@ -209,12 +212,14 @@ ainsi qu’un support excel qu’il pourra re-traiter à sa guise pour son
 analyse de group. Le code sera alors :
 
 ``` r
-diag_idea(input = "chemin_vers_dossier",
-          output_directory = "mes_resultats",
-          type = "group",
-          export_type = c("report","local"),
-          report_format = c("pdf","xlsx"),
-          quiet = FALSE)
+diag_idea(
+  input = "chemin_vers_dossier",
+  output_directory = "mes_resultats",
+  type = "group",
+  export_type = c("report", "local"),
+  report_format = c("pdf", "xlsx"),
+  quiet = FALSE
+)
 ```
 
 Notons qu’il peut demander, en plus de son analyse de groupe, des
@@ -222,12 +227,14 @@ rapports individuels qu’il pourra donner à chaque exploitation (par
 exemple au format Microsoft Word) :
 
 ``` r
-diag_idea(input = "chemin_vers_dossier",
-          output_directory = "mes_resultats",
-          type = c("group","single"),
-          export_type = c("report"),
-          report_format = c("docx"),
-          quiet = FALSE)
+diag_idea(
+  input = "chemin_vers_dossier",
+  output_directory = "mes_resultats",
+  type = c("group", "single"),
+  export_type = c("report"),
+  report_format = c("docx"),
+  quiet = FALSE
+)
 ```
 
 # Contact

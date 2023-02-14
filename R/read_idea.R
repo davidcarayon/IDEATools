@@ -29,7 +29,6 @@
 #' my_data <- read_idea(path)
 #' my_data
 read_idea <- function(input) {
-
   # Standardizing the input encoding
   Encoding(input) <- "UTF-8"
 
@@ -73,14 +72,14 @@ read_idea <- function(input) {
 
   ## Excel files
   if (filetype %in% c("xls", "xlsx")) {
-    version_number <- readxl::read_excel(input, sheet = "Notice", range = "K4") |>  names()
+    version_number <- readxl::read_excel(input, sheet = "Notice", range = "K4") |> names()
     if (length(version_number) == 0) (version_number <- "old")
   }
 
   ## Overall version_number converted to numeric for "if" statements
   version_number <- ifelse(version_number == "old",
     yes = "Unknown",
-    no = as.numeric(gsub('[[:punct:] ]+','',version_number))
+    no = as.numeric(gsub("[[:punct:] ]+", "", version_number))
   )
 
   ## Error if not the appropriate version
@@ -90,7 +89,6 @@ read_idea <- function(input) {
 
   ## json files
   if (filetype == "json") {
-
     ## Extract metadata in a named list
     metadata <- json_file$metadonnees
 
@@ -103,7 +101,7 @@ read_idea <- function(input) {
     if (metadata$MTD_01 %in% c("0", NA)) {
       file_name <- tools::file_path_sans_ext(basename(input))
       file_name_short <- substr(file_name, start = 1, stop = 10) # Limit to 10
-      metadata$MTD_01 <- gsub(x = file_name_short,pattern = " ",replacement = "_")
+      metadata$MTD_01 <- gsub(x = file_name_short, pattern = " ", replacement = "_")
     }
 
     # Standardizing the MTD_14 field
@@ -137,33 +135,28 @@ read_idea <- function(input) {
     metadata$MTD_16 <- as.character(metadata$MTD_16)
 
     ## Special case for newer versions
-    if(version_number >= 433){
+    if (version_number >= 433) {
       metadata$MTD_17 <- as.character(metadata$MTD_17)
 
       ## Error if not complete
       if (length(metadata) != 18) (stop(paste0("The metadonnees field in '", basename(input), "' has ", length(metadata), " entries but expects 18.")))
-
     } else {
-
       ## Error if not complete
       if (length(metadata) != 17) (stop(paste0("The metadonnees field in '", basename(input), "' has ", length(metadata), " entries but expects 17.")))
-
     }
-
   }
 
   ## excel files
   if (filetype %in% c("xls", "xlsx")) {
-
     ## Reading metadata from "Renvoi BDD"
-    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22")[,c(1,4)] |>
+    metadata <- readxl::read_excel(input, sheet = "Renvoi BDD", range = "A4:E22")[, c(1, 4)] |>
       subset(!is.na(Code)) |>
       transform(id = 1) |>
-      stats::reshape(direction = "wide", idvar = "id",timevar = "Code", v.names = "Valeur") |>
+      stats::reshape(direction = "wide", idvar = "id", timevar = "Code", v.names = "Valeur") |>
       as.list()
 
     names(metadata) <- unlist(lapply(names(metadata), gsub, pattern = "Valeur\\.", replacement = ""))
-    attr(metadata,"reshapeWide") <- NULL
+    attr(metadata, "reshapeWide") <- NULL
     metadata[["id"]] <- NULL
 
 
@@ -193,7 +186,7 @@ read_idea <- function(input) {
     if (metadata$MTD_01 %in% c("0", NA)) {
       file_name <- tools::file_path_sans_ext(basename(input))
       file_name_short <- substr(file_name, start = 1, stop = 10) # Limit to 10
-      metadata$MTD_01 <- gsub(x = file_name_short,pattern = " ",replacement = "_")
+      metadata$MTD_01 <- gsub(x = file_name_short, pattern = " ", replacement = "_")
     }
 
     # Making sure metadata is of right format and cleaned.
@@ -217,20 +210,15 @@ read_idea <- function(input) {
 
 
     ## Special case for newer versions
-    if(version_number >= 433){
+    if (version_number >= 433) {
       metadata$MTD_17 <- as.character(metadata$MTD_17)
 
       ## Error if not complete
       if (length(metadata) != 18) (stop(paste0("The 18-rows dataframe for metadata in 'Renvoi BDD' can't be found in range A4:E22 for the file '", basename(input), "'.")))
-
     } else {
-
       ## Error if not complete
       if (length(metadata) != 17) (stop(paste0("The 17-rows dataframe for metadata in 'Renvoi BDD' can't be found in range A4:E21 for the file '", basename(input), "'.")))
-
     }
-
-
   }
 
   ## Final check : checking the presence of crucial metadata needed for indicator calculation.
@@ -238,11 +226,10 @@ read_idea <- function(input) {
 
   # Finding items -----------------------------------------------------------
   if (filetype == "json") {
-
     items <- as.data.frame(json_file$items) |>
       stats::reshape(direction = "long", varying = list(names(as.data.frame(json_file$items))), v.names = c("value"), timevar = "item") |>
       transform(item = names(json_file$items)) |>
-      transform(item = gsub(x = item, pattern = "(?<=[[:upper:]])0", replacement = "", perl = TRUE)) |>  # Convert A01 to A1
+      transform(item = gsub(x = item, pattern = "(?<=[[:upper:]])0", replacement = "", perl = TRUE)) |> # Convert A01 to A1
       transform(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
       subset(!is.na(item)) |>
       subset(select = -id)
@@ -253,18 +240,16 @@ read_idea <- function(input) {
         paste0("The items field in '", basename(input), "' has missing values")
       )
     }
-
   }
 
   if (filetype %in% c("xls", "xlsx")) {
-
     ## Change area if version > 433
     start_row <- ifelse(version_number < 433, yes = 25, no = 26)
     end_row <- ifelse(version_number < 433, yes = 144, no = 145)
-    range = paste0("A",start_row,":E",end_row)
+    range <- paste0("A", start_row, ":E", end_row)
 
-    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range))[,c("Code","A Exporter")] |>
-      stats::setNames(c("item","value")) |>
+    items <- suppressMessages(readxl::read_excel(input, sheet = "Renvoi BDD", range = range))[, c("Code", "A Exporter")] |>
+      stats::setNames(c("item", "value")) |>
       transform(item = gsub(x = item, pattern = "(?<=[[:upper:]])0", replacement = "", perl = TRUE)) |>
       transform(item = gsub(x = item, pattern = "IDEA_", replacement = "")) |>
       subset(!is.na(item))
@@ -275,9 +260,6 @@ read_idea <- function(input) {
         paste0("The items field in '", basename(input), "' has missing values")
       )
     }
-
-
-
   }
 
   ## Building the output list
@@ -289,5 +271,4 @@ read_idea <- function(input) {
   class(output) <- c(class(output), "IDEA_items")
 
   return(output)
-
 }

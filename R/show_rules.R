@@ -7,7 +7,6 @@
 #' @return Exports an excel file in the desired directory
 #' @export
 show_decision_rules <- function(directory = getwd()) {
-
   rlang::check_installed("openxlsx", reason = "to use `show_decision_rules()`")
 
   if (!dir.exists(directory)) (dir.create(directory))
@@ -21,7 +20,6 @@ show_decision_rules <- function(directory = getwd()) {
 #'
 #' @export
 show_tree_structure <- function(directory = getwd()) {
-
   rlang::check_installed("openxlsx", reason = "to use `show_tree_structure()`")
 
   if (!dir.exists(file.path(directory, "tree_structure"))) (dir.create(file.path(directory, "tree_structure")))

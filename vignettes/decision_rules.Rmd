@@ -52,7 +52,7 @@ In the majority of cases, each indicator value can be obtained as the sum of all
 
 ## Decision rules for the Properties approach
 
-For the properties approach, the decision rules are 46 data frames giving the evaluation for each node depending on the previous leaves and nodes, named with the pattern "node_xx", based on this numeration of the heuristic tree (see [Zahm et al., 2019](https://doi.org/10.1051/cagri/2019004)) :
+For the properties approach, the decision rules are 46 data frames giving the evaluation for each node depending on the previous leaves and nodes, named with the pattern "node_xx", based on this numeration of the heuristic tree :
 
 ```{r out.width = "100%", echo = FALSE}
 knitr::include_graphics("img/heuristic_numbers.png")

@@ -1,6 +1,6 @@
 Package: IDEATools
 Title: A Collection of Tools Associated with the IDEA4 Method
-Version: 3.4.0
+Version: 3.4.1
 Authors@R: 
     person(given = "David",
            family = "Carayon",
@@ -28,10 +28,12 @@ Imports:
     rlang,
     ggtext,
     rmarkdown,
-    shiny
+    shiny,
+    openxlsx
 License: GPL-3
 Depends: 
     R (>= 4.1.0)
 VignetteBuilder: knitr
 Suggests: 
+    covr,
     knitr

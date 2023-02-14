@@ -1,3 +1,8 @@
+# IDEATools 3.4.1
+* Fixed an error in the global tree
+* Re-styled some code using the tidyverse style
+* Fixed a error occuring when not choosing trees as plot choice
+
 # IDEATools 3.4.0
 * Fixes to documentation
 * Removed a vignette showing the dev history of IDEATools and associated images

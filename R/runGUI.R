@@ -7,8 +7,8 @@
 #' library(IDEATools)
 #'
 #' ## Only run this example in interactive R sessions
-#'  if (interactive()) {
-#' runGUI()
+#' if (interactive()) {
+#'   runGUI()
 #' }
 #' @importFrom rlang check_installed
 #' @importFrom shiny runApp

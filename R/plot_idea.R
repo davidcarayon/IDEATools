@@ -57,7 +57,6 @@
 #' ## Example without radars or dimensions
 #' idea_plots <- plot_idea(computed_data, choices = c("trees"))
 plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
-
   ## Check if correct input
   if (!any(class(IDEA_data) %in% c("IDEA_data", "IDEA_group_data"))) (stop("The input data is not of class 'IDEA_data'"))
 
@@ -66,18 +65,16 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
   # Individual analysis -----------------------------------------------------
   if (any(class(IDEA_data) == "IDEA_data")) {
-
     ## If the user chooses "dimensions"
     if (any(choices == "dimensions")) {
-
       ## Vector of colors for dimensions to use with each dimension plot
-      vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
+      vec_colors <- c("A" = "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
 
       data.table::setDT(reference_list[["indic_dim"]])
       data.table::setDT(IDEA_data[["dataset"]])
 
       ## Dimensions dataset
-      res_dim <- unique(IDEA_data[["dataset"]][, index := 1][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index][,.(dimension_code, dimension_value)])[reference_list[["indic_dim"]], on = "dimension_code"][,.(dimension_code, dimension_value, max_dim = 100L, dimension = vec_colors[dimension_code])] |>
+      res_dim <- unique(IDEA_data[["dataset"]][, index := 1][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index][, .(dimension_code, dimension_value)])[reference_list[["indic_dim"]], on = "dimension_code"][, .(dimension_code, dimension_value, max_dim = 100L, dimension = vec_colors[dimension_code])] |>
         unique() |>
         transform(dimension_value = as.numeric(dimension_value))
 
@@ -90,12 +87,12 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         y = dimension_value, group = factor(dimension)
       )) +
         ggplot2::geom_bar(ggplot2::aes(x = dimension, y = max_dim, fill = dimension),
-                          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8),
-                          stat = "identity"
+          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8),
+          stat = "identity"
         ) +
         ggplot2::geom_bar(ggplot2::aes(fill = dimension),
-                          color = "black",
-                          position = ggplot2::position_dodge(width = 0.8), stat = "identity"
+          color = "black",
+          position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
         ggplot2::geom_hline(yintercept = critiq, color = "red", size = 1.5, linetype = 5) +
         ggplot2::scale_fill_identity() +
@@ -111,17 +108,17 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
 
-      lbl_dim <- reference_list[["indic_dim"]][, .(dim = dimension,dimension_code)] |> unique()
+      lbl_dim <- reference_list[["indic_dim"]][, .(dim = dimension, dimension_code)] |> unique()
 
       ## Components dataset
-      res_compo <- unique(IDEA_data[["dataset"]][, index := 1][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index][,.(dimension_code, dimension_value, component_code, component_value)])[reference_list[["indic_dim"]], on = c("dimension_code","component_code")][,.(dimension,dimension_code, component_code, component, component_value, component_max)] |>
+      res_compo <- unique(IDEA_data[["dataset"]][, index := 1][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index][, .(dimension_code, dimension_value, component_code, component_value)])[reference_list[["indic_dim"]], on = c("dimension_code", "component_code")][, .(dimension, dimension_code, component_code, component, component_value, component_max)] |>
         unique() |>
         transform(component = sapply(component, FUN = wrapit, width = 40, USE.NAMES = FALSE)) |>
         transform(component = factor(component, levels = rev(component))) |>
         transform(dimension = vec_colors[dimension_code]) |>
-        merge(res_dim, by = c("dimension_code","dimension")) |>
+        merge(res_dim, by = c("dimension_code", "dimension")) |>
         merge(lbl_dim, by = "dimension_code") |>
-        transform(facet_label = paste0("Dimension ",dim," (",dimension_value,"/100)")) |>
+        transform(facet_label = paste0("Dimension ", dim, " (", dimension_value, "/100)")) |>
         transform(facet_label = factor(facet_label, levels = unique(facet_label))) |>
         transform(component_value = as.numeric(component_value))
 
@@ -132,12 +129,12 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         group = factor(dimension)
       )) +
         ggplot2::geom_bar(ggplot2::aes(x = component, y = component_max, fill = dimension),
-                          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8),
-                          stat = "identity"
+          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8),
+          stat = "identity"
         ) +
         ggplot2::geom_bar(ggplot2::aes(fill = dimension),
-                          color = "black",
-                          position = ggplot2::position_dodge(width = 0.8), stat = "identity"
+          color = "black",
+          position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
         ggplot2::facet_wrap(~facet_label, scales = "free", ncol = 1) +
         ggplot2::geom_label(ggplot2::aes(label = paste0(component_value, "/", component_max)), fill = "white", size = 5.5) +
@@ -151,7 +148,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       ## Indicators dataset
 
-      res_indic <- unique(IDEA_data[["dataset"]][,.(indic,scaled_value,component_value)]) |>
+      res_indic <- unique(IDEA_data[["dataset"]][, .(indic, scaled_value, component_value)]) |>
         merge(reference_list[["indic_dim"]], by.x = "indic", by.y = "indic_code") |>
         transform(indic_number = regmatches(indic, regexpr("[[:digit:]]+", indic))) |>
         transform(full_name = paste0(indic, " - ", indic_name)) |>
@@ -170,8 +167,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       ## Plot for indicators of dimension A
       plot_indic_ae <- ggplot2::ggplot(df, ggplot2::aes(x = full_name, y = scaled_value)) +
-        ggplot2::geom_bar(ggplot2::aes(x = full_name, y = max_indic), fill = "#2e9c15",
-                          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity"
+        ggplot2::geom_bar(ggplot2::aes(x = full_name, y = max_indic),
+          fill = "#2e9c15",
+          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
         ggplot2::geom_bar(fill = "#2e9c15", color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity") +
         ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y") +
@@ -191,8 +189,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       ## Plot for indicators of dimension B
       plot_indic_st <- ggplot2::ggplot(df, ggplot2::aes(x = full_name, y = scaled_value, fill = dimension)) +
-        ggplot2::geom_bar(ggplot2::aes(x = full_name, y = max_indic), fill = "#5077FE",
-                          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity"
+        ggplot2::geom_bar(ggplot2::aes(x = full_name, y = max_indic),
+          fill = "#5077FE",
+          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
         ggplot2::geom_bar(fill = "#5077FE", color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity") +
         ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y") +
@@ -213,8 +212,9 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       ## Plot for indicators of dimension C
       plot_indic_ec <- ggplot2::ggplot(df, ggplot2::aes(x = full_name, y = scaled_value, fill = dimension)) +
-        ggplot2::geom_bar(ggplot2::aes(x = full_name, y = max_indic), fill = "#FE962B",
-                          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity"
+        ggplot2::geom_bar(ggplot2::aes(x = full_name, y = max_indic),
+          fill = "#FE962B",
+          alpha = 0.3, color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
         ggplot2::geom_bar(fill = "#FE962B", color = "black", position = ggplot2::position_dodge(width = 0.8), stat = "identity") +
         ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y") +
@@ -258,7 +258,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
         ) +
         ggplot2::guides(fill = "none")
 
-      ggplot2::ggsave(temp_pdf,plot = donut, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
+      ggplot2::ggsave(temp_pdf, plot = donut, dpi = 320, width = 10.1, height = 7.53, device = cairo_pdf)
 
 
       ## Preparing surrounding donut
@@ -348,35 +348,32 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## If user chooses "trees"
     if (any(choices == "trees")) {
-
       # Empty return list
       prop_list <- list()
 
       ## For loop on each property + another synthetic one
       for (prop in names(IDEA_data$nodes)) {
-
         structure_list <- tree_structure[[prop]]
 
-        nodes = structure_list$nodes
-        lines = structure_list$lines
+        nodes <- structure_list$nodes
+        lines <- structure_list$lines
 
-        if(prop != "Global") {
-
+        if (prop != "Global") {
           data.table::setDT(IDEA_data$nodes[[prop]])
 
-          IDEA_data$nodes[[prop]]$index = 1
+          IDEA_data$nodes[[prop]]$index <- 1
 
           pivoted_data <- IDEA_data$nodes[[prop]][, data.table::melt(.SD, id.vars = "index")]
 
-          merged_data <- pivoted_data[,.(indic_code = variable,value)] |>
+          merged_data <- pivoted_data[, .(indic_code = variable, value)] |>
             merge(reference_list$indic_prop, by = "indic_code")
 
-          leaves <- merged_data[, prop_code := paste(prop_code, collapse = " "), by = c("indic_code")][, name := paste0(indic_code, "/", prop_code, "  ", indic_name)][,.(prop_code, name, value)][,code := sub("\\/.*", "",name)][,.(code,name,value)]
+          leaves <- merged_data[, prop_code := paste(prop_code, collapse = " "), by = c("indic_code")][, name := paste0(indic_code, "/", prop_code, "  ", indic_name)][, .(prop_code, name, value)][, code := sub("\\/.*", "", name)][, .(code, name, value)]
 
-          merged_data <- pivoted_data[,.(node_code = variable, value)] |>
+          merged_data <- pivoted_data[, .(node_code = variable, value)] |>
             merge(reference_list$properties_nodes, by = "node_code")
 
-          branches <- merged_data[,.(code = node_code, name = node_name, value)]
+          branches <- merged_data[, .(code = node_code, name = node_name, value)]
 
           data_table <- rbind(leaves, branches) |>
             transform(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
@@ -392,122 +389,107 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             ##### ADD OTHERS
             transform(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
 
-          if(prop == "Robustesse") {
-
-            main <- tibble::tibble(rect_df_full[!code %in% c("R9","R2"),])
-            bonus <- tibble::tibble(rect_df_full[code %in% c("R9","R2"),])
+          if (prop == "Robustesse") {
+            main <- tibble::tibble(rect_df_full[!code %in% c("R9", "R2"), ])
+            bonus <- tibble::tibble(rect_df_full[code %in% c("R9", "R2"), ])
 
             prop_list[[prop]] <- ggplot2::ggplot() +
-              ggplot2::xlim(c(-120,305)) +
+              ggplot2::xlim(c(-120, 305)) +
               ggplot2::ylim(c(15, 210)) +
               ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2", "inch"), height = ggplot2::unit("1.2", "inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5", "inch"), height = ggplot2::unit("2", "inch"), box.size = 2) +
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
-              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 40), legend.title = ggplot2::element_text(size = 45, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
-
-
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 40), legend.title = ggplot2::element_text(size = 45, face = "bold"), legend.direction = "horizontal", legend.key.width = ggplot2::unit(20, "mm"), legend.key = ggplot2::element_rect(color = "black", size = 4))
           }
 
-          if(prop == "Capacite") {
-
-            main <- rect_df_full[!code %in% c("CP7","CP9","CP10","CP5","CP6","CP8"),]
-            bonus <- rect_df_full[code %in% c("CP7","CP9","CP5","CP6","CP8"),]
-            bonus_prop <- rect_df_full[code %in% c("CP10"),]
+          if (prop == "Capacite") {
+            main <- rect_df_full[!code %in% c("CP7", "CP9", "CP10", "CP5", "CP6", "CP8"), ]
+            bonus <- rect_df_full[code %in% c("CP7", "CP9", "CP5", "CP6", "CP8"), ]
+            bonus_prop <- rect_df_full[code %in% c("CP10"), ]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-450, 330)) +
               ggplot2::ylim(c(-10, 215)) +
               ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2.2","inch"), box.size = 2)+
-              ggtext::geom_textbox(data = bonus_prop, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"), box.size = 2)+
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6.2", "inch"), height = ggplot2::unit("1.2", "inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6", "inch"), height = ggplot2::unit("2.2", "inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus_prop, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8", "inch"), height = ggplot2::unit("3", "inch"), box.size = 2) +
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 12, "small" = 8.5), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
-              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
-
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal", legend.key.width = ggplot2::unit(20, "mm"), legend.key = ggplot2::element_rect(color = "black", size = 4))
           }
 
 
-          if(prop == "Autonomie") {
-
-            main <- rect_df_full[!code %in% c("AU3","AU5","AU4"),]
-            bonus <- rect_df_full[code %in% c("AU3","AU5","AU4"),]
+          if (prop == "Autonomie") {
+            main <- rect_df_full[!code %in% c("AU3", "AU5", "AU4"), ]
+            bonus <- rect_df_full[code %in% c("AU3", "AU5", "AU4"), ]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
-              ggplot2::xlim(c(-200,320)) +
-              ggplot2::ylim(c(20,210)) +
+              ggplot2::xlim(c(-200, 320)) +
+              ggplot2::ylim(c(20, 210)) +
               ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2", "inch"), height = ggplot2::unit("1.2", "inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8", "inch"), height = ggplot2::unit("2", "inch"), box.size = 2) +
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
-              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 33, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
-
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 33, face = "bold"), legend.direction = "horizontal", legend.key.width = ggplot2::unit(20, "mm"), legend.key = ggplot2::element_rect(color = "black", size = 4))
           }
 
 
-          if(prop == "Responsabilite") {
-
-            main <- rect_df_full[!code %in% paste0("RG",1:15),]
-            bonus <- rect_df_full[code %in% paste0("RG",1:15),]
+          if (prop == "Responsabilite") {
+            main <- rect_df_full[!code %in% paste0("RG", 1:15), ]
+            bonus <- rect_df_full[code %in% paste0("RG", 1:15), ]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
               ggplot2::xlim(c(-270, 320)) +
               ggplot2::ylim(c(20, 370)) +
               ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8", "inch"), height = ggplot2::unit("1.2", "inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8", "inch"), height = ggplot2::unit("2", "inch"), box.size = 2) +
               ggplot2::scale_size_manual(values = c("very very big" = 18, "very big" = 15, "big" = 12.5, "small" = 10), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
-              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 50), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
-
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 50), legend.title = ggplot2::element_text(size = 55, face = "bold"), legend.direction = "horizontal", legend.key.width = ggplot2::unit(20, "mm"), legend.key = ggplot2::element_rect(color = "black", size = 4))
           }
 
 
-          if(prop == "Ancrage") {
-
-            main <- rect_df_full[!code %in% c("AN2","AN1","AN4","AN5"),]
-            bonus <- rect_df_full[code %in% c("AN2","AN1","AN4","AN5"),]
+          if (prop == "Ancrage") {
+            main <- rect_df_full[!code %in% c("AN2", "AN1", "AN4", "AN5"), ]
+            bonus <- rect_df_full[code %in% c("AN2", "AN1", "AN4", "AN5"), ]
 
             prop_list[[prop]] <- ggplot2::ggplot() +
-              ggplot2::xlim(c(-120,313)) +
+              ggplot2::xlim(c(-120, 313)) +
               ggplot2::ylim(c(80, 210)) +
               ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
-              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2","inch"), height = ggplot2::unit("1.2","inch"), box.size = 2) +
-              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6","inch"), height = ggplot2::unit("2","inch"), box.size = 2)+
+              ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("5.2", "inch"), height = ggplot2::unit("1.2", "inch"), box.size = 2) +
+              ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("6", "inch"), height = ggplot2::unit("2", "inch"), box.size = 2) +
               ggplot2::scale_size_manual(values = c("very very big" = 15, "very big" = 13, "big" = 10, "small" = 7), guide = "none") +
               ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
               ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
               ggplot2::theme_void() +
-              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 40, face = "bold"), legend.direction = "horizontal",legend.key.width = ggplot2::unit(20,"mm"), legend.key = ggplot2::element_rect(color = "black",size = 4))
-
-
+              ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 35), legend.title = ggplot2::element_text(size = 40, face = "bold"), legend.direction = "horizontal", legend.key.width = ggplot2::unit(20, "mm"), legend.key = ggplot2::element_rect(color = "black", size = 4))
           }
-
-
-
-
-
         } else {
-
           data.table::setDT(IDEA_data$nodes[[prop]])
+
+          ## Fixing error in reference table
+          nodes[14, 1] <- "AN4"
 
           pivoted_data <- IDEA_data$nodes[["Global"]][, data.table::melt(.SD, id.vars = "index")]
 
           branches <- pivoted_data |>
             merge(reference_list$properties_nodes, by.x = "variable", by.y = "node_code")
 
-          branches <- branches[,.(code = variable, name = node_name, value)]
+          branches <- branches[, .(code = variable, name = node_name, value)]
 
           data_table <- branches |>
             transform(value = paste0(toupper(substr(value, 1, 1)), substr(value, 2, nchar(value))))
@@ -524,23 +506,21 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
             transform(name = ifelse(name == "Responsabilit\u00e9 globale", yes = "RESPONSABILIT\uc9 GLOBALE", no = name)) |>
             transform(col = ifelse(value %in% c("Tr\u00e8s d\u00e9favorable", "Tr\u00e8s favorable"), yes = "white", no = "black"))
 
-          main <- rect_df_full[!code %in% c("CP10"),] |> tibble::tibble()
-          bonus <- rect_df_full[code %in% c("CP10"),] |> tibble::tibble()
+          main <- rect_df_full[!code %in% c("CP10"), ] |> tibble::tibble()
+          bonus <- rect_df_full[code %in% c("CP10"), ] |> tibble::tibble()
 
           prop_list[[prop]] <- ggplot2::ggplot() +
             ggplot2::xlim(c(-270, 320)) +
             ggplot2::ylim(c(120, 370)) +
             ggplot2::geom_segment(data = lines, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), size = 2) +
-            ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("9","inch"), height = ggplot2::unit("1.8","inch"), box.size = 2) +
-            ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8","inch"), height = ggplot2::unit("3","inch"), box.size = 2)+
-            ggtext::geom_textbox(ggplot2::aes(x = 25, y = 280), label = "Exploitation agricole", fill = "white", size = 25, text.color = "black", halign = 0.5, valign = 0.5, width = ggplot2::unit("10","inch"), height = ggplot2::unit("3","inch"), box.size = 2)+
+            ggtext::geom_textbox(data = main, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("9", "inch"), height = ggplot2::unit("1.8", "inch"), box.size = 2) +
+            ggtext::geom_textbox(data = bonus, ggplot2::aes(x = x, y = y, label = name, fill = value, size = size, text.color = col), halign = 0.5, valign = 0.5, show.legend = TRUE, key_glyph = ggplot2::draw_key_rect, width = ggplot2::unit("8", "inch"), height = ggplot2::unit("3", "inch"), box.size = 2) +
+            ggtext::geom_textbox(ggplot2::aes(x = 25, y = 280), label = "Exploitation agricole", fill = "white", size = 25, text.color = "black", halign = 0.5, valign = 0.5, width = ggplot2::unit("10", "inch"), height = ggplot2::unit("3", "inch"), box.size = 2) +
             ggplot2::scale_size_manual(values = c("very very big" = 20, "very big" = 15, "big" = 15, "small" = 12), guide = "none") +
             ggplot2::scale_color_manual(values = c("white" = "white", "black" = "black"), guide = "none") +
             ggplot2::scale_fill_manual("\uc9valuation", values = color_values, guide = ggplot2::guide_legend(ncol = 6)) +
             ggplot2::theme_void() +
-            ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 50, face = "bold"), legend.key.width = ggplot2::unit(20,"mm"), legend.direction = "horizontal", legend.key = ggplot2::element_rect(color = "black",size = 4))
-
-
+            ggplot2::theme(legend.position = c(0.5, 0.03), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 50, face = "bold"), legend.key.width = ggplot2::unit(20, "mm"), legend.direction = "horizontal", legend.key = ggplot2::element_rect(color = "black", size = 4))
         }
       }
 
@@ -550,16 +530,17 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     ## If the user chooses "radars"
     if (any(choices == "radars")) {
-
       ## Vector of colors for dimensions to use with each dimension plot
-      vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
+      vec_colors <- c("A" = "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
+
+      data.table::setDT(IDEA_data$dataset)
 
       ## Creating a dataset with standardised indicators (%)
       prop_radar <- merge(
-        unique(IDEA_data$dataset[,.(indic_code = indic, scaled_value)]),
+        unique(IDEA_data$dataset[, .(indic_code = indic, scaled_value)]),
         reference_list$indic_dim,
         by = "indic_code"
-      )[,indic_number := regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))] |>
+      )[, indic_number := regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))] |>
         transform(indic_number = as.numeric(indic_number)) |>
         data.table::setorderv(cols = c("dimension_code", "indic_number")) |>
         transform(score_indic = round(scaled_value / max_indic * 100, 0)) |>
@@ -580,29 +561,28 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       # For loop on each property
       for (i in prop_names) {
-
         ## Get the list of indicators of a given property
         list_indic_prop <- indic_codes[[i]]
 
         # Get the name and the y position of each label
-        label_data <- prop_radar[indic_code %in% list_indic_prop,]
+        label_data <- prop_radar[indic_code %in% list_indic_prop, ]
         label_data$id <- seq(1, nrow(label_data))
         number_of_bar <- nrow(label_data)
         angle <- 90 - 360 * (label_data$id - 0.5) / number_of_bar
         label_data$hjust <- ifelse(angle < -90, 1, 0)
         label_data$angle <- ifelse(angle < -90, angle + 180, angle)
-        label_data <- label_data[score_indic > 5,]
+        label_data <- label_data[score_indic > 5, ]
 
 
         ## Build the table on the side of the plot
-        mytable <- prop_radar[indic_code %in% list_indic_prop,.(indic_code = as.character(indic_code))] |>
+        mytable <- prop_radar[indic_code %in% list_indic_prop, .(indic_code = as.character(indic_code))] |>
           merge(reference_list$indic_dim, by = "indic_code") |>
           transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
           transform(indic_number = as.numeric(indic_number)) |>
           transform(indic_name = sapply(indic_name, FUN = wrapit, width = 45, USE.NAMES = FALSE)) |>
           data.table::setorderv(cols = c("dimension_code", "indic_number"))
 
-        mytable <- unique(mytable[,.(Code = indic_code, `Nom de l'indicateur` = indic_name)])
+        mytable <- unique(mytable[, .(Code = indic_code, `Nom de l'indicateur` = indic_name)])
 
 
 
@@ -637,31 +617,31 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
         ## Full property name for the plot title
         full_prop_name <- switch(i,
-                                 "Ancrage" = "Ancrage Territorial",
-                                 "Autonomie" = "Autonomie",
-                                 "Robustesse" = "Robustesse",
-                                 "Responsabilite" = "Responsabilit\u00e9 globale",
-                                 "Capacite" = "Capacit\u00e9 productive et reproductive \nde biens et de services"
+          "Ancrage" = "Ancrage Territorial",
+          "Autonomie" = "Autonomie",
+          "Robustesse" = "Robustesse",
+          "Responsabilite" = "Responsabilit\u00e9 globale",
+          "Capacite" = "Capacit\u00e9 productive et reproductive \nde biens et de services"
         )
 
         ## Building legend
-        list_dimensions <- unique(prop_radar[indic_code %in% list_indic_prop,dimension_code])
+        list_dimensions <- unique(prop_radar[indic_code %in% list_indic_prop, dimension_code])
 
         # A simple vector with dimension names
-        vec_dim <- c("A"="Agro\u00e9cologique", "B" = "Socio-Territoriale", "C"= "Economique")
+        vec_dim <- c("A" = "Agro\u00e9cologique", "B" = "Socio-Territoriale", "C" = "Economique")
 
         ## The vector that will be used for legend
         vec_legend <- unname(vec_dim[list_dimensions])
 
         ## Creating the radar plot (polarised histogram)
         p <- ggplot2::ggplot(
-          prop_radar[indic_code %in% list_indic_prop,],
+          prop_radar[indic_code %in% list_indic_prop, ],
           ggplot2::aes(x = indic_code, y = score_indic, fill = dimension)
         ) +
           ggplot2::geom_rect(xmin = -Inf, ymin = -20, xmax = Inf, ymax = 100, fill = "white", color = "white") +
           ggplot2::geom_col(ggplot2::aes(x = indic_code, y = 100, fill = dimension), alpha = 0.3, color = "black") +
           ggplot2::geom_col() +
-          ggplot2::geom_label(ggplot2::aes(label = paste0(score_indic,"%"))) +
+          ggplot2::geom_label(ggplot2::aes(label = paste0(score_indic, "%"))) +
           ggplot2::scale_fill_identity("Dimension", labels = vec_legend, guide = "legend") +
           theme_idea() +
           ggplot2::scale_y_continuous(limits = c(-20, 130), breaks = c(0, 20, 40, 60, 80, 100)) +
@@ -669,7 +649,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           ggplot2::theme(axis.text.y = ggplot2::element_blank()) +
           ggplot2::theme(axis.title = ggplot2::element_blank()) +
           ggplot2::theme(panel.grid = ggplot2::element_blank()) +
-          ggplot2::labs(fill = "Dimension", title = paste0('Indicateurs de la propri\u00e9t\u00e9 ',full_prop_name,'')) +
+          ggplot2::labs(fill = "Dimension", title = paste0("Indicateurs de la propri\u00e9t\u00e9 ", full_prop_name, "")) +
           ggplot2::theme(legend.position = "top") +
           ggplot2::coord_polar()
 
@@ -695,7 +675,6 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
   # Group analysis ----------------------------------------------------------
 
   if (any(class(IDEA_data) == "IDEA_group_data")) {
-
     # Number of farms
     n_farms <- length(unique(IDEA_data$dataset$farm_id))
 
@@ -711,36 +690,36 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       merge(reference_list$properties_nodes, by.x = "variable", by.y = "node_code") |>
       subset(level == "propriete") |>
       transform(node_name = ifelse(node_name == "Capacit\u00e9 productive et reproductive de biens et de services", yes = "Capacit\u00e9 productive et \n reproductive de biens et de \n services", no = node_name)) |>
-      transform(result_ascii = stringi::stri_trans_general(value,id = "Latin-ASCII")) |>
-      transform(result_ascii = factor(result_ascii, levels = c("tres defavorable","defavorable","favorable","tres favorable"))) |>
+      transform(result_ascii = stringi::stri_trans_general(value, id = "Latin-ASCII")) |>
+      transform(result_ascii = factor(result_ascii, levels = c("tres defavorable", "defavorable", "favorable", "tres favorable"))) |>
       data.table::setorderv(cols = c("result_ascii"))
 
     ## Building legend
-    legend_names <- unique(heatmap_data[,value])
+    legend_names <- unique(heatmap_data[, value])
 
     heatmap <- heatmap_data |>
-      transform(value = stringi::stri_trans_general(value,id = "Latin-ASCII")) |>
+      transform(value = stringi::stri_trans_general(value, id = "Latin-ASCII")) |>
       transform(value = vec_colors[value]) |>
-      transform(value = factor(value, levels = c("#CD0000","#FF6347","#33FF00","#008B00"))) |>
+      transform(value = factor(value, levels = c("#CD0000", "#FF6347", "#33FF00", "#008B00"))) |>
       ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = value)) +
       ggplot2::geom_tile(color = "black") +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
       ggplot2::labs(x = "Exploitations agricoles", y = "Propri\u00e9t\u00e9", fill = "\uc9valuation") +
       theme_idea() +
-      ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = ggplot2::element_text(angle = 90,hjust = 1))
+      ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
 
 
-    freq_data <- heatmap_data[,.(node_name,value)][, .(n = .N), by = .(node_name,value)][,prop := n / sum(n)*100, by = node_name][, value := stringi::stri_trans_general(value,id = "Latin-ASCII")][,value := vec_colors[value]][, value := factor(value, levels = c("#CD0000","#FF6347","#33FF00","#008B00"))]
+    freq_data <- heatmap_data[, .(node_name, value)][, .(n = .N), by = .(node_name, value)][, prop := n / sum(n) * 100, by = node_name][, value := stringi::stri_trans_general(value, id = "Latin-ASCII")][, value := vec_colors[value]][, value := factor(value, levels = c("#CD0000", "#FF6347", "#33FF00", "#008B00"))]
 
 
     freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = value)) +
-      ggplot2::geom_col(position = "stack", color ="black") +
-      ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5)) +
+      ggplot2::geom_col(position = "stack", color = "black") +
+      ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop), "%")), position = ggplot2::position_stack(vjust = 0.5)) +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
       theme_idea() +
-      ggplot2::coord_flip()+
+      ggplot2::coord_flip() +
       ggplot2::labs(x = "", y = "Fr\u00e9quence (%)") +
-      ggplot2::scale_y_continuous(breaks = seq(0,100,5))
+      ggplot2::scale_y_continuous(breaks = seq(0, 100, 5))
 
     ## Histograms for dimensions
 
@@ -748,22 +727,22 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     setDT(reference_list$indic_dim)
 
     ## Data for dimensions
-    dim_data <- unique(IDEA_data$dataset[,.(farm_id, dimension_code, dimension_value = as.numeric(dimension_value))])[,alpha := "b"]
+    dim_data <- unique(IDEA_data$dataset[, .(farm_id, dimension_code, dimension_value = as.numeric(dimension_value))])[, alpha := "b"]
 
     ## dataframe with an "alpha" argument
-    alpha <- dim_data[,.(farm_id, dimension_code, dimension_value = 100-dimension_value, alpha = "a")]
+    alpha <- dim_data[, .(farm_id, dimension_code, dimension_value = 100 - dimension_value, alpha = "a")]
 
     ## Vector of colors for dimensions to use with each dimension plot
-    vec_colors <- c("A"= "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
+    vec_colors <- c("A" = "#2e9c15", "B" = "#5077FE", "C" = "#FE962B")
 
 
     ## Full data for the dimension histogram
     hist_data <- rbind(dim_data, alpha) |>
       transform(label = ifelse(alpha == "a", yes = "", no = paste0(dimension_value, "/100"))) |>
-      merge(unique(reference_list$indic_dim[,.(dimension, dimension_code)]), by = "dimension_code") |>
+      merge(unique(reference_list$indic_dim[, .(dimension, dimension_code)]), by = "dimension_code") |>
       subset(select = c(dimension, dimension_value, dimension_code, farm_id, label, alpha)) |>
       unique() |>
-      transform(dimension = vec_colors[dimension_code])|>
+      transform(dimension = vec_colors[dimension_code]) |>
       data.table::setorderv(cols = c("dimension_code"), order = -1) |>
       transform(dimension = factor(dimension, levels = unique(dimension)))
 
@@ -775,7 +754,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::guides(alpha = "none") +
       ggplot2::geom_col(color = "black") +
       ggplot2::geom_text(ggplot2::aes(x = farm_id, y = dimension_value, label = label), position = ggplot2::position_stack(vjust = 0.5)) +
-      ggplot2::scale_fill_identity("Dimension", labels = c("Economique","Socio-Territoriale","Agro\u00e9cologique"), guide = guide_legend(reverse = TRUE)) +
+      ggplot2::scale_fill_identity("Dimension", labels = c("Economique", "Socio-Territoriale", "Agro\u00e9cologique"), guide = guide_legend(reverse = TRUE)) +
       theme_idea() +
       ggplot2::ylim(0, 300) +
       ggplot2::labs(x = "Exploitations agricoles", y = "Score", fill = "Dimension") +
@@ -788,32 +767,32 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Dimension data
 
     boxplot_dim_data <- dim_data |>
-      merge(unique(reference_list$indic_dim[,.(dimension, dimension_code)]), by = "dimension_code")|>
+      merge(unique(reference_list$indic_dim[, .(dimension, dimension_code)]), by = "dimension_code") |>
       subset(select = c(farm_id, dimension_code, dimension, dimension_value)) |>
       unique() |>
       transform(dimension = vec_colors[dimension_code])
 
     ## Estimating means to add on the boxplot
-    means <- boxplot_dim_data[,.(Mean = mean(dimension_value)), by = dimension]
+    means <- boxplot_dim_data[, .(Mean = mean(dimension_value)), by = dimension]
 
     ## Plotting dimensions boxplot
     dimensions_boxplot <- ggplot2::ggplot(boxplot_dim_data, ggplot2::aes(x = dimension, y = dimension_value)) +
       ggplot2::stat_boxplot(geom = "errorbar", width = 0.3) +
       ggplot2::geom_boxplot(color = "black", ggplot2::aes(fill = dimension), width = 0.8) +
-      ggplot2::geom_point(data = means, ggplot2::aes(x = dimension, y = Mean,color = "Moyenne"), size = 4, shape = 18) +
+      ggplot2::geom_point(data = means, ggplot2::aes(x = dimension, y = Mean, color = "Moyenne"), size = 4, shape = 18) +
       theme_idea() +
-      ggplot2::scale_fill_identity("Dimension", labels = c("Agro\u00e9cologique","Socio-Territoriale","Economique"), guide = "legend") +
-      ggplot2::scale_color_manual(name = "L\u00e9gende",values = c("darkred")) +
+      ggplot2::scale_fill_identity("Dimension", labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"), guide = "legend") +
+      ggplot2::scale_color_manual(name = "L\u00e9gende", values = c("darkred")) +
       ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
       ggplot2::labs(y = "Valeur de la dimension", fill = "Dimension", caption = paste0("(N = ", n_farms, ")")) +
-      ggplot2::scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100))+
+      ggplot2::scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
       ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
     ## Components
 
     ## Component data
     compo_data <- IDEA_data$dataset |>
-      merge(unique(reference_list$indic_dim[,.(dimension_code,component_code,component_max, component,dimension)]), by = c("dimension_code","component_code")) |>
+      merge(unique(reference_list$indic_dim[, .(dimension_code, component_code, component_max, component, dimension)]), by = c("dimension_code", "component_code")) |>
       subset(select = c(farm_id, dimension_code, dimension, component_code, component, component_value, component_max)) |>
       unique() |>
       transform(min_compo = 0) |>
@@ -821,7 +800,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       transform(component = factor(component, levels = rev(unique(component))))
 
     ## Estimating means to add on the boxplot
-    means <- compo_data[,.(Mean = mean(component_value)), by = .(dimension,component,component_code)]
+    means <- compo_data[, .(Mean = mean(component_value)), by = .(dimension, component, component_code)]
 
     ## Plotting components boxplot
     components_boxplot <- ggplot2::ggplot(compo_data, ggplot2::aes(x = component, y = component_value)) +
@@ -831,7 +810,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::geom_point(ggplot2::aes(y = component_max), shape = 93, size = 5, color = "red") +
       ggplot2::geom_point(ggplot2::aes(y = min_compo), shape = 91, size = 5, color = "red") +
       theme_idea() +
-      ggplot2::scale_fill_manual(values = c("#2e9c15","#5077FE","#FE962B")) +
+      ggplot2::scale_fill_manual(values = c("#2e9c15", "#5077FE", "#FE962B")) +
       ggplot2::scale_color_manual(values = c("darkred")) +
       ggplot2::theme(axis.title.y = ggplot2::element_blank()) +
       ggplot2::labs(y = "Valeur de la composante", fill = "Dimension", color = "L\u00e9gende", caption = paste0("(N = ", n_farms, ")")) +
@@ -845,14 +824,14 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Agroecologie
 
     ## Subset for dimension A
-    indic_data <- IDEA_data$dataset[,.(indic_code = indic, scaled_value, dimension_code,component_code,component_value)] |>
+    indic_data <- IDEA_data$dataset[, .(indic_code = indic, scaled_value, dimension_code, component_code, component_value)] |>
       merge(reference_list$indic_dim, by = c("indic_code", "dimension_code", "component_code")) |>
       subset(dimension_code == "A") |>
       transform(full_name = paste0(indic_code, " - ", indic_name)) |>
       transform(full_name = sapply(full_name, FUN = wrapit, width = 75, USE.NAMES = FALSE)) |>
       transform(component = ifelse(component == "Bouclage de flux \nde mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
-                                   yes = "Bouclage de flux de mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
-                                   no = component
+        yes = "Bouclage de flux de mati\u00e8res et d'\u00e9nergie \npar une recherche d'autonomie",
+        no = component
       )) |>
       transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
       transform(indic_number = as.numeric(indic_number)) |>
@@ -862,7 +841,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
 
     ## Estimating means to add on the boxplot
-    moys <- indic_data[,.(Mean = mean(scaled_value)), by = .(component,full_name, indic_code)]
+    moys <- indic_data[, .(Mean = mean(scaled_value)), by = .(component, full_name, indic_code)]
 
     ## Plotting indicators for dimension A
     indic_ae_boxplot <- ggplot2::ggplot(indic_data, ggplot2::aes(x = full_name, y = scaled_value)) +
@@ -880,14 +859,14 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Socio-Territorial
 
     ## Subset for dimension B
-    indic_data <- IDEA_data$dataset[,.(indic_code = indic, scaled_value, dimension_code,component_code,component_value)] |>
+    indic_data <- IDEA_data$dataset[, .(indic_code = indic, scaled_value, dimension_code, component_code, component_value)] |>
       merge(reference_list$indic_dim, by = c("indic_code", "dimension_code", "component_code")) |>
       subset(dimension_code == "B") |>
       transform(full_name = paste0(indic_code, " - ", indic_name)) |>
       transform(full_name = sapply(full_name, FUN = wrapit, width = 75, USE.NAMES = FALSE)) |>
       transform(component = ifelse(component == "D\u00e9veloppement local \net \u00e9conomie circulaire",
-                                   yes = "D\u00e9veloppement local et \u00e9conomie circulaire",
-                                   no = component
+        yes = "D\u00e9veloppement local et \u00e9conomie circulaire",
+        no = component
       )) |>
       transform(indic_number = regmatches(indic_code, regexpr("[[:digit:]]+", indic_code))) |>
       transform(indic_number = as.numeric(indic_number)) |>
@@ -898,7 +877,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
 
     ## Estimating means to add on the boxplot
-    moys <- indic_data[,.(Mean = mean(scaled_value)), by = .(component,full_name, indic_code)]
+    moys <- indic_data[, .(Mean = mean(scaled_value)), by = .(component, full_name, indic_code)]
 
     ## Plotting indicators for dimension B
     indic_st_boxplot <- ggplot2::ggplot(indic_data, ggplot2::aes(x = full_name, y = scaled_value)) +
@@ -916,7 +895,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     ## Economique
 
     ## Subset for dimension C
-    indic_data <- IDEA_data$dataset[,.(indic_code = indic, scaled_value, dimension_code,component_code,component_value)] |>
+    indic_data <- IDEA_data$dataset[, .(indic_code = indic, scaled_value, dimension_code, component_code, component_value)] |>
       merge(reference_list$indic_dim, by = c("indic_code", "dimension_code", "component_code")) |>
       subset(dimension_code == "C") |>
       transform(full_name = paste0(indic_code, " - ", indic_name)) |>
@@ -928,7 +907,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       transform(component = factor(component, levels = unique(component)))
 
     ## Estimating means to add on the boxplot
-    moys <- indic_data[,.(Mean = mean(scaled_value)), by = .(component,full_name, indic_code)]
+    moys <- indic_data[, .(Mean = mean(scaled_value)), by = .(component, full_name, indic_code)]
 
     ## Plotting indicators for dimension C
     indic_ec_boxplot <- ggplot2::ggplot(indic_data, ggplot2::aes(x = full_name, y = scaled_value)) +

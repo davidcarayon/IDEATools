@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.1</span>
       </span>
     </div>
 
@@ -118,7 +118,6 @@
 </h1></div>
 <!-- badges: start -->
 
-<!-- badges: end -->
 <p>IDEATools est un package R dédié à la méthode IDEA4, visant à fournir aux utilisateurs des outils pour le traitement, l’automatisation et le reporting de diagnostics IDEA.</p>
 </div>
 <div class="section level1">
@@ -200,20 +199,21 @@
 <p>Voici un appel complet à la fonction <code><a href="reference/diag_idea.html">diag_idea()</a></code> avec toutes les possibilités de paramétrage :</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span><span class="va">input</span>,</span>
-<span>          <span class="va">output_directory</span>,</span>
-<span>          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>,<span class="st">"group"</span><span class="op">)</span>,</span>
-<span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span>,<span class="cn">NULL</span><span class="op">)</span>,</span>
-<span>          plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>,<span class="st">"trees"</span>,<span class="st">"radars"</span><span class="op">)</span>,</span>
-<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"docx"</span>,<span class="st">"xlsx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,</span>
-<span>          prefix <span class="op">=</span> <span class="st">"EA"</span>,</span>
-<span>          dpi <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>          append <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="va">output_directory</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"single"</span>, <span class="st">"group"</span><span class="op">)</span>,</span>
+<span>  export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>, <span class="st">"local"</span>, <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  plot_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dimensions"</span>, <span class="st">"trees"</span>, <span class="st">"radars"</span><span class="op">)</span>,</span>
+<span>  report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>, <span class="st">"docx"</span>, <span class="st">"xlsx"</span>, <span class="st">"pptx"</span><span class="op">)</span>,</span>
+<span>  prefix <span class="op">=</span> <span class="st">"EA"</span>,</span>
+<span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  append <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><em>Pour information, les utilisateurs les moins habitués à l’écosystème R peuvent utiliser les commandes suivantes (à condition d’utiliser RStudio) pour sélectionner les dossier/fichiers via une fenêtre en presse-bouton:</em></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire </span></span>
+<code class="sourceCode R"><span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Dans le cas d'un répertoire</span></span>
 <span><span class="co"># OU</span></span>
-<span><span class="va">input</span><span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/file-dialogs.html" class="external-link">selectFile</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span></span>
+<span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/file-dialogs.html" class="external-link">selectFile</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Si un seul calculateur</span></span>
 <span></span>
 <span><span class="va">output_directory</span> <span class="op">&lt;-</span> <span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/file-dialogs.html" class="external-link">selectDirectory</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>On distingue 3 grands types de diagnostics :</p>
@@ -222,13 +222,15 @@
 </h2>
 <p>En premier lieu, l’utilisateur peut avoir besoin d’un diagnostic pour une seule ferme. Prennons ici l’exemple d’utilisateur qui souhaite récupérer ses résultats pour sa ferme, mais uniquement ses arbres éclairés. Le code sera alors :</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span>input <span class="op">=</span> <span class="st">"chemin_calculateur"</span>,</span>
-<span>          output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
-<span>          type <span class="op">=</span> <span class="st">"single"</span>,</span>
-<span>          export_type <span class="op">=</span> <span class="st">"local"</span>,</span>
-<span>          prefix <span class="op">=</span> <span class="st">"MaFerme"</span>,</span>
-<span>          plot_choices <span class="op">=</span> <span class="st">"trees"</span>,</span>
-<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span></span>
+<span>  input <span class="op">=</span> <span class="st">"chemin_calculateur"</span>,</span>
+<span>  output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"single"</span>,</span>
+<span>  export_type <span class="op">=</span> <span class="st">"local"</span>,</span>
+<span>  prefix <span class="op">=</span> <span class="st">"MaFerme"</span>,</span>
+<span>  plot_choices <span class="op">=</span> <span class="st">"trees"</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="les-analyses-multi-individuelles">Les analyses multi-individuelles<a class="anchor" aria-label="anchor" href="#les-analyses-multi-individuelles"></a>
@@ -236,12 +238,14 @@
 <p>Ensuite, certains utilisateurs ont besoin de traiter plusieurs calculateurs en même temps.</p>
 <p>Ici par exemple, l’utilisateur n’a pas besoin des figures “brutes”, mais a juste besoin pour chaque exploitation d’un rapport au format word qu’il pourra commenter ainsi qu’une présentation powerpoint contenant toutes les figures et prête à projeter. Le code sera alors :</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span>input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
-<span>          output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
-<span>          type <span class="op">=</span> <span class="st">"single"</span>,</span>
-<span>          export_type <span class="op">=</span> <span class="st">"report"</span>,</span>
-<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"docx"</span>,<span class="st">"pptx"</span><span class="op">)</span>,</span>
-<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span></span>
+<span>  input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
+<span>  output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"single"</span>,</span>
+<span>  export_type <span class="op">=</span> <span class="st">"report"</span>,</span>
+<span>  report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"docx"</span>, <span class="st">"pptx"</span><span class="op">)</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="les-analyses-de-groupe">Les analyses de groupe<a class="anchor" aria-label="anchor" href="#les-analyses-de-groupe"></a>
@@ -249,20 +253,24 @@
 <p>Enfin, certains utilisateurs souhaitent traiter un ensemble de calculateurs en même temps et ont besoin d’avoir une vision globale sur le groupe.</p>
 <p>Dans cet exemple, l’utilisateur va donc demander à la fois des graphiques bruts, mais aussi des rapports prêts à être imprimés (PDF) ainsi qu’un support excel qu’il pourra re-traiter à sa guise pour son analyse de group. Le code sera alors :</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span>input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
-<span>          output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
-<span>          type <span class="op">=</span> <span class="st">"group"</span>,</span>
-<span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>,<span class="st">"local"</span><span class="op">)</span>,</span>
-<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>,<span class="st">"xlsx"</span><span class="op">)</span>,</span>
-<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span></span>
+<span>  input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
+<span>  output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"group"</span>,</span>
+<span>  export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>, <span class="st">"local"</span><span class="op">)</span>,</span>
+<span>  report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pdf"</span>, <span class="st">"xlsx"</span><span class="op">)</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Notons qu’il peut demander, en plus de son analyse de groupe, des rapports individuels qu’il pourra donner à chaque exploitation (par exemple au format Microsoft Word) :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span>input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
-<span>          output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
-<span>          type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>,<span class="st">"single"</span><span class="op">)</span>,</span>
-<span>          export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span><span class="op">)</span>,</span>
-<span>          report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"docx"</span><span class="op">)</span>,</span>
-<span>          quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/diag_idea.html">diag_idea</a></span><span class="op">(</span></span>
+<span>  input <span class="op">=</span> <span class="st">"chemin_vers_dossier"</span>,</span>
+<span>  output_directory <span class="op">=</span> <span class="st">"mes_resultats"</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"single"</span><span class="op">)</span>,</span>
+<span>  export_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span><span class="op">)</span>,</span>
+<span>  report_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"docx"</span><span class="op">)</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level1">
@@ -329,10 +337,10 @@ Quick Link
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-green.svg" alt="Lifecycle:stable"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.4.0-green.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.4.1-green.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
-<li><a href="https://github.com/davidcarayon/IDEATools/actions" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://zenodo.org/badge/latestdoi/251535041" class="external-link"><img src="https://zenodo.org/badge/251535041.svg" alt="DOI"></a></li>
+<li><a href="https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 

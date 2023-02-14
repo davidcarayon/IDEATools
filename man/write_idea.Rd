@@ -59,26 +59,16 @@ library(IDEATools)
 path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
 computed_data <- compute_idea(my_data)
-idea_plots <- plot_idea(computed_data)
+# Only plotting the radars as a minimal example
+idea_plots <- plot_idea(computed_data, choices = "radars") 
 # Find your temporary directory
 tempdir <- tempdir()
 
-\dontrun{
-# Export as raw plots to your tempdir.
+# Export as raw plots to your tempdir
 write_idea(idea_plots,
   output_directory = tempdir,
   type = "local",
   prefix = "myFarm",
-  dpi = 50
+  dpi = 20 # Can be much higher
 )
-
-# Export as xlsx reports to your tempdir.
-write_idea(idea_plots,
-  output_directory = tempdir,
-  prefix = "myFarm",
-  type = "report",
-  report_format = "xlsx",
-  dpi = 50
-)
-}
 }

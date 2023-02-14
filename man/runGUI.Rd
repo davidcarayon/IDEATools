@@ -16,7 +16,7 @@ This function loads a graphical user interface (GUI) to use IDEATools.
 library(IDEATools)
 
 ## Only run this example in interactive R sessions
- if (interactive()) {
-runGUI()
+if (interactive()) {
+  runGUI()
 }
 }

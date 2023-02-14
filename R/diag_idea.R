@@ -49,7 +49,6 @@
 #' )
 #' }
 diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "pdf", prefix = NULL, dpi = 320, append = FALSE, quiet = FALSE) {
-
   ## Estimating total duration
   global_start <- Sys.time()
 
@@ -67,7 +66,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
   # Individual analysis -----------------------------------------------------
   if (any(type == "single") & input_type == "file") {
-
     ## Printing starting info
     if (!quiet) {
       message("D\u00e9but du diagnostic individuel IDEA4")
@@ -90,7 +88,7 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     ## If the first pipeline fails, try the old_idea one
     if (any(class(test_version) == "try-error")) {
       if (!quiet) {
-        message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(",basename(input),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
+        message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(", basename(input), ")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
       }
 
       ## Reading items (and estimating duration)
@@ -106,7 +104,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
         message(paste0("Calculateur bien import\u00e9 via `old_idea()` et les 53 indicateurs ont bien \u00e9t\u00e9 calcul\u00e9s (", duration, "s)\n"))
       }
     } else {
-
       ## Reading items (and estimating duration)
       start <- Sys.time()
 
@@ -176,7 +173,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
   # Multi-individual analysis -----------------------------------------------
   if ((any(type == "single") & input_type == "list_files") | (any(type == "single") & input_type == "directory")) {
-
     ## Creating the iterating vector according to the input
     if (input_type == "list_files") {
       files_iter <- input
@@ -210,7 +206,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Starting a for loop for each file
     for (i in files_iter) {
-
       ## Try the first pipeline
       test_version <- try(read_idea(i), silent = FALSE)
 
@@ -220,13 +215,12 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
+          message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(", basename(i), ")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
         }
 
         # Old alternative
         IDEA_data <- old_idea(i)
       } else {
-
         ## Full computation pipeline
         IDEA_items <- read_idea(i)
         IDEA_data <- compute_idea(IDEA_items)
@@ -264,15 +258,13 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       }
 
       return(return_list)
-
     }
   }
 
 
   # Group analysis ----------------------------------------------------------
 
-  if ((any(type %in%  c("group","group_reference")) & input_type == "list_files") | (any(type %in%  c("group","group_reference")) & input_type == "directory")) {
-
+  if ((any(type %in% c("group", "group_reference")) & input_type == "list_files") | (any(type %in% c("group", "group_reference")) & input_type == "directory")) {
     ## Creating the iterating vector according to the input
     if (input_type == "list_files") {
       files_iter <- input
@@ -304,7 +296,6 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
 
     ## Starting a for loop for each file with read > compute
     for (i in files_iter) {
-
       # Duration estimation
       start <- Sys.time()
 
@@ -317,13 +308,12 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       ## If the first pipeline fails, try the old_idea one
       if (any(class(test_version) == "try-error")) {
         if (!quiet) {
-          message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(",basename(i),")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
+          message(paste0("Erreur dans l'ex\u00e9cution de la fonction `read_idea(", basename(i), ")`. Tentative de r\u00e9cup\u00e9ration des donn\u00e9es via un algorithme de secours (old_idea) si votre calculateur est juste trop ancien.\n "))
         }
 
         # Old alternative
         IDEA_data <- old_idea(i)
       } else {
-
         ## Full computation pipeline
         IDEA_items <- read_idea(i)
         IDEA_data <- compute_idea(IDEA_items)
@@ -348,7 +338,9 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
       }
     }
 
-    if(sum(duplicated(group_list$metadata$MTD_01)) > 1) {stop("farm ids are duplicated, please use a distict id for each farm")}
+    if (sum(duplicated(group_list$metadata$MTD_01)) > 1) {
+      stop("farm ids are duplicated, please use a distict id for each farm")
+    }
 
     ## printing state
     if (!quiet) {
@@ -362,23 +354,23 @@ diag_idea <- function(input, output_directory, type = "single", export_type = c(
     # Aggregating results for properties
     group_list$nodes <- list(
       "Robustesse" = lapply(group_list$nodes, FUN = function(x) x[[1]]) |> data.table::rbindlist(),
-      "Capacite" =  lapply(group_list$nodes, FUN = function(x) x[[2]]) |> data.table::rbindlist(),
-      "Autonomie" =  lapply(group_list$nodes, FUN = function(x) x[[3]]) |> data.table::rbindlist(),
+      "Capacite" = lapply(group_list$nodes, FUN = function(x) x[[2]]) |> data.table::rbindlist(),
+      "Autonomie" = lapply(group_list$nodes, FUN = function(x) x[[3]]) |> data.table::rbindlist(),
       "Responsabilite" = lapply(group_list$nodes, FUN = function(x) x[[4]]) |> data.table::rbindlist(),
-      "Ancrage" =  lapply(group_list$nodes, FUN = function(x) x[[5]]) |> data.table::rbindlist(),
-      "Global" =  lapply(group_list$nodes, FUN = function(x) x[[6]]) |> data.table::rbindlist()
+      "Ancrage" = lapply(group_list$nodes, FUN = function(x) x[[5]]) |> data.table::rbindlist(),
+      "Global" = lapply(group_list$nodes, FUN = function(x) x[[6]]) |> data.table::rbindlist()
     )
 
     ## Applying a special class to the list for plot_idea to understand it's a group analysis
     class(group_list) <- c(class(group_list), "IDEA_group_data")
 
-    group_list$nodes$Global[,index :=  NULL]
+    group_list$nodes$Global[, index := NULL]
 
     ## Plotting
     IDEA_group_plots <- plot_idea(group_list)
 
     ## Special class if the output is "reference"
-    if(type == "group_reference") {
+    if (type == "group_reference") {
       class(IDEA_group_plots) <- c(class(IDEA_group_plots), "IDEA_group_plots_ref")
     }
 

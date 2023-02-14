@@ -39,33 +39,24 @@
 #' path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 #' my_data <- read_idea(path)
 #' computed_data <- compute_idea(my_data)
-#' idea_plots <- plot_idea(computed_data)
+#' # Only plotting the radars as a minimal example
+#' idea_plots <- plot_idea(computed_data, choices = "radars") 
 #' # Find your temporary directory
 #' tempdir <- tempdir()
 #'
-#' \dontrun{
-#' # Export as raw plots to your tempdir.
+#' # Export as raw plots to your tempdir
 #' write_idea(idea_plots,
 #'   output_directory = tempdir,
 #'   type = "local",
 #'   prefix = "myFarm",
-#'   dpi = 50
+#'   dpi = 20 # Can be much higher
 #' )
-#'
-#' # Export as xlsx reports to your tempdir.
-#' write_idea(idea_plots,
-#'   output_directory = tempdir,
-#'   prefix = "myFarm",
-#'   type = "report",
-#'   report_format = "xlsx",
-#'   dpi = 50
-#' )
-#' }
 write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", append = FALSE, input_file_append = NULL, quiet = FALSE) {
-
-  if(append == TRUE) {
+  if (append == TRUE) {
     filetype <- tools::file_ext(input_file_append)
-    if(filetype != "xlsx") {stop("To append the results to the original file, it should be in xlsx format.")}
+    if (filetype != "xlsx") {
+      stop("To append the results to the original file, it should be in xlsx format.")
+    }
   }
 
   # Checks ------------------------------------------------------------------
@@ -74,9 +65,10 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
   # Individual analysis --------------------------------------------------------
   if (any(class(IDEA_plots) == "IDEA_plots")) {
-
     # If prefix is null, assign MTD_01
-    if(is.null(prefix)) {prefix = IDEA_plots$data$metadata$MTD_01}
+    if (is.null(prefix)) {
+      prefix <- IDEA_plots$data$metadata$MTD_01
+    }
 
     # Creating Global output directory
     output_directory <- file.path(output_directory, Sys.Date(), prefix)
@@ -111,27 +103,30 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(dimension_plots), plot = dimension_plots) |>
           transform(plotname = ifelse(plotname == "plot_dimensions", "Dimensions",
-                                      ifelse(plotname == "plot_components", "Composantes",
-                                             ifelse(plotname == "plot_components_polarised", "Composantes polaris\u00e9es",
-                                                    ifelse(plotname == "plot_indic_st", "Indicateurs Socio-Territoriaux",
-                                                           ifelse(plotname == "plot_indic_ec", "Indicateurs Economiques",
-                                                                  ifelse(plotname == "plot_indic_ae", "Indicateurs Agro\u00e9cologiques", plotname))))))) |>
+            ifelse(plotname == "plot_components", "Composantes",
+              ifelse(plotname == "plot_components_polarised", "Composantes polaris\u00e9es",
+                ifelse(plotname == "plot_indic_st", "Indicateurs Socio-Territoriaux",
+                  ifelse(plotname == "plot_indic_ec", "Indicateurs Economiques",
+                    ifelse(plotname == "plot_indic_ae", "Indicateurs Agro\u00e9cologiques", plotname)
+                  )
+                )
+              )
+            )
+          )) |>
           transform(prefix = prefix) |>
           transform(
             widths = c(9.11, 11, 8, 10.69, 10.69, 10.69),
             heights = c(5.6, 11.5, 8, 12, 13.5, 9)
           ) |>
           transform(folder = dimension_directory) |>
-          transform(path = file.path(dimension_directory, paste0(prefix,"_",plotname))) |>
-          transform(png_path = paste0(path,".png")) |>
+          transform(path = file.path(dimension_directory, paste0(prefix, "_", plotname))) |>
+          transform(png_path = paste0(path, ".png")) |>
           transform(dpi = dpi)
 
         # Iterating
-        for(i in 1:nrow(tab_res)) {
-
-          tab <- tab_res[i,]
+        for (i in 1:nrow(tab_res)) {
+          tab <- tab_res[i, ]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, dpi = tab$dpi, width = tab$widths, height = tab$heights)
-
         }
 
         ## Duration estimation
@@ -159,27 +154,29 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(radar_plots), plot = radar_plots) |>
           transform(plotname = ifelse(plotname == "radar_Capacite", "Capacit\u00e9 productive et reproductive de biens et de services",
-                                      ifelse(plotname == "radar_Ancrage", "Ancrage Territorial",
-                                             ifelse(plotname == "radar_Autonomie", "Autonomie",
-                                                    ifelse(plotname == "radar_Robustesse", "Robustesse",
-                                                           ifelse(plotname == "radar_Responsabilite", "Responsabilit\u00e9 globale", plotname)))))) |>
+            ifelse(plotname == "radar_Ancrage", "Ancrage Territorial",
+              ifelse(plotname == "radar_Autonomie", "Autonomie",
+                ifelse(plotname == "radar_Robustesse", "Robustesse",
+                  ifelse(plotname == "radar_Responsabilite", "Responsabilit\u00e9 globale", plotname)
+                )
+              )
+            )
+          )) |>
           transform(
             widths = 16.1,
             heights = 7.61
           ) |>
           transform(folder = radar_directory) |>
-          transform(path = file.path(radar_directory, paste0(prefix,"_",plotname))) |>
-          transform(png_path = paste0(path,".png")) |>
+          transform(path = file.path(radar_directory, paste0(prefix, "_", plotname))) |>
+          transform(png_path = paste0(path, ".png")) |>
           transform(dpi = dpi)
 
 
 
         # Iterating
-        for(i in 1:nrow(tab_res)) {
-
-          tab <- tab_res[i,]
+        for (i in 1:nrow(tab_res)) {
+          tab <- tab_res[i, ]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, dpi = tab$dpi, width = tab$widths, height = tab$heights)
-
         }
 
         ## Duration estimation
@@ -210,22 +207,25 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         tab_res <- tibble::tibble(name = names(tree_plots), itemlist = tree_plots) |>
           transform(folder = tree_directory) |>
           transform(plotname = ifelse(name == "Capacite", "Capacit\u00e9 productive et reproductive de biens et de services",
-                                      ifelse(name == "Ancrage", "Ancrage Territorial",
-                                             ifelse(name == "Autonomie", "Autonomie",
-                                                    ifelse(name == "Robustesse", "Robustesse",
-                                                           ifelse(name == "Responsabilite", "Responsabilit\u00e9 globale",
-                                                                  ifelse(name == "Global", "Arbre global", name))))))
-          ) |>
+            ifelse(name == "Ancrage", "Ancrage Territorial",
+              ifelse(name == "Autonomie", "Autonomie",
+                ifelse(name == "Robustesse", "Robustesse",
+                  ifelse(name == "Responsabilite", "Responsabilit\u00e9 globale",
+                    ifelse(name == "Global", "Arbre global", name)
+                  )
+                )
+              )
+            )
+          )) |>
           transform(path = file.path(tree_directory, paste0(prefix, "_", plotname))) |>
           transform(
-            png_path = paste0(path,".png"),
-            pdf_path = paste0(path,".pdf")
-          )|>
+            png_path = paste0(path, ".png"),
+            pdf_path = paste0(path, ".pdf")
+          ) |>
           transform(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
         export_heuristic_map <- function(prop, itemlist, folder, png_path, pdf_path) {
-
           ## List with dimension of trees
           heuristic_res <- list(
             Robustesse = c(40, 26),
@@ -247,52 +247,40 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Move the PNG file to the appropriate folder
 
-          if(prop == "Responsabilite") {
-
+          if (prop == "Responsabilite") {
             exported_name <- basename(list.files(".", pattern = "Respons"))
-            file.copy(exported_name,png_path, overwrite = TRUE)
+            file.copy(exported_name, png_path, overwrite = TRUE)
             file.remove(exported_name)
-
-          } else if(prop == "Capacite") {
-
+          } else if (prop == "Capacite") {
             exported_name <- basename(list.files(".", pattern = "Capacit"))
-            file.copy(exported_name,png_path, overwrite = TRUE)
+            file.copy(exported_name, png_path, overwrite = TRUE)
             file.remove(exported_name)
-
           } else {
-
-            file.copy(basename(png_path),png_path, overwrite = TRUE)
+            file.copy(basename(png_path), png_path, overwrite = TRUE)
             file.remove(basename(png_path))
-
           }
-
-
         }
 
         # Iterating
-        for(i in 1:nrow(tab_res)) {
-
-          tab <- tab_res[i,]
+        for (i in 1:nrow(tab_res)) {
+          tab <- tab_res[i, ]
 
           suppressWarnings(
             export_heuristic_map(prop = tab$name, itemlist = tab$itemlist[[1]], tab$folder, tab$png_path, tab$pdf_path)
           )
         }
-      }
-
-      ## Duration estimation
+              ## Duration estimation
       end <- Sys.time()
       duration <- round(difftime(end, start, units = "secs"))
 
       if (!quiet) (message(paste0("Les arbres \u00e9clair\u00e9s ont \u00e9t\u00e9 export\u00e9s \u00e0 l'adresse '", tree_directory, "' (", duration, "s)")))
+      }
     }
-
 
     # If export is "report" ------------------------------------------------------
 
     if (any(type == "report")) {
-
-      rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","gt"), reason = "to produce reports`")
+      rlang::check_installed(c("rmarkdown", "knitr", "openxlsx", "officedown", "gt"), reason = "to produce reports`")
 
       # Reports requires all 3 types of plots
       if (length(names(IDEA_plots)) < 4) (stop("Reporting functions requires that all three kind of plots are drawn in previous `plots_idea()` call"))
@@ -308,12 +296,11 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
       ### PDF reports
       if (any(report_format == "pdf")) {
-
         if (!quiet) (message("Production du rapport PDF..."))
 
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","single", "pdf_report.Rmd")
+        report_path <- file.path(knitting_dir, "report", "single", "pdf_report.Rmd")
 
         # Defining params
         params <- list(
@@ -325,11 +312,12 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         # Render in new env, in knitting dir to avoid full paths
         suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE))
+          output_file = output_file,
+          params = params,
+          envir = new.env(parent = globalenv()), quiet = TRUE
+        ))
 
-        file.copy(file.path(dirname(report_path),output_file), file.path(output_directory,output_file))
+        file.copy(file.path(dirname(report_path), output_file), file.path(output_directory, output_file))
 
         end <- Sys.time()
         duration <- round(difftime(end, start, units = "secs"))
@@ -349,7 +337,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","single", "docx_report.Rmd")
+        report_path <- file.path(knitting_dir, "report", "single", "docx_report.Rmd")
 
         # Defining params
         params <- list(
@@ -363,9 +351,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
+          output_file = output_file, output_dir = output_directory,
+          params = params,
+          envir = new.env(parent = globalenv()), quiet = TRUE
         ))
 
         end <- Sys.time()
@@ -384,7 +372,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         start <- Sys.time()
 
-        report_path <- file.path(knitting_dir, "report","single", "pptx_report.Rmd")
+        report_path <- file.path(knitting_dir, "report", "single", "pptx_report.Rmd")
 
         # Defining params
         params <- list(
@@ -398,9 +386,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
         # Render in new env
         suppressWarnings(rmarkdown::render(report_path,
-                                           output_file = output_file, output_dir = output_directory,
-                                           params = params,
-                                           envir = new.env(parent = globalenv()), quiet = TRUE
+          output_file = output_file, output_dir = output_directory,
+          params = params,
+          envir = new.env(parent = globalenv()), quiet = TRUE
         ))
 
 
@@ -449,7 +437,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
   # Group analysis ----------------------------------------------------------
 
   if (any(class(IDEA_plots) == "IDEA_group_plots")) {
-
     ## Number of farms
     n_farm <- nrow(IDEA_plots$data$metadata)
 
@@ -461,10 +448,8 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
     }
 
     if (any(class(IDEA_plots) == "IDEA_group_plots_ref")) {
-
-
       ## Check format
-      if (any(type == "report") & any(report_format %in% c("pptx","docx"))) {
+      if (any(type == "report") & any(report_format %in% c("pptx", "docx"))) {
         stop("Reference output can only be a pdf or xlsx report")
       }
 
@@ -487,20 +472,25 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         ## Creating a table with all paths for ggsave
         tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
           subset(plotname != "data") |>
-          subset(!plotname %in% c("heatmap","dimensions_histogram")) |>
+          subset(!plotname %in% c("heatmap", "dimensions_histogram")) |>
           transform(plotname = ifelse(plotname == "freq_plot", "Fr\u00e9quence_propri\u00e9t\u00e9s",
-                                      ifelse(plotname == "dimensions_boxplot", "Distribution_dimensions",
-                                             ifelse(plotname == "components_boxplot", "Distribution_composantes",
-                                                    ifelse(plotname == "indic_ae_boxplot", "Distribution_indicateurs_agroecologiques",
-                                                           ifelse(plotname == "indic_st_boxplot", "Distribution_indicateurs_socio_territoriaux",
-                                                                  ifelse(plotname == "indic_ec_boxplot", "Distribution_indicateurs_economiques", plotname))))))) |>
+            ifelse(plotname == "dimensions_boxplot", "Distribution_dimensions",
+              ifelse(plotname == "components_boxplot", "Distribution_composantes",
+                ifelse(plotname == "indic_ae_boxplot", "Distribution_indicateurs_agroecologiques",
+                  ifelse(plotname == "indic_st_boxplot", "Distribution_indicateurs_socio_territoriaux",
+                    ifelse(plotname == "indic_ec_boxplot", "Distribution_indicateurs_economiques", plotname)
+                  )
+                )
+              )
+            )
+          )) |>
           transform(
             widths = c(10, 7.95, 11.3, 11.9, 11.9, 11.9),
             heights = c(5, 6.91, 8.94, 12.5, 14, 11)
           ) |>
           transform(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
           transform(path = file.path(group_directory, plotname)) |>
-          transform(png_path = paste0(path,".png")) |>
+          transform(png_path = paste0(path, ".png")) |>
           transform(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
@@ -509,18 +499,15 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         }
 
         # Iterating
-        for(i in 1:nrow(tab_res)) {
-
-          tab <- tab_res[i,]
+        for (i in 1:nrow(tab_res)) {
+          tab <- tab_res[i, ]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
-
         }
       }
 
 
       if (any(type == "report")) {
-
-        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr","gt"), reason = "to produce reports`")
+        rlang::check_installed(c("rmarkdown", "knitr", "openxlsx", "officedown", "knitr", "gt"), reason = "to produce reports`")
 
         ## Creating output directory
         if (!dir.exists(output_directory)) {
@@ -546,7 +533,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           start <- Sys.time()
 
           # Using the HTML report, converted to PDF
-          report_path <- file.path(knitting_dir, "report","group", "pdf_group_report_ref.Rmd")
+          report_path <- file.path(knitting_dir, "report", "group", "pdf_group_report_ref.Rmd")
 
           # Defining params
           params <- list(
@@ -558,11 +545,12 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Render in new env, in knitting dir to avoid full paths
           suppressWarnings(rmarkdown::render(report_path,
-                                             output_file = output_file,
-                                             params = params,
-                                             envir = new.env(parent = globalenv()), quiet = TRUE))
+            output_file = output_file,
+            params = params,
+            envir = new.env(parent = globalenv()), quiet = TRUE
+          ))
 
-          file.copy(file.path(dirname(report_path),output_file), file.path(output_directory,output_file))
+          file.copy(file.path(dirname(report_path), output_file), file.path(output_directory, output_file))
 
           end <- Sys.time()
           duration <- round(difftime(end, start, units = "secs"))
@@ -598,13 +586,10 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
             message(paste0("Le rapport a \u00e9t\u00e9 export\u00e9 \u00e0 l'adresse '", file.path(output_directory, output_file), "' (", duration, "s)"))
           }
         }
-
-
       }
 
       # End of ref pipeline
     } else {
-
       ## Normal pipeline
 
       # If type is "local" --------------------------------------------------------
@@ -629,20 +614,27 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         tab_res <- tibble::tibble(plotname = names(IDEA_plots), plot = IDEA_plots) |>
           subset(plotname != "data") |>
           transform(plotname = ifelse(plotname == "heatmap", "Matrice_propri\u00e9t\u00e9s",
-                           ifelse(plotname == "freq_plot", "Fr\u00e9quence_propri\u00e9t\u00e9s",
-                                  ifelse(plotname == "dimensions_histogram", "Histogramme_dimensions",
-                                         ifelse(plotname == "dimensions_boxplot", "Distribution_dimensions",
-                                                ifelse(plotname == "components_boxplot", "Distribution_composantes",
-                                                       ifelse(plotname == "indic_ae_boxplot", "Distribution_indicateurs_agroecologiques",
-                                                              ifelse(plotname == "indic_st_boxplot", "Distribution_indicateurs_socio_territoriaux",
-                                                                     ifelse(plotname == "indic_ec_boxplot", "Distribution_indicateurs_economiques", plotname))))))))) |>
+            ifelse(plotname == "freq_plot", "Fr\u00e9quence_propri\u00e9t\u00e9s",
+              ifelse(plotname == "dimensions_histogram", "Histogramme_dimensions",
+                ifelse(plotname == "dimensions_boxplot", "Distribution_dimensions",
+                  ifelse(plotname == "components_boxplot", "Distribution_composantes",
+                    ifelse(plotname == "indic_ae_boxplot", "Distribution_indicateurs_agroecologiques",
+                      ifelse(plotname == "indic_st_boxplot", "Distribution_indicateurs_socio_territoriaux",
+                        ifelse(plotname == "indic_ec_boxplot", "Distribution_indicateurs_economiques", plotname)
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )) |>
           transform(
-            widths = c(10.4,10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
-            heights = c(6.82,5, 8.61, 6.91, 8.94, 12.5, 14, 11)
+            widths = c(10.4, 10, 14.5, 7.95, 11.3, 11.9, 11.9, 11.9),
+            heights = c(6.82, 5, 8.61, 6.91, 8.94, 12.5, 14, 11)
           ) |>
           transform(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>
           transform(path = file.path(group_directory, plotname)) |>
-          transform(png_path = paste0(path,".png")) |>
+          transform(png_path = paste0(path, ".png")) |>
           transform(dpi = dpi)
 
         ## Custom function to iterate (faster than for loop)
@@ -651,11 +643,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
         }
 
         # Iterating
-        for(i in 1:nrow(tab_res)) {
-
-          tab <- tab_res[i,]
+        for (i in 1:nrow(tab_res)) {
+          tab <- tab_res[i, ]
           ggplot2::ggsave(tab$plot[[1]], filename = tab$png_path, width = tab$widths, height = tab$heights, dpi = tab$dpi)
-
         }
 
 
@@ -671,8 +661,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
       # If export is "report" -----------------------------------------------------
 
       if (any(type == "report")) {
-
-        rlang::check_installed(c("rmarkdown","knitr","openxlsx","officedown","knitr","gt"), reason = "to produce reports`")
+        rlang::check_installed(c("rmarkdown", "knitr", "openxlsx", "officedown", "knitr", "gt"), reason = "to produce reports`")
 
         ## Creating output directory
         if (!dir.exists(output_directory)) {
@@ -699,7 +688,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           start <- Sys.time()
 
           # Using the HTML report, converted to PDF
-          report_path <- file.path(knitting_dir, "report","group", "pdf_group_report.Rmd")
+          report_path <- file.path(knitting_dir, "report", "group", "pdf_group_report.Rmd")
 
           # Defining params
           params <- list(
@@ -711,11 +700,12 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Render in new env, in knitting dir to avoid full paths
           suppressWarnings(rmarkdown::render(report_path,
-                                             output_file = output_file,
-                                             params = params,
-                                             envir = new.env(parent = globalenv()), quiet = TRUE))
+            output_file = output_file,
+            params = params,
+            envir = new.env(parent = globalenv()), quiet = TRUE
+          ))
 
-          file.copy(file.path(dirname(report_path),output_file), file.path(output_directory,output_file))
+          file.copy(file.path(dirname(report_path), output_file), file.path(output_directory, output_file))
 
           # Actualise for printing
           output_file <- paste0("Rapport_groupe_", n_farm, ".pdf")
@@ -737,7 +727,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           start <- Sys.time()
 
-          report_path <- file.path(knitting_dir, "report","group", "docx_group_report.Rmd")
+          report_path <- file.path(knitting_dir, "report", "group", "docx_group_report.Rmd")
 
           # Defining params
           params <- list(
@@ -750,9 +740,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Render in new env
           suppressWarnings(rmarkdown::render(report_path,
-                                             output_file = output_file, output_dir = output_directory,
-                                             params = params,
-                                             envir = new.env(parent = globalenv()), quiet = TRUE
+            output_file = output_file, output_dir = output_directory,
+            params = params,
+            envir = new.env(parent = globalenv()), quiet = TRUE
           ))
 
           end <- Sys.time()
@@ -771,7 +761,7 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           start <- Sys.time()
 
-          report_path <- file.path(knitting_dir, "report","group", "pptx_group_report.Rmd")
+          report_path <- file.path(knitting_dir, "report", "group", "pptx_group_report.Rmd")
 
           # Defining params
           params <- list(
@@ -784,9 +774,9 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
 
           # Render in new env
           suppressWarnings(rmarkdown::render(report_path,
-                                             output_file = output_file, output_dir = output_directory,
-                                             params = params,
-                                             envir = new.env(parent = globalenv()), quiet = TRUE
+            output_file = output_file, output_dir = output_directory,
+            params = params,
+            envir = new.env(parent = globalenv()), quiet = TRUE
           ))
 
           end <- Sys.time()
@@ -824,10 +814,6 @@ write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type =
           }
         }
       }
-
     }
-
-
-
   }
 }

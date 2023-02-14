@@ -8,7 +8,6 @@
 #' @export
 #' @importFrom ggplot2 theme_grey theme element_line element_rect element_text margin element_blank unit rel
 theme_idea <- function(base_size = 15, base_family = "") {
-
   # colors
   blue <- "#2c3e50"
   green <- "#18BC9C"
@@ -73,4 +72,3 @@ theme_idea <- function(base_size = 15, base_family = "") {
       complete = TRUE
     )
 }
-

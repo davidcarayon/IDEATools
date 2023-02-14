@@ -31,7 +31,6 @@
 #' computed_data <- old_idea(input)
 #' }
 old_idea <- function(input) {
-
   # Standardizing the input encoding
   Encoding(input) <- "UTF-8"
 
@@ -84,7 +83,6 @@ old_idea <- function(input) {
 
   ## Re-scales the component value according to the max authorized value
   ScaleComponent <- function(compo, value) {
-
     max <- unique(reference_list$indic_dim[reference_list$indic_dim$component_code == compo, "component_max"]) |>
       unlist(use.names = FALSE)
 
@@ -97,7 +95,9 @@ old_idea <- function(input) {
 
   ## Calculates the dimension score based on components
   Component2Dimension <- function(df) {
-    df <- df |> subset(select = c("component", "component_value")) |> unique()
+    df <- df |>
+      subset(select = c("component", "component_value")) |>
+      unique()
     df <- sum(df$component_value, na.rm = TRUE)
   }
 
@@ -109,19 +109,18 @@ old_idea <- function(input) {
     INT <- data$INT
     FAV <- data$FAV
 
-    vals <-  stats::na.omit(c(TDEF, DEF, INT, FAV))
+    vals <- stats::na.omit(c(TDEF, DEF, INT, FAV))
 
     if (length(vals) == 4) {
       res <- cut(score, breaks = c(-Inf, DEF, INT, FAV, Inf), labels = c("tr\u00e8s d\u00e9favorable", "d\u00e9favorable", "interm\u00e9diaire", "favorable"), right = FALSE)
-
     }
 
     if (length(vals) == 3) {
-      res <- cut(score, breaks = c(-Inf,INT, FAV,Inf), labels = c("d\u00e9favorable", "interm\u00e9diaire", "favorable"),right = FALSE)
+      res <- cut(score, breaks = c(-Inf, INT, FAV, Inf), labels = c("d\u00e9favorable", "interm\u00e9diaire", "favorable"), right = FALSE)
     }
 
     if (length(vals) == 2) {
-      res <- cut(score, breaks = c(-Inf, FAV, Inf), labels = c("interm\u00e9diaire", "favorable"),right = FALSE)
+      res <- cut(score, breaks = c(-Inf, FAV, Inf), labels = c("interm\u00e9diaire", "favorable"), right = FALSE)
     }
 
     return(res)
@@ -130,9 +129,9 @@ old_idea <- function(input) {
   # Reading metadata --------------------------------------------------------
 
   ## Extract the appropriate sheet
-  saisie_et_calc <- suppressMessages(as.data.frame(readxl::read_excel(input, sheet = "Saisie et Calculateur")[,1:6]))
+  saisie_et_calc <- suppressMessages(as.data.frame(readxl::read_excel(input, sheet = "Saisie et Calculateur")[, 1:6]))
 
-  names(saisie_et_calc)[1] = "donnees_exploit"
+  names(saisie_et_calc)[1] <- "donnees_exploit"
 
   ### Manually defining metadata (will potentially fail for some of them)
   metadata <- list(MTD_00 = NA)
@@ -143,8 +142,8 @@ old_idea <- function(input) {
   metadata$MTD_05 <- NA
   metadata$MTD_06 <- NA
   metadata$MTD_07 <- NA
-  metadata$MTD_08 <- subset(saisie_et_calc, donnees_exploit == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)")[1,6]
-  metadata$MTD_09 <- subset(saisie_et_calc, donnees_exploit == "EBE retenu IDEA")[1,6]
+  metadata$MTD_08 <- subset(saisie_et_calc, donnees_exploit == "Capital hors foncier: actif net total - valeur des terres (dans immo. corporelles)")[1, 6]
+  metadata$MTD_09 <- subset(saisie_et_calc, donnees_exploit == "EBE retenu IDEA")[1, 6]
   metadata$MTD_10 <- NA
   metadata$MTD_11 <- as.character(saisie_et_calc[6, 2])
   metadata$MTD_12 <- NA
@@ -153,7 +152,7 @@ old_idea <- function(input) {
     as.Date(origin = "1900-01-01") |>
     sub(pattern = "\\-.*", replacement = "") |>
     as.numeric()
-  metadata$MTD_14 <- subset(saisie_et_calc, donnees_exploit == "Pr\u00e9sence d'\u00e9levage :")[1,2]
+  metadata$MTD_14 <- subset(saisie_et_calc, donnees_exploit == "Pr\u00e9sence d'\u00e9levage :")[1, 2]
   metadata$MTD_15 <- NA
   metadata$MTD_16 <- NA
 
@@ -179,7 +178,7 @@ old_idea <- function(input) {
   if (metadata$MTD_01 %in% c("0", NA)) {
     file_name <- tools::file_path_sans_ext(basename(input))
     file_name_short <- substr(file_name, start = 1, stop = 10) # Limit to 10
-    metadata$MTD_01 <- gsub(x = file_name_short, pattern = " ",replacement = "_")
+    metadata$MTD_01 <- gsub(x = file_name_short, pattern = " ", replacement = "_")
   }
 
   # Making sure metadata is of right format and cleaned.
@@ -206,12 +205,12 @@ old_idea <- function(input) {
   ## Agroecologie
 
   ## Label
-  AE_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agro\u00e9cologique")[,2] |>
-                               na.omit()) |> unlist(use.names = FALSE)
+  AE_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agro\u00e9cologique")[, 2] |>
+    na.omit()) |> unlist(use.names = FALSE)
 
   ## Value
   AE_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension agro\u00e9cologique"))
-  AE_val <- AE_val[!is.na(AE_val[, 8]), ][seq(2, 38, 2), ][, 8] |> unlist(use.names=FALSE)
+  AE_val <- AE_val[!is.na(AE_val[, 8]), ][seq(2, 38, 2), ][, 8] |> unlist(use.names = FALSE)
 
   ## Error if not complete
   if (length(AE_val) != 19) (stop("The algorithm expects 19 indicators in the 'Dimension agro\u00e9cologique' sheet"))
@@ -221,12 +220,12 @@ old_idea <- function(input) {
   ## Socio-territorial
 
   ## Label
-  ST_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale")[,2] |>
-                               na.omit()) |> unlist(use.names = FALSE)
+  ST_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale")[, 2] |>
+    na.omit()) |> unlist(use.names = FALSE)
 
   ## Value
   ST_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension socio-territoriale"))
-  ST_val <- ST_val[!is.na(ST_val[, 8]), ][seq(2, 46, 2), ][, 8] |> unlist(use.names=FALSE)
+  ST_val <- ST_val[!is.na(ST_val[, 8]), ][seq(2, 46, 2), ][, 8] |> unlist(use.names = FALSE)
 
   ## Error if not complete
   if (length(ST_val) != 23) (stop("The algorithm expects 23 indicators in the 'Dimension socio-territoriale' sheet"))
@@ -240,12 +239,12 @@ old_idea <- function(input) {
 
 
   ## Label
-  EC_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension \u00e9conomique")[,2] |>
-                               na.omit()) |> unlist(use.names = FALSE)
+  EC_lab <- suppressMessages(readxl::read_excel(input, sheet = "Dimension \u00e9conomique")[, 2] |>
+    na.omit()) |> unlist(use.names = FALSE)
 
   ## Value
   EC_val <- suppressMessages(readxl::read_excel(input, sheet = "Dimension \u00e9conomique"))
-  EC_val <- EC_val[!is.na(EC_val[, 7]), ][seq(2, 22, 2), ][, 7] |> unlist(use.names=FALSE)
+  EC_val <- EC_val[!is.na(EC_val[, 7]), ][seq(2, 22, 2), ][, 7] |> unlist(use.names = FALSE)
 
   ## Error if not complete
   if (length(EC_val) != 11) (stop("The algorithm expects 11 indicators in the 'Dimension \u00e9conomique' sheet"))
@@ -263,7 +262,7 @@ old_idea <- function(input) {
   rbind_data[, unscaled_value := round(unscaled_value + 1e-10, 0)]
 
   data_dt_with_indic_dim <- rbind_data[reference_list[["indic_dim"]], on = c("indic" = "indic_code")]
-  data_dt_grouped_by_component_code <- data_dt_with_indic_dim[, .(indic, unscaled_value, scaled_value, dimension, component,dimension_code), by = component_code]
+  data_dt_grouped_by_component_code <- data_dt_with_indic_dim[, .(indic, unscaled_value, scaled_value, dimension, component, dimension_code), by = component_code]
   data_dt_grouped_by_component_code[, component_value := sum(scaled_value, na.rm = TRUE), by = component_code]
   data_dt_grouped_by_component_code[, component_value := mapply(component_code, component_value, FUN = ScaleComponent)]
 
@@ -271,13 +270,13 @@ old_idea <- function(input) {
   data_dt_grouped_by_dimension[, dimension_value := lapply(data, FUN = Component2Dimension)]
   data_dt_unnested <- data_dt_grouped_by_dimension[, c("data") := NULL]
 
-  computed_dimensions <- data_dt_grouped_by_component_code[data_dt_unnested, on = "dimension"][,.(indic, unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value)]
+  computed_dimensions <- data_dt_grouped_by_component_code[data_dt_unnested, on = "dimension"][, .(indic, unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value)]
 
   data.table::setDT(decision_rules_total[["categorisation"]])
 
   computed_categories_dt <- computed_dimensions[decision_rules_total[["categorisation"]], on = "indic"]
 
-  computed_categories_dt_grouped <- computed_categories_dt[, .(unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value, TDEF,DEF,INT,FAV), by = indic]
+  computed_categories_dt_grouped <- computed_categories_dt[, .(unscaled_value, scaled_value, dimension_code, component_code, component_value, dimension_value, TDEF, DEF, INT, FAV), by = indic]
 
   computed_categories_dt_nested <- computed_categories_dt_grouped[, .(data = list(.SD)), by = indic]
   computed_categories_dt_nested[, score_category := lapply(data, FUN = Score2Category)]
@@ -295,62 +294,62 @@ old_idea <- function(input) {
 
   # Renaming computed_categories for the full pipeline
   prop_data <- computed_categories_dt
-  decision_rules_total <- lapply(decision_rules_total,data.table::as.data.table)
+  decision_rules_total <- lapply(decision_rules_total, data.table::as.data.table)
 
   # Robustesse --------------------------------------------------------------
 
   ## Node 1
-  node_1 <- prop_data[indic %in% names(decision_rules_total$node_1)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_1 <- prop_data[indic %in% names(decision_rules_total$node_1)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_1, by = c("A1", "A3", "A4"))
 
   ## Node 2
-  node_2 <- prop_data[indic %in% names(decision_rules_total$node_2)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_1, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_2 <- prop_data[indic %in% names(decision_rules_total$node_2)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_1, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_2, by = c("A14", "C5", "R1"))
 
   ## Node 3
-  node_3 <- prop_data[indic %in% names(decision_rules_total$node_3)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_3 <- prop_data[indic %in% names(decision_rules_total$node_3)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_3, by = c("C4", "C7"))
 
   ## Node 4
-  node_4 <- prop_data[indic %in% names(decision_rules_total$node_4)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_3, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_4 <- prop_data[indic %in% names(decision_rules_total$node_4)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_3, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_4, by = c("A2", "R3"))
 
   ## Node 5
-  node_5 <- prop_data[indic %in% names(decision_rules_total$node_5)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_5 <- prop_data[indic %in% names(decision_rules_total$node_5)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_5, by = c("C8", "C9"))
 
   ## Node 6
-  node_6 <- prop_data[indic %in% names(decision_rules_total$node_6)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_5, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_6 <- prop_data[indic %in% names(decision_rules_total$node_6)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_5, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_6, by = c("A15", "R5"))
 
   ## Node 7
-  node_7 <- prop_data[indic %in% names(decision_rules_total$node_7)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_4, on = "index"][node_6, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_7 <- prop_data[indic %in% names(decision_rules_total$node_7)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_4, on = "index"][node_6, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_7, by = c("B22", "R4", "R6"))
 
   ## Node 8
-  node_8 <- prop_data[indic %in% names(decision_rules_total$node_8)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_8 <- prop_data[indic %in% names(decision_rules_total$node_8)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_8, by = c("B13", "B15"))
 
   ## Node 9
-  node_9 <- prop_data[indic %in% names(decision_rules_total$node_9)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_8, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_9 <- prop_data[indic %in% names(decision_rules_total$node_9)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_8, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_9, by = c("B16", "B18", "R8"))
 
   ## Node 10
   node_10 <- node_9[node_7, on = "index"][node_2, on = "index"] |>
-    merge(decision_rules_total$node_10,by = c("R9", "R7", "R2"))
+    merge(decision_rules_total$node_10, by = c("R9", "R7", "R2"))
 
   # Capacit\u00e9 productive et reproductive de biens et services ----------------
 
   ## Node 11
-  node_11 <- prop_data[indic %in% names(decision_rules_total$node_11)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_11 <- prop_data[indic %in% names(decision_rules_total$node_11)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_11, by = c("A12", "A13", "A5"))
 
   ## Node 12
-  node_12 <- prop_data[indic %in% names(decision_rules_total$node_12)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_12 <- prop_data[indic %in% names(decision_rules_total$node_12)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_12, by = c("B14", "B15", "B16"))
 
   ## Node 13
-  node_13 <- prop_data[indic %in% names(decision_rules_total$node_13)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_13 <- prop_data[indic %in% names(decision_rules_total$node_13)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_13, by = c("B13", "B18"))
 
   ## Node 14
@@ -362,7 +361,7 @@ old_idea <- function(input) {
     merge(decision_rules_total$node_15, by = c("CP1", "CP4"))
 
   ## Node 16
-  node_16 <- prop_data[indic %in% names(decision_rules_total$node_16)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_16 <- prop_data[indic %in% names(decision_rules_total$node_16)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_16, by = c("B1", "B3"))
 
   ## Node 17
@@ -370,11 +369,11 @@ old_idea <- function(input) {
     merge(decision_rules_total$node_17, by = c("CP6", "CP5"))
 
   ## Node 18
-  node_18 <- prop_data[indic %in% names(decision_rules_total$node_18)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_18 <- prop_data[indic %in% names(decision_rules_total$node_18)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_18, by = c("C2", "C3"))
 
   ## Node 19
-  node_19 <- prop_data[indic %in% names(decision_rules_total$node_19)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_18, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_19 <- prop_data[indic %in% names(decision_rules_total$node_19)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_18, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_19, by = c("C1", "C10", "CP8"))
 
   ## Node 20
@@ -384,11 +383,11 @@ old_idea <- function(input) {
   # Autonomie ---------------------------------------------------------------
 
   ## Node 21
-  node_21 <- prop_data[indic %in% names(decision_rules_total$node_21)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_21 <- prop_data[indic %in% names(decision_rules_total$node_21)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_21, by = c("B13", "B15", "B18"))
 
   ## Node 22
-  node_22 <- prop_data[indic %in% names(decision_rules_total$node_22)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_22 <- prop_data[indic %in% names(decision_rules_total$node_22)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_22, by = c("B8", "C5"))
 
   ## Node 23
@@ -396,11 +395,11 @@ old_idea <- function(input) {
     merge(decision_rules_total$node_23, by = c("AU1", "AU2"))
 
   ## Node 24
-  node_24 <- prop_data[indic %in% names(decision_rules_total$node_24)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_24 <- prop_data[indic %in% names(decision_rules_total$node_24)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_24, by = c("C3", "C6"))
 
   ## Node 25
-  node_25 <- prop_data[indic %in% names(decision_rules_total$node_25)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_25 <- prop_data[indic %in% names(decision_rules_total$node_25)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_25, by = c("A6", "A7", "A8"))
 
   ## Node 26
@@ -410,15 +409,15 @@ old_idea <- function(input) {
   # Responsabilit\u00e9 Globale --------------------------------------------------
 
   ## Node 27
-  node_27 <- prop_data[indic %in% names(decision_rules_total$node_27)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_27 <- prop_data[indic %in% names(decision_rules_total$node_27)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_27, by = c("B20", "B5"))
 
   ## Node 28
-  node_28 <- prop_data[indic %in% names(decision_rules_total$node_28)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_28 <- prop_data[indic %in% names(decision_rules_total$node_28)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_28, by = c("B11", "B19"))
 
   ## Node 29
-  node_29 <- prop_data[indic %in% names(decision_rules_total$node_29)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_29 <- prop_data[indic %in% names(decision_rules_total$node_29)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_29, by = c("B1", "B2", "B4"))
 
   ## Node 30
@@ -426,11 +425,11 @@ old_idea <- function(input) {
     merge(decision_rules_total$node_30, by = c("RG1", "RG2", "RG3"))
 
   ## Node 31
-  node_31 <- prop_data[indic %in% names(decision_rules_total$node_31)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_31 <- prop_data[indic %in% names(decision_rules_total$node_31)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_31, by = c("A10", "A9"))
 
   ## Node 32
-  node_32 <- prop_data[indic %in% names(decision_rules_total$node_32)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_32 <- prop_data[indic %in% names(decision_rules_total$node_32)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_32, by = c("A11", "C11"))
 
   ## Node 33
@@ -438,15 +437,15 @@ old_idea <- function(input) {
     merge(decision_rules_total$node_33, by = c("RG6", "RG5"))
 
   ## Node 34
-  node_34 <- prop_data[indic %in% names(decision_rules_total$node_34)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_34 <- prop_data[indic %in% names(decision_rules_total$node_34)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_34, by = c("B14", "B17"))
 
   ## Node 35
-  node_35 <- prop_data[indic %in% names(decision_rules_total$node_35)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_35 <- prop_data[indic %in% names(decision_rules_total$node_35)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_35, by = c("B16", "B21"))
 
   ## Node 36
-  node_36 <- prop_data[indic %in% names(decision_rules_total$node_36)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_36 <- prop_data[indic %in% names(decision_rules_total$node_36)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_36, by = c("A5", "B23"))
 
   ## Node 37
@@ -454,15 +453,15 @@ old_idea <- function(input) {
     merge(decision_rules_total$node_37, by = c("RG8", "RG9", "RG10"))
 
   ## Node 38
-  node_38 <- prop_data[indic %in% names(decision_rules_total$node_38)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_38 <- prop_data[indic %in% names(decision_rules_total$node_38)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_38, by = c("A16", "A17", "A18"))
 
   ## Node 39
-  node_39 <- prop_data[indic %in% names(decision_rules_total$node_39)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
-    merge(decision_rules_total$node_39, by =  c("A19", "B12"))
+  node_39 <- prop_data[indic %in% names(decision_rules_total$node_39)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
+    merge(decision_rules_total$node_39, by = c("A19", "B12"))
 
   ## Node 40
-  node_40 <- node_38[node_39, on = "index"]|>
+  node_40 <- node_38[node_39, on = "index"] |>
     merge(decision_rules_total$node_40, by = c("RG12", "RG13"))
 
   ## Node 41
@@ -472,19 +471,19 @@ old_idea <- function(input) {
   # Ancrage territorial -----------------------------------------------------
 
   ## Node 42
-  node_42 <- prop_data[indic %in% names(decision_rules_total$node_42)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
-    merge(decision_rules_total$node_42, by =  c("B10", "B3"))
+  node_42 <- prop_data[indic %in% names(decision_rules_total$node_42)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
+    merge(decision_rules_total$node_42, by = c("B10", "B3"))
 
   ## Node 43
-  node_43 <- prop_data[indic %in% names(decision_rules_total$node_43)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_43 <- prop_data[indic %in% names(decision_rules_total$node_43)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_43, by = c("B7", "B8", "B9"))
 
   ## Node 44
-  node_44 <- prop_data[indic %in% names(decision_rules_total$node_44)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_44 <- prop_data[indic %in% names(decision_rules_total$node_44)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_44, by = c("B14", "B15"))
 
   ## Node 45
-  node_45 <- prop_data[indic %in% names(decision_rules_total$node_45)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_44, on = "index"][, lapply(.SD, unlist), by=index][, lapply(.SD, as.character), by=index] |>
+  node_45 <- prop_data[indic %in% names(decision_rules_total$node_45)][, .(score_category, index = 1), by = indic][, data.table::dcast(.SD, index ~ indic, value.var = "score_category")][node_44, on = "index"][, lapply(.SD, unlist), by = index][, lapply(.SD, as.character), by = index] |>
     merge(decision_rules_total$node_45, by = c("B19", "B6", "AN3"))
 
   ## Node 46
