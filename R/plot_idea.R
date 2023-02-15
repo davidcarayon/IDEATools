@@ -94,7 +94,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
           color = "black",
           position = ggplot2::position_dodge(width = 0.8), stat = "identity"
         ) +
-        ggplot2::geom_hline(yintercept = critiq, color = "red", size = 1.5, linetype = 5) +
+        ggplot2::geom_hline(yintercept = critiq, color = "red", linewidth = 1.5, linetype = 5) +
         ggplot2::scale_fill_identity() +
         ggplot2::geom_label(ggplot2::aes(label = paste0(dimension_value, "/", max_dim)), fill = "white", size = 5) +
         theme_idea(base_size = 16) +
@@ -234,7 +234,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       # data for standardized components (%)
       component_data <- res_compo |>
-        transform(score = round((component_value / component_max) * 100))
+        transform(score = round((component_value / component_max) * 100)) |> 
+        transform(component_code = factor(component_code, levels = unique(component_code)))
 
       ## First plot : Polarised histogram exported to pdf
       donut <- ggplot2::ggplot(component_data, ggplot2::aes(x = component_code, y = score, fill = dimension)) +
