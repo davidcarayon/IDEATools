@@ -4,7 +4,7 @@
 \alias{show_tree_structure}
 \title{Show the reference table used for building colored trees}
 \usage{
-show_tree_structure(directory = getwd())
+show_tree_structure(directory)
 }
 \arguments{
 \item{directory}{the directory where to output the reference tables}
@@ -14,4 +14,9 @@ Exports an excel file in the desired directory
 }
 \description{
 Show the reference table used for building colored trees
+}
+\examples{
+library(IDEATools)
+show_tree_structure(tempdir())
+
 }

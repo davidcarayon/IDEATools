@@ -6,7 +6,7 @@
 \usage{
 write_idea(
   IDEA_plots,
-  output_directory = "IDEATools_output",
+  output_directory,
   type = c("local", "report"),
   prefix = NULL,
   dpi = 320,

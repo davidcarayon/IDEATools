@@ -25,9 +25,9 @@
 #' @examples
 #' library(IDEATools)
 #'
-#' ## Importing from an old file
-#' \dontrun{
+#' ## Importing from an old IDEA file
 #' input <- "path_to_your_old_file.xlsx"
+#' if(file.exists(input)) {
 #' computed_data <- old_idea(input)
 #' }
 old_idea <- function(input) {

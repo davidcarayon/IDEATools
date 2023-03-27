@@ -5,7 +5,6 @@
 #' @import ggplot2
 #'
 #' @return a ggplot2 theme for IDEA
-#' @export
 #' @importFrom ggplot2 theme_grey theme element_line element_rect element_text margin element_blank unit rel
 theme_idea <- function(base_size = 15, base_family = "") {
   # colors

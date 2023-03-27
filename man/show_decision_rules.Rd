@@ -4,7 +4,7 @@
 \alias{show_decision_rules}
 \title{Show decision rules}
 \usage{
-show_decision_rules(directory = getwd())
+show_decision_rules(directory)
 }
 \arguments{
 \item{directory}{the directory where to output the decision rules}
@@ -14,4 +14,9 @@ Exports an excel file in the desired directory
 }
 \description{
 Show decision rules
+}
+\examples{
+library(IDEATools)
+show_decision_rules(tempdir())
+
 }

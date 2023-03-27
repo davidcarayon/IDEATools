@@ -36,18 +36,17 @@
 #' # Find your temporary directory (the output will be there)
 #' tempdir <- tempdir()
 #'
-#' \dontrun{
 #' # Run a full individual diagnosis with no export, with only trees
 #' my_diagnosis <- diag_idea(
 #'   input = path,
 #'   output_directory = tempdir,
 #'   type = "single",
 #'   export_type = NULL,
-#'   prefix = "Exploitation_A",
+#'   prefix = "Farm_A",
 #'   plot_choices = "trees",
+#'   dpi = 20,  ## Can be much higher
 #'   quiet = TRUE
 #' )
-#' }
 diag_idea <- function(input, output_directory, type = "single", export_type = c("report", "local"), plot_choices = c("dimensions", "trees", "radars"), report_format = "pdf", prefix = NULL, dpi = 320, append = FALSE, quiet = FALSE) {
   ## Estimating total duration
   global_start <- Sys.time()

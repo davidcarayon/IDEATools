@@ -51,7 +51,7 @@
 #'   prefix = "myFarm",
 #'   dpi = 20 # Can be much higher
 #' )
-write_idea <- function(IDEA_plots, output_directory = "IDEATools_output", type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", append = FALSE, input_file_append = NULL, quiet = FALSE) {
+write_idea <- function(IDEA_plots, output_directory, type = c("local", "report"), prefix = NULL, dpi = 320, report_format = "docx", append = FALSE, input_file_append = NULL, quiet = FALSE) {
   if (append == TRUE) {
     filetype <- tools::file_ext(input_file_append)
     if (filetype != "xlsx") {

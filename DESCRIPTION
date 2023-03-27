@@ -1,10 +1,10 @@
 Package: IDEATools
-Title: A Collection of Tools Associated with the IDEA4 Method
+Title: Individual and Group Farm Sustainability Assessments using the IDEA4 Method
 Version: 3.4.1
 Authors@R: 
     person(given = "David",
            family = "Carayon",
-           role = c("aut", "cre"),
+           role = c("aut", "cre","cph"),
            email = "david.carayon@inrae.fr",
            comment = c(ORCID = "0000-0003-0217-2175"))
 Description: Collection of tools to automate the processing of data collected though the IDEA4 method (see Zahm et al. (2018) <doi:10.1051/cagri/2019004> ). Starting from the original data collecting files this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. 
