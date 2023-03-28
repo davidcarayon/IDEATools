@@ -5,11 +5,10 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![packageversion](https://img.shields.io/badge/Package%20version-3.4.1-green.svg?style=flat-square)](commits/master)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![DOI](https://zenodo.org/badge/251535041.svg)](https://zenodo.org/badge/latestdoi/251535041)
 [![R-CMD-check](https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/IDEATools)](https://cran.r-project.org/package=IDEATools)
 <!-- badges: end -->
 
 IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
@@ -18,26 +17,23 @@ reporting de diagnostics IDEA.
 
 # Installation & Prérequis
 
-En attendant sa publication officielle sur le CRAN, vous pouvez
-télécharger et utiliser la version en cours de développement depuis
-GitHub avec :
+:tada: IDEATools est maintenant officiellement sur le cran :tada:
+
+``` r
+install.packages("IDEATools")
+```
+
+Vous pouvez toujours installer la dernière version en cours de
+développement :
 
 ``` r
 install.packages("remotes")
 remotes::install_github("davidcarayon/IDEATools")
 ```
 
-Si vous souhaitez utiliser certaines fonctionnalités avancées (interface
-graphique, rapports automatisés), vous des packages supplémentaires sont
-nécessaires, il peuvent être installés directement en préciseant
-l’argument `dependencies` :
-
-``` r
-remotes::install_github("davidcarayon/IDEATools", dependencies = TRUE)
-```
-
-*NB : Le logiciel RTools est parfois nécessaire sur les machines
-Windows. Vous pouvez l’installer ici :
+*NB : Le logiciel RTools est parfois nécessaire sur les machines Windows
+pour l’installation de la version en cours de développement. Vous pouvez
+l’installer ici :
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/)*
 
 Une fois installé, vous pouvez charger le package avec :
@@ -254,16 +250,17 @@ Quick Link
 
 # Citation
 
-Carayon D (2023). IDEATools: A collection of tools associated with the
-IDEA4 method.
+Carayon D (2023). *IDEATools: Individual and Group Farm Sustainability
+Assessments using the IDEA4 Method*. R package version 3.4.1,
+<https://CRAN.R-project.org/package=IDEATools>.
 
-    @software{david_carayon_2023_6811276,
-      author       = {David Carayon},
-      title        = {davidcarayon/IDEATools},
-      month        = oct,
-      year         = 2023,
-      publisher    = {Zenodo},
-      version      = {v3.4.0},
-      doi          = {10.5281/zenodo.6811276},
-      url          = {https://doi.org/10.5281/zenodo.6811276}
-    }
+A BibTeX entry for LaTeX users is
+
+      @Manual{,
+        title = {IDEATools: Individual and Group Farm Sustainability Assessments using the
+    IDEA4 Method},
+        author = {David Carayon},
+        year = {2023},
+        note = {R package version 3.4.1},
+        url = {https://CRAN.R-project.org/package=IDEATools},
+      }
