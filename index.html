@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Collection of Tools Associated with the IDEA4 Method • IDEATools</title>
+<title>Individual and Group Farm Sustainability Assessments using the IDEA4 Method • IDEATools</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="A Collection of Tools Associated with the IDEA4 Method">
+<script src="pkgdown.js"></script><meta property="og:title" content="Individual and Group Farm Sustainability Assessments using the IDEA4 Method">
 <meta property="og:description" content="Collection of tools to automate the processing of data collected though the IDEA4 method (see Zahm et al. (2018) &lt;doi:10.1051/cagri/2019004&gt; ). Starting from the original data collecting files this packages provides functions to compute IDEA indicators, draw modern and aesthetic plots, and produce a wide range of reporting materials. ">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">IDEATools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.4.1.9000</span>
       </span>
     </div>
 
@@ -123,14 +123,14 @@
 <div class="section level1">
 <h1 id="installation--prérequis">Installation &amp; Prérequis<a class="anchor" aria-label="anchor" href="#installation--pr%C3%A9requis"></a>
 </h1>
-<p>En attendant sa publication officielle sur le CRAN, vous pouvez télécharger et utiliser la version en cours de développement depuis GitHub avec :</p>
+<p><span class="emoji" data-emoji="tada">🎉</span> IDEATools est maintenant officiellement sur le cran <span class="emoji" data-emoji="tada">🎉</span></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"IDEATools"</span><span class="op">)</span></span></code></pre></div>
+<p>Vous pouvez toujours installer la dernière version en cours de développement :</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span><span class="op">)</span></span></code></pre></div>
-<p>Si vous souhaitez utiliser certaines fonctionnalités avancées (interface graphique, rapports automatisés), vous des packages supplémentaires sont nécessaires, il peuvent être installés directement en préciseant l’argument <code>dependencies</code> :</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"davidcarayon/IDEATools"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></em></p>
+<p><em>NB : Le logiciel RTools est parfois nécessaire sur les machines Windows pour l’installation de la version en cours de développement. Vous pouvez l’installer ici : <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></em></p>
 <p>Une fois installé, vous pouvez charger le package avec :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidcarayon.github.io/IDEATools/index.html" class="external-link">IDEATools</a></span><span class="op">)</span></span></code></pre></div>
@@ -286,17 +286,16 @@ Quick Link
 <div class="section level1">
 <h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h1>
-<p>Carayon D (2023). IDEATools: A collection of tools associated with the IDEA4 method.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="sc">@</span>software{david_carayon_2023_6811276,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  author       <span class="ot">=</span> {David Carayon},</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  title        <span class="ot">=</span> {davidcarayon<span class="sc">/</span>IDEATools},</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  month        <span class="ot">=</span> oct,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  year         <span class="ot">=</span> <span class="dv">2023</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  publisher    <span class="ot">=</span> {Zenodo},</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  version      <span class="ot">=</span> {v3.<span class="fl">4.0</span>},</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  doi          <span class="ot">=</span> {<span class="fl">10.5281</span><span class="sc">/</span>zenodo<span class="fl">.6811276</span>},</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  url          <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.5281</span><span class="sc">/</span>zenodo<span class="fl">.6811276</span>}</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Carayon D (2023). <em>IDEATools: Individual and Group Farm Sustainability Assessments using the IDEA4 Method</em>. R package version 3.4.1, <a href="https://CRAN.R-project.org/package=IDEATools" class="external-link uri">https://CRAN.R-project.org/package=IDEATools</a>.</p>
+<p>A BibTeX entry for LaTeX users is</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  <span class="sc">@</span>Manual{,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    title <span class="ot">=</span> {IDEATools<span class="sc">:</span> Individual and Group Farm Sustainability Assessments using the</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>IDEA4 Method},</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    author <span class="ot">=</span> {David Carayon},</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    year <span class="ot">=</span> {<span class="dv">2023</span>},</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    note <span class="ot">=</span> {R package version <span class="dv">3</span>.<span class="fl">4.1</span>},</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>CRAN.R<span class="sc">-</span>project.org<span class="sc">/</span>package<span class="ot">=</span>IDEATools},</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 </div>
 
   </div>
@@ -330,18 +329,17 @@ Quick Link
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>David Carayon <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-0217-2175" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>David Carayon <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-0217-2175" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-green.svg" alt="Lifecycle:stable"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-3.4.1-green.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://zenodo.org/badge/latestdoi/251535041" class="external-link"><img src="https://zenodo.org/badge/251535041.svg" alt="DOI"></a></li>
 <li><a href="https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://cran.r-project.org/package=IDEATools" class="external-link"><img src="https://www.r-pkg.org/badges/version/IDEATools" alt="CRAN_Status_Badge"></a></li>
 </ul>
 </div>
 
