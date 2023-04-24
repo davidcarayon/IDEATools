@@ -1,0 +1,14 @@
+compute_idea            Compute IDEA4 indicators and aggregation
+                        metrics
+diag_idea               Run a complete IDEA4 diagnosis
+jsonify2                Convert IDEA excel files to json, without
+                        output
+old_idea                Read "old" IDEA data files
+plot_idea               Plot IDEA4 results
+read_idea               Read IDEA4 items and metadata
+runGUI                  Minimal Shiny app for IDEATools
+show_decision_rules     Show decision rules
+show_tree_structure     Show the reference table used for building
+                        colored trees
+theme_idea              IDEA ggplot2 theme
+write_idea              Write IDEA4 results and graphs to local disc

@@ -1,0 +1,88 @@
+---
+title: "Diagnostic IDEAv4"
+date: "Analyse du `r format(Sys.Date(), '%d %B %Y')`"
+subtitle: Eléments de sortie d'analyse de groupe - Version 2.0
+output: 
+  powerpoint_presentation:
+    slide_level: 3
+    reference_doc: templates/template.pptx
+params:
+  outdir : "tmp"
+  data: "data"
+  dpi: 320
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+library(data.table)
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	out.width = "100%"
+)
+```
+
+```{r input, include = FALSE}
+outdir <- params$outdir
+IDEA_plots <- params$data
+IDEAdata <- IDEA_plots$data
+metadata <- IDEAdata$metadata
+n_farm <- nrow(metadata)
+
+IDEATools::write_idea(IDEA_plots,output_directory = outdir, type = "local", dpi = params$dpi, quiet = TRUE)
+```
+
+## Lecture de la durabilité : approche par les trois dimensions de la durabilité
+
+### Distribution des résultats du groupe
+
+```{r fig.cap = "Figure 1 : Distribution des notes obtenues pour chaque dimension de la durabilité", fig.width = 7.95, fig.height=6.91}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_dimensions.png"))
+```
+
+### Résultats individuels globaux pour les trois dimensions
+
+```{r fig.cap = "Figure 2 : Visualisation des notes obtenues par chaque exploitation pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=13}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Histogramme_dimensions.png"))
+```
+
+### Résultats lus selon les 13 composantes
+
+```{r fig.cap= "Figure 3 : Distribution des notes de durabilité obtenues pour chaque composante", fig.width = 11.3, fig.height=8.94}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_composantes.png"))
+```
+
+## Résultats détaillés par indicateur
+
+### Indicateurs agroécologiques
+
+```{r fig.cap= "Figure 4 : Distribution des notes obtenues pour les indicateurs agroécologiques, regroupés par composante", fig.width = 11.9, fig.height=12.5}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_indicateurs_agroecologiques.png"))
+```
+
+### Indicateurs socio-territoriaux
+
+```{r fig.cap= "Figure 5 : Distribution des scores obtenus pour les indicateurs socio-territoriaux, regroupés par composante", fig.width = 11.9, fig.height=14}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_indicateurs_socio_territoriaux.png"))
+```
+
+### Indicateurs économiques
+
+```{r fig.cap= "Figure 6 : Distribution des scores obtenus pour les indicateurs économiques, regroupés par composante", fig.width = 11.9, fig.height=11}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Distribution_indicateurs_economiques.png"))
+```
+
+## Lecture par les propriétés
+
+### Matrice des propriétés
+
+```{r fig.cap= "Figure 7 : Matrice des résultats par les propriétés du groupe", fig.width = 10.4, fig.height=6.82}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Matrice_propriétés.png"))
+```
+
+### Fréquence d'attribution des modalités
+
+```{r fig.cap= "Figure 8 : Fréquence d'attribution de chaque modalité pour chaque propriété", fig.width = 14, fig.height=5}
+knitr::include_graphics(file.path(outdir,Sys.Date(),paste0("Groupe_",n_farm),"Graphiques","Fréquence_propriétés.png"))
+```

@@ -1,0 +1,232 @@
+---
+title: "RAPPORT DE DIAGNOSTIC INDIVIDUEL IDEA 4"
+output: 
+  pdf_document:
+    dev: cairo_pdf
+    latex_engine: pdflatex
+    includes: 
+      before_body: templates/page_de_garde.tex
+      in_header: templates/preamble.tex
+toc: true
+params:
+  data: "data"
+  dpi: 320
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, out.width = "100%", fig.align = "center", dpi = params$dpi)
+
+library(IDEATools)
+IDEA_plots <- params$data
+IDEA_data <- IDEA_plots$data
+```
+
+```{r}
+nom_files <- IDEA_data$metadata$MTD_01
+date <- IDEA_data$metadata$MTD_13
+```
+
+---
+author: "`r nom_files`"
+subtitle: `r paste0("Analyse du"," ",format(Sys.Date(),'%d/%m/%Y'))`
+date : "`r date`"
+---
+  
+```{r results = "asis"}
+cat(paste0("\\fancyfoot[L]{Diagnostic individuel IDEA 4}"))
+cat(paste0("\\fancyfoot[R]{",nom_files," | ",date,"}"))
+cat(paste0("\\fancyhead[]{}"))
+```
+
+\newpage
+
+# Principales caractéristiques structurelles
+
+```{r}
+tibble::tibble(metadata_code = names(IDEA_data$metadata), value = unlist(IDEA_data$metadata)) |> 
+  merge(IDEATools:::reference_list$metadata, by = "metadata_code") |> 
+  subset(select = c(metadata_name, value)) |> 
+  setNames(c("Caractéristique", "Valeur")) |> 
+  knitr::kable()
+```
+
+\newpage
+
+# Lecture par les dimensions de la durabilité
+
+## Résultats pour les 3 dimensions
+
+\Large
+
+```{r}
+min_val <- min(unlist(IDEA_data$dataset$dimension_value))
+```
+
+La note de durabilité attribuée par IDEA4 à cette exploitation agricole est de
+**`r min_val` / 100** (valeur la plus faible).
+
+\large
+
+```{r fig.width = 9.11, fig.height=5.6, fig.cap = "Résultats pour les 3 dimensions"} 
+print(IDEA_plots$dimensions$plot_dimensions)
+```
+
+\newpage
+
+## Résultats pour les 13 composantes
+
+```{r fig.cap= "Résultats pour les 13 composantes", fig.width = 14.5, fig.height=14}
+print(IDEA_plots$dimensions$plot_components + ggplot2::theme(text = ggplot2::element_text(size = 25)))
+```
+
+```{r fig.cap= "Résultats pour les 13 composantes, présentés sous forme d'histogramme polaire", fig.width = 8, fig.height=8}
+print(IDEA_plots$dimensions$plot_components_polarised)
+```
+
+\newpage
+
+## Résultats pour les 19 indicateurs Agroécologiques
+
+```{r fig.cap= "Résultats pour les 19 indicateurs Agroécologiques", fig.width = 10.69, fig.height=11}
+print(IDEA_plots$dimensions$plot_indic_ae)
+```
+
+\newpage
+
+## Résultats pour les 23 indicateurs Socio-territoriaux
+
+```{r fig.cap= "Résultats pour les 23 indicateurs Socio-territoriaux", fig.width = 10.69, fig.height=11}
+print(IDEA_plots$dimensions$plot_indic_st)
+```
+
+\newpage
+
+## Résultats pour les 11 indicateurs Economiques
+
+```{r fig.cap= "Résultats pour les 11 indicateurs Economiques", fig.width = 10.69, fig.height = 11}
+print(IDEA_plots$dimensions$plot_indic_ec)
+```
+
+# Lecture par les propriétés des systèmes agricoles durables
+
+## Résultats globaux synthétiques
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r global, fig.width = 45, fig.height = 28, out.width="100%", echo = FALSE, fig.align = "center"}
+print(IDEA_plots$trees$Global)
+```
+
+\end{minipage}}
+\end{center}
+
+\newpage
+
+## Propriété "Autonomie"
+
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r autonomie, fig.width = 48, fig.height = 30, out.width="100%", echo = FALSE}
+print(IDEA_plots$trees$Autonomie)
+```
+
+\end{minipage}}
+\end{center}
+
+\newpage
+
+## Propriété "Capacité productive et reproductive de biens et de services"
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r capacite, fig.width = 48, fig.height = 30, out.width="100%", echo = FALSE}
+print(IDEA_plots$trees$Capacite)
+```
+
+\end{minipage}}
+\end{center}
+
+\newpage
+
+## Propriété "Responsabilité Globale"
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r responsabilite, fig.width = 49, fig.height = 37, out.width="100%", echo = FALSE}
+print(IDEA_plots$trees$Responsabilite)
+```
+
+\end{minipage}}
+\end{center}
+
+\newpage
+
+## Propriété "Ancrage Territorial"
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r ancrage, fig.width = 33, fig.height = 20, out.width='100%', echo = FALSE}
+print(IDEA_plots$trees$Ancrage)
+```
+
+\end{minipage}}
+\end{center}
+
+\newpage
+
+## Propriété "Robustesse"
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r robustesse, fig.width = 40, fig.height = 26, out.width="100%", echo = FALSE}
+print(IDEA_plots$trees$Robustesse)
+```
+
+\end{minipage}}
+\end{center}
+
+## Diagrammes radar des indicateurs de chaque propriété
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Angrage territorial"', fig.width = 16.1, fig.height=6.5, fig.align="center"}
+print(IDEA_plots$radars$radar_Ancrage)
+```
+
+<br>
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Autonomie"', fig.width = 16.1, fig.height=6.5, fig.align="center"}
+print(IDEA_plots$radars$radar_Autonomie)
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Capacité productive et reproductive de biens et services"', fig.width = 16.1, fig.height=7.61, fig.align="center"}
+print(IDEA_plots$radars$radar_Capacite)
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Responsabilité globale"', fig.width = 16.1, fig.height=7.61, fig.align="center"}
+print(IDEA_plots$radars$radar_Responsabilite)
+```
+
+```{r fig.cap= 'Pourcentage du score maximal obtenu pour chaque indicateur rattaché à la propriété "Robustesse"', fig.width = 16.1, fig.height=7.61, fig.align="center"}
+print(IDEA_plots$radars$radar_Robustesse)
+```
+
+

@@ -1,0 +1,213 @@
+---
+title: "RAPPORT DE DIAGNOSTIC DE GROUPE IDEA 4"
+output: 
+  pdf_document:
+    latex_engine: pdflatex
+    includes: 
+      before_body: templates/page_de_garde_group.tex
+      in_header: templates/preamble.tex
+toc: true
+params:
+  data: "data"
+  dpi: 320
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, out.width = "100%")
+
+library(IDEATools)
+library(data.table)
+IDEAdata <- params$data
+metadata <- IDEAdata$data$metadata
+n_farm <- nrow(metadata)
+```
+
+```{r}
+nom_files <- metadata$MTD_01
+date <- metadata$MTD_13
+```
+
+---
+author: "`r paste(nom_files, collapse = ", ")`"
+subtitle: `r paste0("Analyse du"," ",format(Sys.Date(),'%d/%m/%Y'))`
+date : "`r paste(date, collapse = ", ")`"
+---
+
+```{r results = "asis"}
+cat(paste0("\\fancyhead[]{}"))
+```
+
+# Principales caractéristiques structurelles
+
+Nombre d'exploitations : **`r n_farm`**
+
+```{r}
+metadata <- metadata |>
+  transform(MTD_02 = round(MTD_02, 1)) |>
+  transform(MTD_15 = round(MTD_15, 1)) |>
+  transform(MTD_03 = round(MTD_03, 1)) |>
+  transform(MTD_08 = round(MTD_08, 0)) |>
+  transform(MTD_09 = round(MTD_09, 0)) |>
+  transform(MTD_10 = round(MTD_10, 0)) |>
+  subset(select = c(MTD_02, MTD_15, MTD_03, MTD_08, MTD_09, MTD_10)) 
+
+reference_list <- IDEATools:::reference_list
+reference_list$metadata <- data.table::as.data.table(reference_list$metadata)
+
+data.table::setDT(metadata)
+
+metadata <- data.table::melt(metadata, id.vars = NULL, measure.vars = names(metadata)) |> 
+  merge(reference_list$metadata, by.x = "variable", by.y = "metadata_code")
+
+metadata <- metadata[,.(Variable = metadata_name, value = value)][, .(value), by = Variable]
+
+metadata[, .(
+  "Percentile 5" = stats::quantile(value, 0.05, na.rm=TRUE),
+  "Quartile 1" = stats::quantile(value, 0.25, na.rm=TRUE),
+  "Moyenne" = round(mean(value, na.rm=TRUE)),
+  "Médiane" = stats::median(value, na.rm=TRUE),
+  "Quartile 3" = stats::quantile(value, 0.75, na.rm=TRUE), 
+  "Percentile 95" = stats::quantile(value, 0.95, na.rm=TRUE)
+), by = Variable] |>  
+  transform(Variable = c("SAU (ha)","UTH","Capital d'exploitation (€)", "EBE (€)", "Résultat courant (€)", "Part des PP dans la SAU (%)")) |> 
+  gt::gt() |> 
+  gt::tab_header(title = "Caractéristiques numériques") |> 
+  gt::tab_options(table.width = gt::pct(100))
+```
+
+\newpage
+
+```{r}
+metadata <- IDEAdata$data$metadata
+unique_age <- unique(metadata$MTD_05)
+unique_atelier<- data.frame(MTD = unique(metadata$MTD_12)) |> transform(MTD = ifelse(MTD == "1", yes = "oui", no = "non")) |> unlist(use.names = FALSE)
+unique_elevage <- data.table(MTD = metadata$MTD_14)[, MTD := data.table::fcase(
+  MTD == 0, "Pas d'élevage",
+  MTD == 1, "Monogastrique",
+  TRUE, "Herbivore"
+)][, .(MTD)][, unique(MTD)]
+
+possible_age <- data.table(
+  metadata_name = "Tranche d’âge du chef d’exploitation",
+  value = c("-25","26-35","36-45", "46-55","56-65","65+"),
+  n = 0
+) |>
+  subset(!value %in% unique_age)
+
+possible_atelier <- data.table(
+  metadata_name = "Atelier hors sol",
+  value = c("oui","non"),
+  n = 0
+) |>
+  subset(!value %in% unique_atelier)
+
+possible_elevage <- data.table(
+  metadata_name = "Type d’élevage",
+  value = c("Pas d'élevage","Monogastrique","Herbivore"),
+  n = 0
+)|>
+  subset(!value %in% unique_elevage)
+
+
+metadata_selected <- as.data.table(metadata)[, .(MTD_05,MTD_06,MTD_11,MTD_12,MTD_13,MTD_14)]
+
+metadata_selected[, MTD_12 := ifelse(MTD_12 == "1", yes = "oui", no = "non")]
+
+metadata_selected[, MTD_14 := data.table::fcase(
+  MTD_14 == 0, "Pas d'élevage",
+  MTD_14 == 1, "Monogastrique",
+  TRUE, "Herbivore"
+)]
+
+reference_list <- IDEATools:::reference_list
+reference_list$metadata <- data.table::as.data.table(reference_list$metadata)
+
+metadata_long <- data.table::melt(metadata_selected, measure.vars = names(metadata_selected)) |> 
+  merge(reference_list$metadata[, .(metadata_code, metadata_name)], by.x = "variable", by.y = "metadata_code")
+
+metadata_long <- metadata_long[, .(metadata_name, value)][, metadata_name := ifelse(grepl(x = metadata_name, pattern = "Atelier"), yes = "Atelier hors sol", no = metadata_name)]
+
+metadata_count <- metadata_long[, .(n = .N), by = .(metadata_name, value)]
+
+metadata_count <- data.table::rbindlist(list(metadata_count,possible_age, possible_elevage, possible_atelier))
+
+metadata_count[, c("Nom", "Modalité", "Nombre d'exploitations") := .(metadata_name, value, n)][, .(Nom, Modalité, "Nombre d'exploitations" = n)] |> 
+  gt::gt() |> 
+  gt::tab_header(title = "Caractéristiques catégorielles") |> 
+  gt::tab_options(table.width = gt::pct(100))
+```
+
+\newpage
+
+# Lecture par les dimensions de la durabilité
+
+## Résultats pour les 3 dimensions 
+
+```{r fig.cap = "Distribution des notes obtenues pour chaque dimension de la durabilité sur une échelle de 0 à 100", fig.width = 7.95, fig.height=6.91}
+print(IDEAdata$dimensions_boxplot)
+```
+
+\newpage
+
+```{r fig.cap = "Notes obtenues par chaque exploitation agricole pour chaque dimension de la durabilité",fig.width = 10.5, fig.height=8}
+print(IDEAdata$dimensions_histogram)
+```
+
+\newpage
+
+## Résultats pour les 13 composantes
+
+```{r fig.cap= "Distribution des notes de durabilité obtenues pour chaque composante", fig.width = 13, fig.height=13}
+print(IDEAdata$components_boxplot + ggplot2::theme(axis.text = ggplot2::element_text(size = 20)))
+```
+
+\newpage
+
+## Résultats détaillés par indicateur
+
+```{r fig.cap= "Distribution des notes obtenues pour les indicateurs agroécologiques, regroupés par composante", fig.width = 11.9, fig.height=11.8}
+print(IDEAdata$indic_ae_boxplot)
+```
+
+```{r fig.cap= "Distribution des scores obtenus pour les indicateurs tocio-territoriaux, regroupés par composante", fig.width = 11.9, fig.height=14}
+print(IDEAdata$indic_st_boxplot)
+```
+
+```{r fig.cap= "Distribution des scores obtenus pour les indicateurs économiques, regroupés par composante", fig.width = 11.9, fig.height=12}
+print(IDEAdata$indic_ec_boxplot+ ggplot2::theme(axis.text = ggplot2::element_text(size = 13))) 
+```
+
+\newpage
+
+# Lecture par les propriétés des systèmes agricoles durables
+
+## Matrice des résultats individuels
+
+```{r fig.cap= "Matrice des résultats par les propriétés du groupe", fig.width = 10.4, fig.height=6.82}
+print(IDEAdata$heatmap)
+```
+
+\newpage
+
+## Fréquence d'attribution de chaque modalité
+
+\begin{center}
+\rotatebox{270}{
+
+\begin{minipage}{0.9\textheight}
+
+```{r freq, fig.width = 33, fig.height = 20, out.width='100%', echo = FALSE}
+ggplot2::ggplot(IDEAdata$freq_plot$data,ggplot2::aes(x = node_name, y = prop, fill = value)) +
+      ggplot2::geom_col(position = "stack", color ="black") +
+      ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop),"%")),position = ggplot2::position_stack(vjust = 0.5),size = 17) +
+      ggplot2::scale_fill_identity("\uc9valuation", guide = ggplot2::guide_legend(reverse = TRUE), labels = c("Très défavorable","Défavorable","Favorable","Très favorable")) +
+      theme_idea() +
+      ggplot2::coord_flip() +
+      ggplot2::theme(axis.text = ggplot2::element_text(size = 45),axis.title = ggplot2::element_text(size = 45), legend.text = ggplot2::element_text(size = 45), legend.title = ggplot2::element_text(size = 50)) +
+      ggplot2::labs(x = "", y = "Fr\u00e9quence (%)") +
+      ggplot2::scale_y_continuous(breaks = seq(0,100,5))
+```
+
+\end{minipage}}
+\end{center}
+
