@@ -84,7 +84,7 @@ unique_atelier<- data.frame(MTD = unique(metadata$MTD_12)) |> transform(MTD = if
 unique_elevage <- data.table(MTD = metadata$MTD_14)[, MTD := data.table::fcase(
   MTD == 0, "Pas d'élevage",
   MTD == 1, "Monogastrique",
-  TRUE, "Herbivore"
+  MTD == 2, "Herbivore"
 )][, .(MTD)][, unique(MTD)]
 
 possible_age <- data.table(
@@ -116,7 +116,7 @@ metadata_selected[, MTD_12 := ifelse(MTD_12 == "1", yes = "oui", no = "non")]
 metadata_selected[, MTD_14 := data.table::fcase(
   MTD_14 == 0, "Pas d'élevage",
   MTD_14 == 1, "Monogastrique",
-  TRUE, "Herbivore"
+  MTD_14 == 2, "Herbivore"
 )]
 
 reference_list <- IDEATools:::reference_list

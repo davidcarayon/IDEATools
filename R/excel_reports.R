@@ -491,7 +491,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   unique_elevage <- data.table::data.table(MTD = metadata$MTD_14)[, MTD := data.table::fcase(
     MTD == 0, "Pas d'\u00e9levage",
     MTD == 1, "Monogastrique",
-    TRUE, "Herbivore"
+    MTD == 2, "Herbivore"
   )][, .(MTD)][, unique(MTD)]
 
   possible_age <- data.table::data.table(
@@ -523,7 +523,7 @@ excel_group_report <- function(IDEAdata, output_dir, outdir, output_file, dpi) {
   metadata_selected[, MTD_14 := data.table::fcase(
     MTD_14 == 0, "Pas d'\u00e9levage",
     MTD_14 == 1, "Monogastrique",
-    TRUE, "Herbivore"
+    MTD_14 == 2, "Herbivore"
   )]
 
   reference_list$metadata <- data.table::as.data.table(reference_list$metadata)
@@ -1127,7 +1127,7 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
   unique_elevage <- data.table::data.table(MTD = metadata$MTD_14)[, MTD := data.table::fcase(
     MTD == 0, "Pas d'\u00e9levage",
     MTD == 1, "Monogastrique",
-    TRUE, "Herbivore"
+    MTD == 2, "Herbivore"
   )][, .(MTD)][, unique(MTD)]
 
   possible_age <- data.table::data.table(
@@ -1159,7 +1159,7 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
   metadata_selected[, MTD_14 := data.table::fcase(
     MTD_14 == 0, "Pas d'\u00e9levage",
     MTD_14 == 1, "Monogastrique",
-    TRUE, "Herbivore"
+    MTD_14 == 2, "Herbivore"
   )]
 
   reference_list$metadata <- data.table::as.data.table(reference_list$metadata)
