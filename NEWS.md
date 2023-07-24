@@ -1,3 +1,7 @@
+# IDEATools 3.5.0
+* Changed logo in documentation
+* Updated indicator names based on the published book
+
 # IDEATools 3.4.2
 * Fixed an error for group reports
 

@@ -1,6 +1,6 @@
 Package: IDEATools
 Title: Individual and Group Farm Sustainability Assessments using the IDEA4 Method
-Version: 3.4.2
+Version: 3.5.0
 Authors@R: 
     person(given = "David",
            family = "Carayon",
