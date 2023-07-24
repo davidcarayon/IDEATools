@@ -1,8 +1,9 @@
 ## Test environments
 * local OS X install, R 4.2.1, Apple silicon arm64 build
-* Ubuntu Linux 20.04.1 LTS (on R-hub), R-release, GCC
-* Fedora Linux (on R-hub) R-devel, clang, gfortan
 * Windows Server 2022 (on R-hub), R-devel, 64 bit
+* Github Actions : macos-latest (release)
+* Github Actions : ubuntu-latest (devel, release, oldrel-1)
+* Github Actions : windows-latest (release, 4.1)
 
 ## revdepcheck results
 
