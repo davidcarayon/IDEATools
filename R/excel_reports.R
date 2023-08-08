@@ -1545,9 +1545,13 @@ excel_group_report_reference <- function(IDEAdata, output_dir, outdir, output_fi
       by.y = "node_code"
     )[, .(Exploitation, name = node_name, value)][, data.table::dcast(.SD, Exploitation ~ name, value.var = "value")]
 
+
+    ref_list <- unique(subset(reference_list$indic_prop, select = c(indic_code, indic_name)))
+
+
     indics1 <- merge(
       df[, data.table::melt(.SD, id.vars = "Exploitation")][, .(Exploitation, name = variable, value)],
-      reference_list$indic_prop,
+      ref_list,
       by.x = "name",
       by.y = "indic_code"
     )[, .(Exploitation, name = indic_name, value)]
