@@ -40,7 +40,7 @@
 #' my_data <- read_idea(path)
 #' computed_data <- compute_idea(my_data)
 #' # Only plotting the radars as a minimal example
-#' idea_plots <- plot_idea(computed_data, choices = "radars") 
+#' idea_plots <- plot_idea(computed_data, choices = "radars")
 #' # Find your temporary directory
 #' tempdir <- tempdir()
 #'
@@ -485,7 +485,7 @@ write_idea <- function(IDEA_plots, output_directory, type = c("local", "report")
             )
           )) |>
           transform(
-            widths = c(10, 7.95, 11.3, 11.9, 11.9, 11.9),
+            widths = c(13, 10, 11.3, 11.9, 11.9, 11.9),
             heights = c(5, 6.91, 8.94, 12.5, 14, 11)
           ) |>
           transform(plotname = gsub(x = plotname, pattern = " ", replacement = "_")) |>

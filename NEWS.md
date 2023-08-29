@@ -1,3 +1,6 @@
+# IDEATools 3.5.1
+* Fixed 2 figure widths in `write_idea()`
+
 # IDEATools 3.5.0
 * Changed logo in documentation
 * Updated indicator names based on the published book
