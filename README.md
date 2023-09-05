@@ -11,9 +11,9 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/IDEATools)](https://cran.r-project.org/package=IDEATools)
 <!-- badges: end -->
 
-IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
-aux utilisateurs des outils pour le traitement, l’automatisation et le
-reporting de diagnostics IDEA.
+> *IDEATools est un package R dédié à la méthode IDEA4, visant à fournir
+> aux utilisateurs des outils pour le traitement, l’automatisation et le
+> reporting de diagnostics IDEA.*
 
 # Installation & Prérequis
 

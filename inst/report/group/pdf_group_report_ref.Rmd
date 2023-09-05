@@ -143,7 +143,7 @@ metadata_count[, c("Nom", "Modalité", "Nombre d'exploitations") := .(metadata_n
 
 ## Résultats pour les 3 dimensions 
 
-```{r fig.cap = "Distribution des notes obtenues pour chaque dimension de la durabilité sur une échelle de 0 à 100", fig.width = 7.95, fig.height=6.91}
+```{r fig.cap = "Distribution des notes obtenues pour chaque dimension de la durabilité sur une échelle de 0 à 100", fig.width = 10, fig.height=6.91}
 print(IDEAdata$dimensions_boxplot)
 ```
 
