@@ -1,3 +1,7 @@
+# IDEATools 3.5.2
+* Added word wrapping for labels of group reports
+* Moved the group dimensions boxplot legend to the right
+
 # IDEATools 3.5.1
 * Fixed 2 figure widths in `write_idea()`
 

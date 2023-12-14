@@ -234,7 +234,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
       # data for standardized components (%)
       component_data <- res_compo |>
-        transform(score = round((component_value / component_max) * 100)) |> 
+        transform(score = round((component_value / component_max) * 100)) |>
         transform(component_code = factor(component_code, levels = unique(component_code)))
 
       ## First plot : Polarised histogram exported to pdf
@@ -701,6 +701,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
     heatmap <- heatmap_data |>
       transform(value = stringi::stri_trans_general(value, id = "Latin-ASCII")) |>
       transform(value = vec_colors[value]) |>
+      transform(node_name = sapply(node_name, FUN = wrapit, width = 30, USE.NAMES = FALSE)) |>
       transform(value = factor(value, levels = c("#CD0000", "#FF6347", "#33FF00", "#008B00"))) |>
       ggplot2::ggplot(ggplot2::aes(farm_id, node_name, fill = value)) +
       ggplot2::geom_tile(color = "black") +
@@ -710,7 +711,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::theme(axis.title.y = ggplot2::element_blank(), axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
 
 
-    freq_data <- heatmap_data[, .(node_name, value)][, .(n = .N), by = .(node_name, value)][, prop := n / sum(n) * 100, by = node_name][, value := stringi::stri_trans_general(value, id = "Latin-ASCII")][, value := vec_colors[value]][, value := factor(value, levels = c("#CD0000", "#FF6347", "#33FF00", "#008B00"))]
+    freq_data <- heatmap_data[, .(node_name, value)][, .(n = .N), by = .(node_name, value)][, prop := n / sum(n) * 100, by = node_name][, value := stringi::stri_trans_general(value, id = "Latin-ASCII")][, value := vec_colors[value]][, value := factor(value, levels = c("#CD0000", "#FF6347", "#33FF00", "#008B00"))] |>
+      transform(node_name = sapply(node_name, FUN = wrapit, width = 30, USE.NAMES = FALSE))
 
 
     freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = value)) +
@@ -786,6 +788,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       ggplot2::scale_color_manual(name = "L\u00e9gende", values = c("darkred")) +
       ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
       ggplot2::labs(y = "Valeur de la dimension", fill = "Dimension", caption = paste0("(N = ", n_farms, ")")) +
+      ggplot2::theme(legend.position = "right") +
       ggplot2::scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
       ggplot2::scale_x_discrete(labels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique"))
 
@@ -798,7 +801,8 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
       unique() |>
       transform(min_compo = 0) |>
       transform(component = sapply(component, FUN = wrapit, width = 60, USE.NAMES = FALSE)) |>
-      transform(component = factor(component, levels = rev(unique(component))))
+      transform(component = factor(component, levels = rev(unique(component)))) |>
+      transform(dimension = factor(dimension, levels = c("Agro\u00e9cologique", "Socio-Territoriale", "Economique")))
 
     ## Estimating means to add on the boxplot
     means <- compo_data[, .(Mean = mean(component_value)), by = .(dimension, component, component_code)]
