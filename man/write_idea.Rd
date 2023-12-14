@@ -60,7 +60,7 @@ path <- system.file("example_data/idea_example_1.json", package = "IDEATools")
 my_data <- read_idea(path)
 computed_data <- compute_idea(my_data)
 # Only plotting the radars as a minimal example
-idea_plots <- plot_idea(computed_data, choices = "radars") 
+idea_plots <- plot_idea(computed_data, choices = "radars")
 # Find your temporary directory
 tempdir <- tempdir()
 
