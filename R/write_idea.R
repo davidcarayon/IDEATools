@@ -18,9 +18,9 @@
 #'
 #' In the case of an individual analysis, another subdirectory is created with \code{prefix} as a name so that analyses are not mixed up. The user can choose if output should be raw plots (that can be used in custom reports) or pre-compiled reports with a large variety of available formats.
 #'
-#' In the case of a group analysis, another subdirectory is created with a name like "Groupe_{number_of_farms}" so that analyses are not mixed up. The user can again choose if output should be raw plots or pre-compiled reports.
+#' In the case of a group analysis, another subdirectory is created with a name like "Groupe_number_of_farms" so that analyses are not mixed up. The user can again choose if output should be raw plots or pre-compiled reports.
 #'
-#' If the \code{report_format} argument is set to either "docx" or "pptx", the report will be rendered using the {rmarkdown} package (and {officedown}/{officer} packages for the docx output) using a template stored in this package. For "pdf" output, LaTeX will be called with the {rmarkdown} package. For "xlsx" output, the {openxlsx} package will be used to sequentially produce Excel worksheets and files, using an internal R function.
+#' If the \code{report_format} argument is set to either "docx" or "pptx", the report will be rendered using the rmarkdown package (and officedown/officer packages for the docx output) using a template stored in this package. For "pdf" output, LaTeX will be called with the rmarkdown package. For "xlsx" output, the openxlsx package will be used to sequentially produce Excel worksheets and files, using an internal R function.
 #'
 #' Please note that an error will be produced if the input object does not contain all three "dimensions","trees" and "radars" entries in the case of an individual analysis and if \code{type = "report"}.
 #'
