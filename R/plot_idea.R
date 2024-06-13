@@ -717,7 +717,7 @@ plot_idea <- function(IDEA_data, choices = c("dimensions", "trees", "radars")) {
 
     freq_plot <- ggplot2::ggplot(freq_data, aes(x = node_name, y = prop, fill = value)) +
       ggplot2::geom_col(position = "stack", color = "black") +
-      ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop), "%")), position = ggplot2::position_stack(vjust = 0.5)) +
+      ggplot2::geom_label(ggplot2::aes(label = paste0(round(prop), " %")), position = ggplot2::position_stack(vjust = 0.5),key_glyph = draw_key_polygon) +
       ggplot2::scale_fill_identity("\uc9valuation", labels = legend_names, guide = "legend") +
       theme_idea() +
       ggplot2::coord_flip() +

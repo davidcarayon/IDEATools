@@ -23,7 +23,7 @@ library(IDEATools)
 <!-- badges: start -->
 
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![DOI](https://zenodo.org/badge/251535041.svg)](https://zenodo.org/badge/latestdoi/251535041)
+[![DOI](https://img.shields.io/badge/DOI-10.32614/CRAN.package.IDEATools-blue.svg)](https://img.shields.io/badge/DOI-10.32614/CRAN.package.IDEATools-blue.svg)
 [![R-CMD-check](https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/davidcarayon/IDEATools/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/IDEATools)](https://cran.r-project.org/package=IDEATools)
 <!-- badges: end -->
